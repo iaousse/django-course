@@ -1,0 +1,75 @@
+---
+number-sections: false
+---
+# Préface {.hidden}
+```{=latex}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\makeatletter
+\def\ps@preface{%
+  \let\@mkboth\@gobbletwo
+  \def\@oddhead{}%
+  \def\@evenhead{}%
+  \def\@oddfoot{\hfil\thepage\hfil}%
+  \let\@evenfoot\@oddfoot
+}
+\makeatother
+\pagestyle{preface}
+\thispagestyle{preface}
+\phantomsection
+%{\usekomafont{chapter}\strut Préface\par}
+```
+
+Le présent ouvrage est le support du cours **Développement web avec Django**, proposé dans le cadre de la **Formation continue ASERCS** à l'École Supérieure de Technologie de Casablanca (ESTC).
+
+Ce cours s'adresse aux personnes qui possèdent des bases en programmation Python et souhaitent apprendre à construire des applications web. Une connaissance préalable de Django n'est pas nécessaire. Le parcours accompagne pas à pas la création de **BiblioCours**, une application de gestion et de consultation de cours, depuis la mise en place du projet jusqu'à sa préparation pour la production.
+
+Le manuel présente l'architecture d'une application Django, le routage des requêtes, les modèles et l'ORM, les migrations, les vues et templates, les formulaires et l'administration, puis l'authentification, les pratiques de sécurité, les tests et le déploiement. L'objectif est de développer une démarche rigoureuse pour concevoir des applications web maintenables et fiables.
+
+```{=latex}
+\subsection*{Prérequis}
+```
+
+```{=html}
+<h2>Prérequis</h2>
+```
+
+Le contenu de ce manuel est organisé pour des personnes ayant déjà une base en :
+
+- la programmation en Python (variables, conditions, boucles, fonctions et structures de données de base) ;
+- le HTML et les notions élémentaires du fonctionnement du Web.
+
+Une expérience préalable avec Django n'est pas requise : les notions nécessaires sont introduites progressivement et mises en pratique tout au long du cours.
+
+```{=latex}
+\subsection*{Ressources complémentaires}
+```
+
+```{=html}
+<h2>Ressources complémentaires</h2>
+```
+
+La documentation officielle de [Django](https://docs.djangoproject.com/) constitue la ressource de référence pour approfondir les fonctionnalités du framework et consulter les informations correspondant à chaque version.
+
+Les exemples et exercices pratiques de ce manuel sont développés en Python avec Django. Ils suivent la réalisation d'une même application afin de relier les concepts aux étapes concrètes du développement web.
+
+::: {.callout-note}
+Les versions de Python et de Django évoluent. Suivez les versions et les consignes d'installation précisées dans le chapitre de démarrage, et consultez la documentation officielle en cas de différence avec votre environnement.
+:::
+
+::: {.content-visible when-format="pdf"}
+\clearpage
+\renewcommand{\contentsname}{\textcolor[HTML]{164E82}{Sommaire}}
+\tableofcontents
+\clearpage
+:::
+
+```{=latex}
+\clearpage
+\setcounter{chapter}{0}
+\pagenumbering{arabic}
+\pagestyle{headings}
+\makeatletter
+\let\ps@plain\ps@headings
+\makeatother
+```

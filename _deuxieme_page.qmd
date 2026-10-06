@@ -1,0 +1,33 @@
+\small
+::: hanging-indent
+**Cet ouvrage pédagogique** a été élaboré comme support du cours *Développement web avec Django*, proposé dans le cadre de la **Formation continue ASERCS** à l'École Supérieure de Technologie de Casablanca (ESTC).
+:::
+
+::: hanging-indent
+**L'auteur**: M'barek IAOUSSE, Enseignant-Chercheur à l'EST Casablanca, Université Hassan II de Casablanca.
+:::
+
+:::: {.callout}
+::: {layout="[12,-1,40]" layout-valign="center"}
+![](images/CC/by.png)   
+
+\justifying\small Sauf indications contraires, le contenu de ce manuel électronique est disponible 
+en vertu des termes de la [Licence Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/deed.fr).
+:::
+
+::: hanging-indent
+**Autorisations accordées :**\
+**Partager** -- copier, distribuer et communiquer le matériel par tous moyens et sous tous formats.\
+**Adapter** -- remixer, transformer et créer à partir du matériel pour toute utilisation, y compris commerciale.
+:::
+::: hanging-indent
+**Sous réserve de citer l'auteur.**
+:::
+::::
+
+\filbreak
+
+© M'barek IAOUSSE (2026)\
+Pour citer ce manuel : M'barek IAOUSSE. (2026).
+**Développement web avec Django**. École Supérieure de Technologie de Casablanca.
+Sous licence CC BY 4.0.

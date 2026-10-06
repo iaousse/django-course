@@ -1,0 +1,346 @@
+# Construire les pages : vues, URLs et templates {#sec-vues-templates}
+
+## De la donnée à une page HTML
+
+Une page dynamique ne devrait pas construire son HTML par concaténation de
+chaînes Python. La vue prépare les données et choisit le template ; le
+template décrit la représentation HTML. Cette séparation rend le HTML lisible
+par une personne qui travaille sur l'interface sans lui demander de modifier
+la logique métier.
+
+Pour BiblioCours, nous voulons :
+
+```text
+/cours/                    liste des cours publiés
+/cours/<slug>/             détail d'un cours
+/cours/matiere/<slug>/     cours d'une matière
+```
+
+Les noms de routes restent stables même si leur forme évolue. C'est pourquoi
+nous avons défini `app_name = "cours"` et des noms explicites
+[@django-templates].
+
+## Les vues de liste et de détail
+
+Complétez `cours/urls.py` :
+
+```python
+from django.urls import path
+
+from . import views
+
+app_name = "cours"
+
+urlpatterns = [
+    path("matiere/<slug:slug>/", views.cours_par_matiere, name="par_matiere"),
+    path("", views.liste_cours, name="liste"),
+    path("<slug:slug>/", views.detail_cours, name="detail"),
+]
+```
+
+L'ordre mérite attention : la route `matiere/<slug:slug>/` doit apparaître
+avant `"<slug:slug>/"`, sinon le mot `matiere` peut être capturé comme le slug
+d'un cours.
+
+Dans `cours/views.py` :
+
+```python
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, render
+
+from .models import Cours, Matiere
+
+
+def liste_cours(request):
+    """Affiche les cours publiés, dix par page."""
+    queryset = (
+        Cours.objects
+        .filter(statut=Cours.Statut.PUBLIE)
+        .select_related("matiere")
+    )
+    paginator = Paginator(queryset, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "cours/liste.html",
+        {"page_obj": page_obj},
+    )
+
+
+def detail_cours(request, slug):
+    cours = get_object_or_404(
+        Cours.objects.select_related("matiere"),
+        slug=slug,
+        statut=Cours.Statut.PUBLIE,
+    )
+    return render(request, "cours/detail.html", {"cours": cours})
+
+
+def cours_par_matiere(request, slug):
+    matiere = get_object_or_404(Matiere, slug=slug)
+    cours = (
+        matiere.cours
+        .filter(statut=Cours.Statut.PUBLIE)
+        .select_related("matiere")
+    )
+    return render(
+        request,
+        "cours/liste.html",
+        {"page_obj": cours, "matiere": matiere},
+    )
+```
+
+### Pourquoi `render` ?
+
+`render(request, template_name, context)` :
+
+1. charge le template ;
+2. lui transmet un dictionnaire de contexte ;
+3. produit une réponse HTTP avec le HTML.
+
+La clé `"page_obj"` est un contrat entre la vue et le template. Si la vue
+emploie `"cours"` mais que le template parcourt `page_obj`, la page semble vide
+sans que la base soit nécessairement en cause.
+
+### 404 plutôt que page vide
+
+`get_object_or_404` exprime qu'un objet demandé doit exister. Une URL inconnue
+renvoie alors un statut `404 Not Found`, ce qui est correct pour le navigateur,
+les moteurs de recherche et les tests. Il ne faut pas attraper toutes les
+exceptions et renvoyer une page générique : cela masque les erreurs de
+programmation et transforme parfois un 404 en 500.
+
+## Organiser les templates
+
+Créez :
+
+```text
+cours/
+└── templates/
+    └── cours/
+        ├── base.html
+        ├── liste.html
+        ├── detail.html
+        └── partials/
+            └── carte_cours.html
+```
+
+Avec `APP_DIRS = True`, Django cherche un dossier `templates` dans les apps
+installées. Le sous-dossier `cours/` évite les collisions si deux apps
+possèdent un fichier `liste.html`.
+
+## Le template parent
+
+`cours/templates/cours/base.html` :
+
+```html
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BiblioCours{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'cours/site.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <nav aria-label="Navigation principale">
+      <a href="{% url 'cours:liste' %}">BiblioCours</a>
+      <a href="{% url 'cours:liste' %}">Tous les cours</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>BiblioCours — apprendre en construisant.</p>
+  </footer>
+</body>
+</html>
+```
+
+`{% extends %}` et les blocs permettent aux pages enfants de réutiliser le
+document entier. `block title` et `block content` sont des points d'extension.
+Cette technique applique le principe DRY sans rendre toutes les pages
+identiques.
+
+## Afficher une collection avec `liste.html`
+
+```html
+{% extends "cours/base.html" %}
+
+{% block title %}
+  {% if matiere %}Cours de {{ matiere.nom }}{% else %}Tous les cours{% endif %}
+  — BiblioCours
+{% endblock %}
+
+{% block content %}
+  {% if matiere %}
+    <header class="page-heading">
+      <p class="eyebrow">Matière</p>
+      <h1>{{ matiere.nom }}</h1>
+      <p>{{ matiere.description }}</p>
+    </header>
+  {% else %}
+    <header class="page-heading">
+      <p class="eyebrow">Catalogue</p>
+      <h1>Tous les cours</h1>
+    </header>
+  {% endif %}
+
+  <section aria-labelledby="cours-heading">
+    <h2 id="cours-heading">Cours disponibles</h2>
+    {% for cours in page_obj %}
+      {% include "cours/partials/carte_cours.html" %}
+    {% empty %}
+      <p>Aucun cours publié pour le moment.</p>
+    {% endfor %}
+  </section>
+
+  {% if page_obj.has_other_pages %}
+    <nav aria-label="Pagination" class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Précédent</a>
+      {% endif %}
+      <span>Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Suivant</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endblock %}
+```
+
+Le bloc `{% empty %}` évite une page silencieuse quand le QuerySet ne contient
+aucun élément. Les attributs `has_previous` et `has_next` appartiennent à
+l'objet `Page` produit par `Paginator`.
+
+Le partial `partials/carte_cours.html` :
+
+```html
+<article class="course-card">
+  <p class="eyebrow">{{ cours.matiere.nom }}</p>
+  <h3>
+    <a href="{{ cours.get_absolute_url }}">{{ cours.titre }}</a>
+  </h3>
+  <p>{{ cours.resume }}</p>
+  <p class="meta">
+    Publié le {{ cours.date_publication|date:"d/m/Y" }}
+  </p>
+</article>
+```
+
+`include` rend un fragment réutilisable dans le contexte courant. Le modèle
+fournit `get_absolute_url`, ce qui centralise la construction du lien.
+
+## Afficher le détail
+
+`cours/templates/cours/detail.html` :
+
+```html
+{% extends "cours/base.html" %}
+
+{% block title %}{{ cours.titre }} — BiblioCours{% endblock %}
+
+{% block content %}
+  <article class="course-detail">
+    <p class="eyebrow">
+      <a href="{% url 'cours:par_matiere' cours.matiere.slug %}">
+        {{ cours.matiere.nom }}
+      </a>
+    </p>
+    <h1>{{ cours.titre }}</h1>
+    <p class="meta">
+      Mis à jour le {{ cours.date_modification|date:"d/m/Y à H:i" }}
+    </p>
+    <p class="lead">{{ cours.resume }}</p>
+    <div class="course-content">
+      {{ cours.contenu|linebreaks }}
+    </div>
+  </article>
+{% endblock %}
+```
+
+Les variables sont échappées automatiquement. C'est un mécanisme essentiel :
+si le contenu contient `<script>`, Django l'affiche comme du texte au lieu de
+l'exécuter. Le filtre `linebreaks` transforme des retours à la ligne en
+paragraphes et éléments `<br>`.
+
+N'utilisez pas `|safe` simplement pour « faire marcher » un affichage. Il
+désactive l'échappement et doit être réservé à du HTML produit par une source
+de confiance, nettoyé avec une stratégie explicite. La sécurité des templates
+est expliquée au @sec-securite.
+
+## Rechercher avec un paramètre GET
+
+Ajoutons une recherche simple. Dans la vue :
+
+```python
+def liste_cours(request):
+    terme = request.GET.get("q", "").strip()
+    queryset = (
+        Cours.objects
+        .filter(statut=Cours.Statut.PUBLIE)
+        .select_related("matiere")
+    )
+    if terme:
+        queryset = queryset.filter(
+            Q(titre__icontains=terme)
+            | Q(resume__icontains=terme)
+        )
+    paginator = Paginator(queryset, 10)
+    return render(
+        request,
+        "cours/liste.html",
+        {"page_obj": paginator.get_page(request.GET.get("page")), "terme": terme},
+    )
+```
+
+Les paramètres GET sont des chaînes fournies
+par l'utilisateur ; `icontains` protège contre l'injection SQL parce que l'ORM
+paramètre la requête, mais il faut tout de même limiter les coûts et la
+longueur dans une application publique.
+
+Le formulaire de recherche peut être placé dans le template :
+
+```html
+<form method="get" role="search">
+  <label for="q">Rechercher un cours</label>
+  <input id="q" name="q" value="{{ terme }}" type="search">
+  <button type="submit">Rechercher</button>
+</form>
+```
+
+## Lire un bug de template
+
+Pour une page vide, ne commencez pas par changer le CSS. Vérifiez :
+
+```python
+print(queryset.query)
+print(queryset.count())
+```
+
+Puis inspectez le contrat :
+
+- le contexte contient-il `page_obj` ?
+- la boucle utilise-t-elle `page_obj` ?
+- le filtre `statut` exclut-il vos données de test ?
+- la route pointe-t-elle vers la bonne vue ?
+- le fichier est-il bien sous `templates/cours/` ?
+
+Le mode `DEBUG` fournit aussi des pages d'erreur détaillées, mais il ne faut
+jamais en laisser l'affichage actif en production.
+
+## Exercices
+
+1. Ajoutez un lien « Voir la matière » sur chaque carte.
+2. Conservez le terme `q` dans les liens de pagination.
+3. Créez une page 404 personnalisée avec un template `404.html`.
+4. Écrivez une vue qui affiche uniquement les cours d'une matière et vérifiez
+   qu'une matière inexistante renvoie bien `404`.

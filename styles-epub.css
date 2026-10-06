@@ -1,0 +1,29 @@
+.django-cover {
+  break-after: page;
+  display: flex;
+  min-height: 95vh;
+  page-break-after: always;
+}
+
+.django-cover-type {
+  display: block !important;
+}
+
+.django-cover-qr-page {
+  break-before: page;
+  break-after: page;
+  min-height: 95vh;
+  page-break-before: always;
+  page-break-after: always;
+}
+
+.django-cover-qr-page-html {
+  display: flex !important;
+}
+
+.django-cover-qr-page img {
+  display: block;
+  height: auto;
+  margin: 2rem auto;
+  max-width: 75%;
+}

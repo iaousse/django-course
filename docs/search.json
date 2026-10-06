@@ -1,0 +1,862 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Développement web avec Django",
+    "section": "",
+    "text": "Développement web avec Django\n\n  \n  Ouvrage pédagogique\n  Développement web avec Django\n  Conception et développement d'applications web\n  M'barek IAOUSSE\n  Formation continue ASERCSÉcole Supérieure de Technologie de CasablancaUniversité Hassan II de Casablanca\n  Première édition — 2026\n\n\n\nVersion en ligne\n\n\n\nScannez ce code pour accéder à la version en ligne.\n\n\n\nCe manuel a été élaboré comme support du cours Développement web avec Django, proposé dans le cadre de la Formation continue ASERCS à l’École Supérieure de Technologie de Casablanca (ESTC).\n\n\nL’auteur: M’barek IAOUSSE, Enseignant-Chercheur à l’EST Casablanca, Université Hassan II de Casablanca.\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\nSauf indications contraires, le contenu de ce manuel électronique est disponible en vertu des termes de la Licence Creative Commons Attribution 4.0 International.\n\n\n\n\nAutorisations accordées :\nPartager – copier, distribuer et communiquer le matériel par tous moyens et sous tous formats.\nAdapter – remixer, transformer et créer à partir du matériel pour toute utilisation, y compris commerciale.\n\n\nSous réserve de citer l’auteur.\n\n\n\n\n© M’barek IAOUSSE (2026)\nPour citer ce manuel : M’barek IAOUSSE. (2026). Développement web avec Django. École Supérieure de Technologie de Casablanca. Sous licence CC BY 4.0.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>index.html</span>"
+    ]
+  },
+  {
+    "objectID": "preface.html",
+    "href": "preface.html",
+    "title": "Préface",
+    "section": "",
+    "text": "Le présent manuel est le support du cours Développement web avec Django, proposé dans le cadre de la Formation continue ASERCS à l’École Supérieure de Technologie de Casablanca (ESTC).\nCe cours s’adresse aux personnes qui possèdent des bases en programmation Python et souhaitent apprendre à construire des applications web. Une connaissance préalable de Django n’est pas nécessaire. Le parcours accompagne pas à pas la création de BiblioCours, une application de gestion et de consultation de cours, depuis la mise en place du projet jusqu’à sa préparation pour la production.\nLe manuel présente l’architecture d’une application Django, le routage des requêtes, les modèles et l’ORM, les migrations, les vues et templates, les formulaires et l’administration, puis l’authentification, les pratiques de sécurité, les tests et le déploiement. L’objectif est de développer une démarche rigoureuse pour concevoir des applications web maintenables et fiables.\nPrérequis\nLe contenu de ce manuel est organisé pour des personnes ayant déjà une base en :\n\nla programmation en Python (variables, conditions, boucles, fonctions et structures de données de base) ;\nle HTML et les notions élémentaires du fonctionnement du Web.\n\nUne expérience préalable avec Django n’est pas requise : les notions nécessaires sont introduites progressivement et mises en pratique tout au long du cours.\nRessources complémentaires\nLa documentation officielle de Django constitue la ressource de référence pour approfondir les fonctionnalités du framework et consulter les informations correspondant à chaque version.\nLes exemples et exercices pratiques de ce manuel sont développés en Python avec Django. Ils suivent la réalisation d’une même application afin de relier les concepts aux étapes concrètes du développement web.\n\n\n\n\n\n\nNote\n\n\n\nLes versions de Python et de Django évoluent. Suivez les versions et les consignes d’installation précisées dans le chapitre de démarrage, et consultez la documentation officielle en cas de différence avec votre environnement.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Préface</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html",
+    "href": "chapitres/01-demarrer.html",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "",
+    "text": "Ce que nous allons construire\nCe cours suit la construction progressive de BiblioCours, une petite bibliothèque de cours en ligne. L’application permettra finalement de :\nLe projet est volontairement assez petit pour rester lisible, mais assez réaliste pour faire apparaître les problèmes qui comptent dans une application web : organisation du code, données relationnelles, validation, sécurité, tests et déploiement.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#ce-que-nous-allons-construire",
+    "href": "chapitres/01-demarrer.html#ce-que-nous-allons-construire",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "",
+    "text": "classer des cours par matière ;\nafficher une liste puis le détail d’un cours ;\ngérer les données depuis l’administration Django ;\npermettre à des utilisateurs authentifiés de contribuer ;\ntester les comportements importants avant de les faire évoluer.\n\n\n\n\n\n\n\n\nNotePrérequis et version du cours\n\n\n\nOn suppose que vous savez lire du HTML et écrire des programmes Python simples (fonctions, classes, imports, exceptions et modules). Les exemples visent Django 5.2 et Python 3.12 ou une version plus récente compatible. Les idées restent valables pour les versions voisines, mais les détails de configuration doivent toujours être vérifiés dans la documentation de la version installée (Django Software Foundation 2025a).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#pourquoi-django",
+    "href": "chapitres/01-demarrer.html#pourquoi-django",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Pourquoi Django ?",
+    "text": "Pourquoi Django ?\nUne application web reçoit des requêtes HTTP, décide quoi faire, lit ou modifie des données, puis renvoie une réponse HTTP. On pourrait programmer chacune de ces opérations à la main. Django fournit plutôt une structure cohérente :\n\nun routeur associe une URL à du code Python ;\nune vue coordonne le traitement de la requête ;\nun modèle décrit les données et dialogue avec la base ;\nun moteur de templates produit le HTML ;\ndes composants prêts à l’emploi prennent en charge l’administration, l’authentification, les sessions et une partie des protections de sécurité.\n\nCette approche réduit le code répétitif, mais elle impose aussi des conventions. Apprendre Django revient donc moins à mémoriser des fonctions qu’à comprendre le rôle de chaque couche et le moment où elle doit intervenir. Le tutoriel officiel suit la même logique en construisant une application par étapes (Django Software Foundation 2025b).\n\nUne requête, concrètement\nLorsque l’on ouvre http://127.0.0.1:8000/cours/, le navigateur envoie approximativement :\nGET /cours/ HTTP/1.1\nHost: 127.0.0.1:8000\nAccept: text/html\nDjango reçoit cette requête, cherche une route correspondante, appelle la vue, éventuellement interroge la base de données, rend un template et renvoie par exemple :\nHTTP/1.1 200 OK\nContent-Type: text/html; charset=utf-8\n\n&lt;!doctype html&gt;\n&lt;html lang=\"fr\"&gt;…&lt;/html&gt;\nLe code du cours rendra ce chemin observable. À chaque étape, nous chercherons à répondre à trois questions : quelle est l’entrée ? quelle décision est prise ? quelle sortie est produite ?",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#pourquoi-uv-remplace-venv-et-pip-dans-ce-cours",
+    "href": "chapitres/01-demarrer.html#pourquoi-uv-remplace-venv-et-pip-dans-ce-cours",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Pourquoi uv remplace venv et pip dans ce cours",
+    "text": "Pourquoi uv remplace venv et pip dans ce cours\nUn environnement Python global est une mauvaise unité d’installation : deux projets peuvent exiger des versions incompatibles de Django ou d’une même dépendance. On veut isoler les dépendances du projet et pouvoir recréer exactement l’environnement sur une autre machine.\nuv est un gestionnaire rapide de versions Python, d’environnements et de dépendances. Il utilise un fichier pyproject.toml pour déclarer le projet et un fichier uv.lock pour enregistrer la résolution exacte des dépendances (Astral 2025). Nous n’avons donc pas besoin de créer manuellement un dossier env/, ni de penser à activer un environnement à chaque terminal.\n\nInstallation et vérification\nInstallez uv en suivant la méthode officielle correspondant à votre système. Puis vérifiez que la commande est disponible :\nuv --version\npython --version\nSur Windows, PowerShell et Windows Terminal conviennent. Sur macOS et Linux, un terminal courant suffit. Si la commande uv n’est pas trouvée après l’installation, redémarrez le terminal afin que le PATH soit rechargé.\n\n\nInitialiser le projet\nCréez un dossier vide, puis initialisez un projet Python :\nmkdir bibliocours\ncd bibliocours\n\nuv init --python 3.12\nCette commande crée notamment pyproject.toml. Le choix de Python doit être explicite : il évite qu’un collègue utilise par hasard une version très différente. Vous pouvez demander à uv d’installer une version si elle n’existe pas encore sur la machine :\nuv python install 3.12\nuv python pin 3.12\nLa commande uv python pin peut créer un fichier .python-version. Ce fichier documente la version attendue sans mettre Python lui-même dans Git.\n\n\nAjouter Django\nAjoutez Django comme dépendance de production :\nuv add \"Django&gt;=5.2,&lt;6\"\nExaminez ensuite les fichiers produits :\nls\ncat pyproject.toml\nhead -30 uv.lock\nDans pyproject.toml, Django apparaît dans la liste des dépendances. Dans uv.lock, uv conserve les versions concrètement retenues, y compris les dépendances indirectes. Il faut versionner pyproject.toml et uv.lock ; il ne faut pas versionner .venv/.\n\n\n\n\n\n\nImportantuv run est le nouveau réflexe\n\n\n\nLancez une commande Python du projet avec uv run :\nuv run python -c \"import django; print(django.get_version())\"\nuv run django-admin --version\nuv run vérifie l’environnement et exécute la commande avec les dépendances du projet. Vous n’avez donc pas à taper source .venv/bin/activate. Une activation manuelle reste possible, mais elle n’est plus nécessaire pour suivre ce cours.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#créer-le-projet-django",
+    "href": "chapitres/01-demarrer.html#créer-le-projet-django",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Créer le projet Django",
+    "text": "Créer le projet Django\nDans Django, un projet représente la configuration globale d’un site. Une application est une unité fonctionnelle qui regroupe des modèles, vues, templates et tests. Un même projet peut réunir plusieurs applications : cours, comptes, notifications, etc. Cette distinction est importante : le projet assemble ; les applications portent les fonctionnalités.\nCréons la configuration globale dans le dossier courant :\nuv run django-admin startproject config .\nLe point final signifie « utiliser le dossier courant » plutôt que créer un dossier imbriqué config/config. La structure initiale est :\nbibliocours/\n├── .python-version\n├── pyproject.toml\n├── uv.lock\n├── manage.py\n└── config/\n    ├── __init__.py\n    ├── asgi.py\n    ├── settings.py\n    ├── urls.py\n    └── wsgi.py\n\nLe rôle de chaque fichier\n\nmanage.py prépare l’accès aux réglages et expose les commandes Django ;\nconfig/settings.py contient la configuration globale ;\nconfig/urls.py est le routeur principal ;\nconfig/asgi.py et config/wsgi.py sont les points d’entrée utilisés par les serveurs applicatifs ;\n__init__.py indique que config est un paquet Python.\n\nLancez le serveur de développement :\nuv run python manage.py runserver\nOuvrez http://127.0.0.1:8000/. Le serveur recharge souvent le code quand un fichier Python est modifié. Il est pratique pour apprendre, mais il ne doit pas être utilisé comme serveur public : il n’est ni dimensionné ni configuré pour la production.\nArrêtez-le avec ++ctrl+c++. Une seconde commande dans un autre terminal peut inspecter le projet :\nuv run python manage.py check\ncheck analyse la configuration sans modifier la base de données. Prenez l’habitude de l’exécuter après une modification structurelle.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#créer-lapplication-cours",
+    "href": "chapitres/01-demarrer.html#créer-lapplication-cours",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Créer l’application cours",
+    "text": "Créer l’application cours\nuv run python manage.py startapp cours\nLa nouvelle structure ressemble à ceci :\ncours/\n├── __init__.py\n├── admin.py\n├── apps.py\n├── migrations/\n│   └── __init__.py\n├── models.py\n├── tests.py\n└── views.py\nUne app n’est pas active simplement parce que son dossier existe. Ajoutez-la dans config/settings.py :\nINSTALLED_APPS = [\n    \"django.contrib.admin\",\n    \"django.contrib.auth\",\n    \"django.contrib.contenttypes\",\n    \"django.contrib.sessions\",\n    \"django.contrib.messages\",\n    \"django.contrib.staticfiles\",\n    \"cours\",\n]\nDans un projet plus grand, on préfère souvent \"cours.apps.CoursConfig\" : cette forme rend explicite la classe de configuration. La forme courte fonctionne ici car Django sait retrouver CoursConfig.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#versionner-ce-qui-doit-lêtre",
+    "href": "chapitres/01-demarrer.html#versionner-ce-qui-doit-lêtre",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Versionner ce qui doit l’être",
+    "text": "Versionner ce qui doit l’être\nInitialisez Git et créez .gitignore :\ngit init\n.venv/\n__pycache__/\n*.py[cod]\n*.sqlite3\n.env\n.DS_Store\nmedia/\nstaticfiles/\nLa base SQLite locale et les fichiers téléversés peuvent contenir des données de travail ; ils ne doivent pas être envoyés par défaut. Les secrets ne doivent jamais se trouver dans Git. uv.lock, en revanche, doit être conservé : il sert à reproduire l’installation.\ngit add .\ngit commit -m \"chore: initialiser le projet Django\"\ngit status\nUn commit est une étape vérifiable, pas une sauvegarde automatique de chaque frappe. Faites un commit lorsque l’application atteint un état cohérent : le projet démarre, le contrôle Django passe et les fichiers nécessaires sont présents.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#checkpoint",
+    "href": "chapitres/01-demarrer.html#checkpoint",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Checkpoint",
+    "text": "Checkpoint\nÀ la fin de ce chapitre, les commandes suivantes doivent fonctionner :\nuv run python manage.py check\nuv run python manage.py runserver\nuv run django-admin --version\ngit status",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/01-demarrer.html#exercices",
+    "href": "chapitres/01-demarrer.html#exercices",
+    "title": "Démarrer proprement avec Django et uv",
+    "section": "Exercices",
+    "text": "Exercices\n\nDécrivez avec vos mots la différence entre un projet Django et une app Django.\nSupprimez .venv/ si elle existe, puis relancez une commande avec uv run. Que constatez-vous ?\nAjoutez une dépendance de développement avec uv add --dev ruff, puis observez la différence entre les dépendances normales et celles de développement dans pyproject.toml.\nFaites un commit avant et après la création de l’app cours, puis utilisez git diff pour identifier ce que Django a généré.\n\n\n\n\n\nAstral. 2025. « Uv Documentation ». https://docs.astral.sh/uv/.\n\n\nDjango Software Foundation. 2025a. « Django Documentation ». https://docs.djangoproject.com/en/5.2/.\n\n\nDjango Software Foundation. 2025b. « Writing Your First Django App ». https://docs.djangoproject.com/en/5.2/intro/tutorial01/.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Démarrer proprement avec Django et `uv`</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html",
+    "href": "chapitres/02-archetecture-routage.html",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "",
+    "text": "Le chemin complet d’une requête\nUne bonne application Django n’est pas une collection de fichiers que l’on modifie au hasard. Elle est une chaîne de responsabilités. Pour une requête vers /cours/12/, le parcours conceptuel est :\nDjango appelle souvent cette organisation MVT :\nLa comparaison avec MVC est utile mais imparfaite. Le nom importe moins que la règle : une vue ne devrait pas contenir tout le HTML, un template ne devrait pas interroger directement la base, et un modèle ne devrait pas connaître la mise en page. Le découpage rend chaque partie remplaçable et testable (Django Software Foundation 2025). Les bonnes pratiques de conception Django insistent aussi sur la lisibilité, la simplicité et le respect des conventions du framework (Greenfeld et Roy Greenfeld 2017).",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#le-chemin-complet-dune-requête",
+    "href": "chapitres/02-archetecture-routage.html#le-chemin-complet-dune-requête",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "",
+    "text": "navigateur\n   │  requête HTTP\n   ▼\nconfig/urls.py\n   │  route choisie\n   ▼\nvue Python\n   │  lecture ou écriture\n   ▼\nmodèle / ORM ─── base de données\n   │\n   ▼\ntemplate ─── contexte Python\n   │  HTML\n   ▼\nnavigateur\n\n\n\n\nÉlément Django\nResponsabilité\nAnalogie MVC\n\n\n\n\nModel\ndonnées, contraintes et accès à la base\nModel\n\n\nView\ntraitement de la requête et choix de la réponse\nController\n\n\nTemplate\nreprésentation HTML\nView",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#les-apps-découper-par-responsabilité",
+    "href": "chapitres/02-archetecture-routage.html#les-apps-découper-par-responsabilité",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Les apps : découper par responsabilité",
+    "text": "Les apps : découper par responsabilité\nL’app cours aura les responsabilités liées au catalogue pédagogique. Dans une application qui grandit, on pourrait ajouter :\ncomptes/        utilisateurs, profils, permissions\ncours/          matières et cours\ninscriptions/   suivi de la progression\nnotifications/  courriels et alertes\nUne app bien découpée peut être déplacée dans un autre projet avec peu de modifications. Il ne faut pas créer une app pour chaque modèle : on crée une app pour un domaine fonctionnel cohérent.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#lire-settings.py-plutôt-que-le-copier",
+    "href": "chapitres/02-archetecture-routage.html#lire-settings.py-plutôt-que-le-copier",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Lire settings.py plutôt que le copier",
+    "text": "Lire settings.py plutôt que le copier\nLe fichier config/settings.py configure le comportement du projet. Les sections importantes sont :\nfrom pathlib import Path\n\nBASE_DIR = Path(__file__).resolve().parent.parent\n\nSECRET_KEY = \"à-remplacer-en-production\"\nDEBUG = True\nALLOWED_HOSTS = []\n\nINSTALLED_APPS = [\n    # Apps Django fournies\n    \"django.contrib.admin\",\n    \"django.contrib.auth\",\n    \"django.contrib.contenttypes\",\n    \"django.contrib.sessions\",\n    \"django.contrib.messages\",\n    \"django.contrib.staticfiles\",\n    # App du projet\n    \"cours\",\n]\n\nMIDDLEWARE = [\n    \"django.middleware.security.SecurityMiddleware\",\n    \"django.contrib.sessions.middleware.SessionMiddleware\",\n    \"django.middleware.common.CommonMiddleware\",\n    \"django.middleware.csrf.CsrfViewMiddleware\",\n    \"django.contrib.auth.middleware.AuthenticationMiddleware\",\n    \"django.contrib.messages.middleware.MessageMiddleware\",\n    \"django.middleware.clickjacking.XFrameOptionsMiddleware\",\n]\n\nROOT_URLCONF = \"config.urls\"\n\nTEMPLATES = [\n    {\n        \"BACKEND\": \"django.template.backends.django.DjangoTemplates\",\n        \"DIRS\": [],\n        \"APP_DIRS\": True,\n        \"OPTIONS\": {\n            \"context_processors\": [\n                \"django.template.context_processors.request\",\n                \"django.contrib.auth.context_processors.auth\",\n                \"django.contrib.messages.context_processors.messages\",\n            ],\n        },\n    },\n]\n\nWSGI_APPLICATION = \"config.wsgi.application\"\nINSTALLED_APPS active les composants. MIDDLEWARE forme une pile traversée par les requêtes et réponses. TEMPLATES indique comment trouver et rendre les templates. ROOT_URLCONF indique quel routeur commencer à lire.\n\nLe secret et le mode debug\nSECRET_KEY est utilisé par plusieurs mécanismes cryptographiques de Django. Il ne doit pas être publié. DEBUG = True affiche des informations très détaillées en cas d’erreur ; c’est utile localement et dangereux sur Internet. Les réglages de production seront traités au Préparer la production et continuer l’apprentissage.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#déclarer-les-premières-routes",
+    "href": "chapitres/02-archetecture-routage.html#déclarer-les-premières-routes",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Déclarer les premières routes",
+    "text": "Déclarer les premières routes\nLe routeur principal reçoit une liste de motifs. Modifiez config/urls.py :\nfrom django.contrib import admin\nfrom django.urls import include, path\n\nurlpatterns = [\n    path(\"admin/\", admin.site.urls),\n    path(\"cours/\", include(\"cours.urls\")),\n]\nCréez ensuite cours/urls.py :\nfrom django.urls import path\n\nfrom . import views\n\napp_name = \"cours\"\n\nurlpatterns = [\n    path(\"\", views.liste_cours, name=\"liste\"),\n]\nTrois détails sont essentiels :\n\ninclude délègue un préfixe à l’app ;\napp_name crée un espace de noms ;\nname donne un identifiant stable à la route.\n\nUn template doit utiliser le nom de la route, pas recopier son URL. Ainsi, si cours/ devient catalogue/, les liens générés par {% url %} restent cohérents après la modification du routeur.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#écrire-une-vue-minimale",
+    "href": "chapitres/02-archetecture-routage.html#écrire-une-vue-minimale",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Écrire une vue minimale",
+    "text": "Écrire une vue minimale\nDans cours/views.py :\nfrom django.http import HttpRequest, HttpResponse\n\n\ndef accueil(request: HttpRequest) -&gt; HttpResponse:\n    return HttpResponse(\"Bienvenue dans BiblioCours\")\nAjoutez temporairement la route :\nurlpatterns = [\n    path(\"\", views.accueil, name=\"accueil\"),\n]\nOuvrez /cours/. Une vue reçoit au minimum un objet HttpRequest et renvoie un objet de réponse. HttpResponse est idéal pour comprendre le mécanisme, mais une application HTML utilisera plutôt render, présenté au chapitre Construire les pages : vues, URLs et templates.\n\nParamètres capturés dans l’URL\nDjango sait convertir une partie de l’URL avant d’appeler la vue :\nurlpatterns = [\n    path(\"&lt;int:pk&gt;/\", views.detail_cours, name=\"detail\"),\n]\nPour /cours/12/, Django appelle :\ndef detail_cours(request: HttpRequest, pk: int) -&gt; HttpResponse:\n    return HttpResponse(f\"Le cours demandé est {pk}\")\nLe convertisseur int refuse les valeurs qui ne sont pas des entiers. D’autres convertisseurs courants sont str, slug, uuid et path. Une URL porte donc une information structurée, et non une chaîne que la vue doit parser elle-même.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#comprendre-la-résolution-des-urls",
+    "href": "chapitres/02-archetecture-routage.html#comprendre-la-résolution-des-urls",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Comprendre la résolution des URLs",
+    "text": "Comprendre la résolution des URLs\nDjango parcourt urlpatterns de haut en bas et s’arrête au premier motif correspondant. L’ordre compte :\nurlpatterns = [\n    path(\"nouveau/\", views.nouveau_cours, name=\"nouveau\"),\n    path(\"&lt;int:pk&gt;/\", views.detail_cours, name=\"detail\"),\n]\nLa route statique doit précéder la route dynamique. Sinon, selon les motifs, un chemin prévu pour nouveau/ peut être interprété comme un identifiant.\nPour fabriquer une URL dans Python :\nfrom django.urls import reverse\n\nurl = reverse(\"cours:detail\", kwargs={\"pk\": 12})\n# \"/cours/12/\"\nCette technique est préférable à \"/cours/12/\" en dur. Elle sert notamment dans les redirections et les tests.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#requêtes-et-réponses-les-distinctions-importantes",
+    "href": "chapitres/02-archetecture-routage.html#requêtes-et-réponses-les-distinctions-importantes",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Requêtes et réponses : les distinctions importantes",
+    "text": "Requêtes et réponses : les distinctions importantes\nUne requête contient plusieurs catégories d’information :\ndef rechercher(request):\n    terme = request.GET.get(\"q\", \"\")\n    langue = request.headers.get(\"Accept-Language\")\n    utilisateur = request.user\n    return HttpResponse(f\"Recherche: {terme}\")\n\nrequest.GET contient les paramètres de l’URL, donc des données de lecture ;\nrequest.POST contient les données envoyées dans un formulaire ;\nrequest.user représente l’utilisateur courant, éventuellement anonyme ;\nles en-têtes décrivent le contexte HTTP, mais ne doivent pas être traités comme des données fiables ;\nrequest.method indique GET, POST, etc.\n\nUne vue ne doit pas faire confiance aux données reçues. Même un champ qui semble numérique ou une valeur provenant d’un navigateur doit être validé côté serveur. Les formulaires Django aideront à centraliser cette validation.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#premier-modèle-mental-à-retenir",
+    "href": "chapitres/02-archetecture-routage.html#premier-modèle-mental-à-retenir",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Premier modèle mental à retenir",
+    "text": "Premier modèle mental à retenir\nQuand une page ne fonctionne pas, diagnostiquez dans cet ordre :\n\nl’URL est-elle réellement atteinte ?\nla vue est-elle appelée avec les bons paramètres ?\nla requête vers la base renvoie-t-elle le résultat attendu ?\nle contexte transmis au template porte-t-il le bon nom ?\nle template affiche-t-il ce nom et cette valeur ?\nle navigateur reçoit-il le HTML attendu ?\n\nCette méthode est plus rapide que de modifier simultanément le modèle, la vue, le template et le CSS.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/02-archetecture-routage.html#exercice-guidé",
+    "href": "chapitres/02-archetecture-routage.html#exercice-guidé",
+    "title": "Comprendre l’architecture Django et le routage",
+    "section": "Exercice guidé",
+    "text": "Exercice guidé\nAjoutez une page /cours/a-propos/ :\n\nécrivez une vue qui renvoie une HttpResponse ;\ndonnez-lui le nom a_propos ;\nappelez-la depuis cours/urls.py ;\ngénérez son adresse avec reverse dans le shell Django ;\najoutez un test qui vérifie que la réponse a le statut HTTP 200.\n\n\n\n\n\n\n\nAstuceQuestion de conception\n\n\n\nLa route /cours/12/ utilise un entier parce que la vue cherche un objet par clé primaire. Si l’URL devait être lisible, /cours/python-pour-debutants/ pourrait utiliser un slug. Le choix de l’URL est à la fois une décision technique, une décision d’ergonomie et une décision de référencement.\n\n\n\n\n\n\nDjango Software Foundation. 2025. « Django Overview: Design Philosophies ». https://docs.djangoproject.com/en/5.2/misc/design-philosophies/.\n\n\nGreenfeld, Daniel Roy, et Audrey Roy Greenfeld. 2017. Two Scoops of Django: Best Practices for Django 1.11. 1ʳᵉ éd. Two Scoops Press.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Comprendre l'architecture Django et le routage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html",
+    "href": "chapitres/03-modeles-orm-migrations.html",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "",
+    "text": "Penser d’abord au domaine\nAvant d’écrire models.py, décrivons les objets du métier. BiblioCours contient des matières et des cours. Une matière regroupe plusieurs cours ; un cours appartient à une seule matière. Cette phrase donne déjà une relation « un-à-plusieurs ».\nUn bon modèle répond à des questions concrètes :\nLe modèle n’est pas seulement un miroir de la table SQL. Il formalise des règles et fournit une interface Python pour manipuler les données. L’ORM de Django traduit cette interface en requêtes SQL adaptées à la base configurée (Django Software Foundation 2025).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#penser-dabord-au-domaine",
+    "href": "chapitres/03-modeles-orm-migrations.html#penser-dabord-au-domaine",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "",
+    "text": "quelles informations doivent être obligatoires ?\nquelle taille maximale une valeur peut-elle avoir ?\ndeux enregistrements peuvent-ils porter la même valeur ?\nque se passe-t-il si la matière d’un cours est supprimée ?\nquelle date représente la création et quelle date représente la publication ?",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#écrire-les-modèles-de-bibliocours",
+    "href": "chapitres/03-modeles-orm-migrations.html#écrire-les-modèles-de-bibliocours",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Écrire les modèles de BiblioCours",
+    "text": "Écrire les modèles de BiblioCours\nRemplacez le contenu de cours/models.py par :\nfrom django.db import models\nfrom django.urls import reverse\n\n\nclass Matiere(models.Model):\n    nom = models.CharField(max_length=100, unique=True)\n    slug = models.SlugField(max_length=110, unique=True)\n    description = models.TextField(blank=True)\n\n    class Meta:\n        ordering = [\"nom\"]\n        verbose_name = \"matière\"\n        verbose_name_plural = \"matières\"\n\n    def __str__(self):\n        return self.nom\n\n\nclass Cours(models.Model):\n    class Statut(models.TextChoices):\n        BROUILLON = \"brouillon\", \"Brouillon\"\n        PUBLIE = \"publie\", \"Publié\"\n\n    titre = models.CharField(max_length=200)\n    slug = models.SlugField(max_length=220, unique=True)\n    resume = models.TextField(max_length=500)\n    contenu = models.TextField()\n    statut = models.CharField(\n        max_length=20,\n        choices=Statut.choices,\n        default=Statut.BROUILLON,\n    )\n    matiere = models.ForeignKey(\n        Matiere,\n        on_delete=models.PROTECT,\n        related_name=\"cours\",\n    )\n    date_creation = models.DateTimeField(auto_now_add=True)\n    date_modification = models.DateTimeField(auto_now=True)\n    date_publication = models.DateTimeField(null=True, blank=True)\n\n    class Meta:\n        ordering = [\"-date_creation\"]\n        indexes = [\n            models.Index(fields=[\"statut\", \"-date_creation\"]),\n        ]\n\n    def __str__(self):\n        return self.titre\n\n    def get_absolute_url(self):\n        return reverse(\"cours:detail\", kwargs={\"slug\": self.slug})\n\n    @property\n    def est_publie(self):\n        return self.statut == self.Statut.PUBLIE\n\nPourquoi ces champs ?\nCharField représente une chaîne bornée. max_length est utile pour la base, les formulaires et la documentation de l’intention. TextField convient au contenu dont la taille est plus libre. SlugField représente une valeur adaptée aux URLs, généralement composée de lettres minuscules, chiffres et tirets.\nunique=True crée une contrainte d’unicité. Ce n’est pas seulement une validation d’interface : la base elle-même empêchera deux matières d’avoir le même slug. La base est la dernière barrière, car deux requêtes concurrentes peuvent passer simultanément une validation purement applicative.\nTextChoices évite les chaînes dispersées dans le code. La valeur enregistrée est \"publie\" et le libellé affiché est \"Publié\". On peut écrire Cours.Statut.PUBLIE dans le code et laisser Django gérer les choix.\nauto_now_add est évalué à la création ; auto_now à chaque sauvegarde. null=True concerne la valeur en base, tandis que blank=True concerne la validation des formulaires. Cette différence est importante : blank=True ne rend pas automatiquement une colonne SQL nullable.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#choisir-on_delete",
+    "href": "chapitres/03-modeles-orm-migrations.html#choisir-on_delete",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Choisir on_delete",
+    "text": "Choisir on_delete\nLa relation vers Matiere utilise PROTECT. Supprimer une matière qui possède encore des cours serait probablement une erreur métier ; Django lève donc une exception plutôt que d’effacer silencieusement le catalogue.\nLes comportements courants sont :\n\nCASCADE : supprimer les objets liés ;\nPROTECT : refuser la suppression ;\nSET_NULL : mettre la relation à NULL si null=True ;\nSET_DEFAULT : utiliser la valeur par défaut ;\nDO_NOTHING : ne rien orchestrer, choix réservé aux cas maîtrisés.\n\nIl n’existe pas de choix universel. Pour une photo liée à un profil, CASCADE peut être logique. Pour une facture liée à un client, PROTECT est souvent plus sûr.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#les-migrations-lhistorique-du-schéma",
+    "href": "chapitres/03-modeles-orm-migrations.html#les-migrations-lhistorique-du-schéma",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Les migrations : l’historique du schéma",
+    "text": "Les migrations : l’historique du schéma\nUn modèle Python et une table SQL ne sont pas la même chose. La migration est le fichier qui décrit une transformation du schéma. Après la modification des modèles :\nuv run python manage.py makemigrations cours\nuv run python manage.py migrate\nmakemigrations compare l’état actuel des modèles avec l’historique des migrations et génère un fichier Python. migrate exécute les migrations non appliquées dans la base.\nInspectez ce que Django prévoit :\nuv run python manage.py showmigrations\nuv run python manage.py sqlmigrate cours 0001\nsqlmigrate montre le SQL généré sans l’exécuter. C’est un excellent outil pour relier le code Python à la réalité de la base.\n\n\n\n\n\n\nAvertissementNe modifiez pas une migration déjà partagée\n\n\n\nUne migration appliquée fait partie de l’histoire du schéma. En équipe, créez une nouvelle migration plutôt que de réécrire une ancienne. Modifier une migration déjà exécutée peut créer des divergences entre les bases des collaborateurs et la base de production.\n\n\nLes fichiers de migration doivent être versionnés. La base SQLite locale ne l’est généralement pas, mais les instructions permettant de la recréer le sont.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#créer-et-lire-des-objets-dans-le-shell",
+    "href": "chapitres/03-modeles-orm-migrations.html#créer-et-lire-des-objets-dans-le-shell",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Créer et lire des objets dans le shell",
+    "text": "Créer et lire des objets dans le shell\nuv run python manage.py shell\nfrom cours.models import Cours, Matiere\n\ninformatique = Matiere.objects.create(\n    nom=\"Informatique\",\n    slug=\"informatique\",\n    description=\"Comprendre les outils numériques.\",\n)\n\npython_cours = Cours.objects.create(\n    titre=\"Python pour débutants\",\n    slug=\"python-pour-debutants\",\n    resume=\"Les bases du langage Python.\",\n    contenu=\"Variables, fonctions et modules.\",\n    matiere=informatique,\n    statut=Cours.Statut.PUBLIE,\n)\n\npython_cours.matiere\ninformatique.cours.all()\nCours.objects.filter(statut=Cours.Statut.PUBLIE)\nChaque accès à .objects construit ou exécute un QuerySet. Un QuerySet est évaluable de manière différée : écrire cours = Cours.objects.filter(...) ne signifie pas nécessairement qu’une requête SQL est déjà partie. L’évaluation arrive lors d’une itération, d’une conversion en liste, d’un len, ou de l’accès à certains résultats.\n\nFiltrer, trier et limiter\nCours.objects.filter(titre__icontains=\"python\")\nCours.objects.filter(matiere__slug=\"informatique\")\nCours.objects.filter(\n    statut=Cours.Statut.PUBLIE,\n    matiere__nom__iexact=\"informatique\",\n)\nCours.objects.exclude(statut=Cours.Statut.BROUILLON)\nCours.objects.order_by(\"-date_publication\")[:10]\nLes doubles underscores traversent des relations et expriment des recherches. filter renvoie un QuerySet, get attend exactement un résultat et lève une exception si aucun ou plusieurs objets sont trouvés :\ncours = Cours.objects.get(slug=\"python-pour-debutants\")\nPour une vue, get_object_or_404 transforme l’absence en réponse HTTP 404, plutôt que de laisser remonter une exception non gérée.\n\n\nselect_related et prefetch_related\nAfficher une liste de cours et le nom de leur matière peut provoquer une requête par cours si l’on ne prépare pas la relation. C’est le problème classique du N+1 :\ncours = Cours.objects.select_related(\"matiere\").filter(\n    statut=Cours.Statut.PUBLIE,\n)\nselect_related utilise une jointure SQL pour les relations à valeur unique comme ForeignKey. Pour une relation inverse ou plusieurs-à-plusieurs, utilisez prefetch_related :\nmatieres = Matiere.objects.prefetch_related(\"cours\").all()\nIl ne faut pas ajouter ces méthodes mécaniquement. Mesurez les requêtes et choisissez l’outil adapté à la relation et à l’écran.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#modifier-les-données-avec-prudence",
+    "href": "chapitres/03-modeles-orm-migrations.html#modifier-les-données-avec-prudence",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Modifier les données avec prudence",
+    "text": "Modifier les données avec prudence\nCes deux formes ne sont pas équivalentes :\ncours = Cours.objects.get(pk=1)\ncours.titre = \"Nouveau titre\"\ncours.save(update_fields=[\"titre\", \"date_modification\"])\net :\nCours.objects.filter(pk=1).update(titre=\"Nouveau titre\")\nsave passe par le cycle de sauvegarde de l’instance. update exécute une mise à jour SQL directe et ne déclenche pas les méthodes save personnalisées. Pour une opération en masse, update est efficace, mais il faut connaître ses conséquences.\nPour une opération composée de plusieurs écritures, utilisez une transaction :\nfrom django.db import transaction\n\n\n@transaction.atomic\ndef publier(cours):\n    cours.statut = Cours.Statut.PUBLIE\n    cours.save(update_fields=[\"statut\", \"date_modification\"])\nSi une exception survient dans le bloc atomique, Django annule les opérations de la transaction. La transaction protège la cohérence des données ; elle ne remplace pas la validation métier.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#concevoir-avant-de-migrer",
+    "href": "chapitres/03-modeles-orm-migrations.html#concevoir-avant-de-migrer",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Concevoir avant de migrer",
+    "text": "Concevoir avant de migrer\nAjoutez les champs uniquement lorsqu’ils correspondent à un besoin. Un champ description et un champ contenu ne sont pas interchangeables si leurs contraintes et leurs usages diffèrent. À l’inverse, ne créez pas un champ est_publie en plus de statut : deux sources de vérité peuvent diverger.\nLe bon flux est :\n\ndécrire la règle métier ;\nchoisir le type et les contraintes ;\nmodifier le modèle ;\nlire la migration générée ;\nappliquer et tester la migration ;\nessayer les cas normaux et les cas limites.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/03-modeles-orm-migrations.html#exercices",
+    "href": "chapitres/03-modeles-orm-migrations.html#exercices",
+    "title": "Modéliser les données avec l’ORM et les migrations",
+    "section": "Exercices",
+    "text": "Exercices\n\nAjoutez un champ niveau avec trois choix : débutant, intermédiaire, avancé.\nEmpêchez la création d’un cours publié sans date de publication en ajoutant une validation de modèle adaptée.\nÉcrivez une requête qui retourne les cinq cours publiés les plus récents d’une matière donnée.\nActivez les logs SQL en développement et comparez une liste avec et sans select_related(\"matiere\").\n\n\n\n\n\nDjango Software Foundation. 2025. « Models ». https://docs.djangoproject.com/en/5.2/topics/db/models/.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Modéliser les données avec l'ORM et les migrations</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html",
+    "href": "chapitres/04-vues-urls-templates.html",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "",
+    "text": "De la donnée à une page HTML\nUne page dynamique ne devrait pas construire son HTML par concaténation de chaînes Python. La vue prépare les données et choisit le template ; le template décrit la représentation HTML. Cette séparation rend le HTML lisible par une personne qui travaille sur l’interface sans lui demander de modifier la logique métier.\nPour BiblioCours, nous voulons :\nLes noms de routes restent stables même si leur forme évolue. C’est pourquoi nous avons défini app_name = \"cours\" et des noms explicites (Django Software Foundation 2025).",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#de-la-donnée-à-une-page-html",
+    "href": "chapitres/04-vues-urls-templates.html#de-la-donnée-à-une-page-html",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "",
+    "text": "/cours/                    liste des cours publiés\n/cours/&lt;slug&gt;/             détail d'un cours\n/cours/matiere/&lt;slug&gt;/     cours d'une matière",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#les-vues-de-liste-et-de-détail",
+    "href": "chapitres/04-vues-urls-templates.html#les-vues-de-liste-et-de-détail",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Les vues de liste et de détail",
+    "text": "Les vues de liste et de détail\nComplétez cours/urls.py :\nfrom django.urls import path\n\nfrom . import views\n\napp_name = \"cours\"\n\nurlpatterns = [\n    path(\"matiere/&lt;slug:slug&gt;/\", views.cours_par_matiere, name=\"par_matiere\"),\n    path(\"\", views.liste_cours, name=\"liste\"),\n    path(\"&lt;slug:slug&gt;/\", views.detail_cours, name=\"detail\"),\n]\nL’ordre mérite attention : la route matiere/&lt;slug:slug&gt;/ doit apparaître avant \"&lt;slug:slug&gt;/\", sinon le mot matiere peut être capturé comme le slug d’un cours.\nDans cours/views.py :\nfrom django.core.paginator import Paginator\nfrom django.db.models import Q\nfrom django.shortcuts import get_object_or_404, render\n\nfrom .models import Cours, Matiere\n\n\ndef liste_cours(request):\n    \"\"\"Affiche les cours publiés, dix par page.\"\"\"\n    queryset = (\n        Cours.objects\n        .filter(statut=Cours.Statut.PUBLIE)\n        .select_related(\"matiere\")\n    )\n    paginator = Paginator(queryset, 10)\n    page_number = request.GET.get(\"page\")\n    page_obj = paginator.get_page(page_number)\n\n    return render(\n        request,\n        \"cours/liste.html\",\n        {\"page_obj\": page_obj},\n    )\n\n\ndef detail_cours(request, slug):\n    cours = get_object_or_404(\n        Cours.objects.select_related(\"matiere\"),\n        slug=slug,\n        statut=Cours.Statut.PUBLIE,\n    )\n    return render(request, \"cours/detail.html\", {\"cours\": cours})\n\n\ndef cours_par_matiere(request, slug):\n    matiere = get_object_or_404(Matiere, slug=slug)\n    cours = (\n        matiere.cours\n        .filter(statut=Cours.Statut.PUBLIE)\n        .select_related(\"matiere\")\n    )\n    return render(\n        request,\n        \"cours/liste.html\",\n        {\"page_obj\": cours, \"matiere\": matiere},\n    )\n\nPourquoi render ?\nrender(request, template_name, context) :\n\ncharge le template ;\nlui transmet un dictionnaire de contexte ;\nproduit une réponse HTTP avec le HTML.\n\nLa clé \"page_obj\" est un contrat entre la vue et le template. Si la vue emploie \"cours\" mais que le template parcourt page_obj, la page semble vide sans que la base soit nécessairement en cause.\n\n\n404 plutôt que page vide\nget_object_or_404 exprime qu’un objet demandé doit exister. Une URL inconnue renvoie alors un statut 404 Not Found, ce qui est correct pour le navigateur, les moteurs de recherche et les tests. Il ne faut pas attraper toutes les exceptions et renvoyer une page générique : cela masque les erreurs de programmation et transforme parfois un 404 en 500.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#organiser-les-templates",
+    "href": "chapitres/04-vues-urls-templates.html#organiser-les-templates",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Organiser les templates",
+    "text": "Organiser les templates\nCréez :\ncours/\n└── templates/\n    └── cours/\n        ├── base.html\n        ├── liste.html\n        ├── detail.html\n        └── partials/\n            └── carte_cours.html\nAvec APP_DIRS = True, Django cherche un dossier templates dans les apps installées. Le sous-dossier cours/ évite les collisions si deux apps possèdent un fichier liste.html.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#le-template-parent",
+    "href": "chapitres/04-vues-urls-templates.html#le-template-parent",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Le template parent",
+    "text": "Le template parent\ncours/templates/cours/base.html :\n{% load static %}\n&lt;!doctype html&gt;\n&lt;html lang=\"fr\"&gt;\n&lt;head&gt;\n  &lt;meta charset=\"utf-8\"&gt;\n  &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"&gt;\n  &lt;title&gt;{% block title %}BiblioCours{% endblock %}&lt;/title&gt;\n  &lt;link rel=\"stylesheet\" href=\"{% static 'cours/site.css' %}\"&gt;\n&lt;/head&gt;\n&lt;body&gt;\n  &lt;header class=\"site-header\"&gt;\n    &lt;nav aria-label=\"Navigation principale\"&gt;\n      &lt;a href=\"{% url 'cours:liste' %}\"&gt;BiblioCours&lt;/a&gt;\n      &lt;a href=\"{% url 'cours:liste' %}\"&gt;Tous les cours&lt;/a&gt;\n    &lt;/nav&gt;\n  &lt;/header&gt;\n\n  &lt;main class=\"container\"&gt;\n    {% block content %}{% endblock %}\n  &lt;/main&gt;\n\n  &lt;footer class=\"site-footer\"&gt;\n    &lt;p&gt;BiblioCours — apprendre en construisant.&lt;/p&gt;\n  &lt;/footer&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n{% extends %} et les blocs permettent aux pages enfants de réutiliser le document entier. block title et block content sont des points d’extension. Cette technique applique le principe DRY sans rendre toutes les pages identiques.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#afficher-une-collection-avec-liste.html",
+    "href": "chapitres/04-vues-urls-templates.html#afficher-une-collection-avec-liste.html",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Afficher une collection avec liste.html",
+    "text": "Afficher une collection avec liste.html\n{% extends \"cours/base.html\" %}\n\n{% block title %}\n  {% if matiere %}Cours de {{ matiere.nom }}{% else %}Tous les cours{% endif %}\n  — BiblioCours\n{% endblock %}\n\n{% block content %}\n  {% if matiere %}\n    &lt;header class=\"page-heading\"&gt;\n      &lt;p class=\"eyebrow\"&gt;Matière&lt;/p&gt;\n      &lt;h1&gt;{{ matiere.nom }}&lt;/h1&gt;\n      &lt;p&gt;{{ matiere.description }}&lt;/p&gt;\n    &lt;/header&gt;\n  {% else %}\n    &lt;header class=\"page-heading\"&gt;\n      &lt;p class=\"eyebrow\"&gt;Catalogue&lt;/p&gt;\n      &lt;h1&gt;Tous les cours&lt;/h1&gt;\n    &lt;/header&gt;\n  {% endif %}\n\n  &lt;section aria-labelledby=\"cours-heading\"&gt;\n    &lt;h2 id=\"cours-heading\"&gt;Cours disponibles&lt;/h2&gt;\n    {% for cours in page_obj %}\n      {% include \"cours/partials/carte_cours.html\" %}\n    {% empty %}\n      &lt;p&gt;Aucun cours publié pour le moment.&lt;/p&gt;\n    {% endfor %}\n  &lt;/section&gt;\n\n  {% if page_obj.has_other_pages %}\n    &lt;nav aria-label=\"Pagination\" class=\"pagination\"&gt;\n      {% if page_obj.has_previous %}\n        &lt;a href=\"?page={{ page_obj.previous_page_number }}\"&gt;Précédent&lt;/a&gt;\n      {% endif %}\n      &lt;span&gt;Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}&lt;/span&gt;\n      {% if page_obj.has_next %}\n        &lt;a href=\"?page={{ page_obj.next_page_number }}\"&gt;Suivant&lt;/a&gt;\n      {% endif %}\n    &lt;/nav&gt;\n  {% endif %}\n{% endblock %}\nLe bloc {% empty %} évite une page silencieuse quand le QuerySet ne contient aucun élément. Les attributs has_previous et has_next appartiennent à l’objet Page produit par Paginator.\nLe partial partials/carte_cours.html :\n&lt;article class=\"course-card\"&gt;\n  &lt;p class=\"eyebrow\"&gt;{{ cours.matiere.nom }}&lt;/p&gt;\n  &lt;h3&gt;\n    &lt;a href=\"{{ cours.get_absolute_url }}\"&gt;{{ cours.titre }}&lt;/a&gt;\n  &lt;/h3&gt;\n  &lt;p&gt;{{ cours.resume }}&lt;/p&gt;\n  &lt;p class=\"meta\"&gt;\n    Publié le {{ cours.date_publication|date:\"d/m/Y\" }}\n  &lt;/p&gt;\n&lt;/article&gt;\ninclude rend un fragment réutilisable dans le contexte courant. Le modèle fournit get_absolute_url, ce qui centralise la construction du lien.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#afficher-le-détail",
+    "href": "chapitres/04-vues-urls-templates.html#afficher-le-détail",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Afficher le détail",
+    "text": "Afficher le détail\ncours/templates/cours/detail.html :\n{% extends \"cours/base.html\" %}\n\n{% block title %}{{ cours.titre }} — BiblioCours{% endblock %}\n\n{% block content %}\n  &lt;article class=\"course-detail\"&gt;\n    &lt;p class=\"eyebrow\"&gt;\n      &lt;a href=\"{% url 'cours:par_matiere' cours.matiere.slug %}\"&gt;\n        {{ cours.matiere.nom }}\n      &lt;/a&gt;\n    &lt;/p&gt;\n    &lt;h1&gt;{{ cours.titre }}&lt;/h1&gt;\n    &lt;p class=\"meta\"&gt;\n      Mis à jour le {{ cours.date_modification|date:\"d/m/Y à H:i\" }}\n    &lt;/p&gt;\n    &lt;p class=\"lead\"&gt;{{ cours.resume }}&lt;/p&gt;\n    &lt;div class=\"course-content\"&gt;\n      {{ cours.contenu|linebreaks }}\n    &lt;/div&gt;\n  &lt;/article&gt;\n{% endblock %}\nLes variables sont échappées automatiquement. C’est un mécanisme essentiel : si le contenu contient &lt;script&gt;, Django l’affiche comme du texte au lieu de l’exécuter. Le filtre linebreaks transforme des retours à la ligne en paragraphes et éléments &lt;br&gt;.\nN’utilisez pas |safe simplement pour « faire marcher » un affichage. Il désactive l’échappement et doit être réservé à du HTML produit par une source de confiance, nettoyé avec une stratégie explicite. La sécurité des templates est expliquée au Authentification, sécurité et fichiers statiques.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#rechercher-avec-un-paramètre-get",
+    "href": "chapitres/04-vues-urls-templates.html#rechercher-avec-un-paramètre-get",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Rechercher avec un paramètre GET",
+    "text": "Rechercher avec un paramètre GET\nAjoutons une recherche simple. Dans la vue :\ndef liste_cours(request):\n    terme = request.GET.get(\"q\", \"\").strip()\n    queryset = (\n        Cours.objects\n        .filter(statut=Cours.Statut.PUBLIE)\n        .select_related(\"matiere\")\n    )\n    if terme:\n        queryset = queryset.filter(\n            Q(titre__icontains=terme)\n            | Q(resume__icontains=terme)\n        )\n    paginator = Paginator(queryset, 10)\n    return render(\n        request,\n        \"cours/liste.html\",\n        {\"page_obj\": paginator.get_page(request.GET.get(\"page\")), \"terme\": terme},\n    )\nLes paramètres GET sont des chaînes fournies par l’utilisateur ; icontains protège contre l’injection SQL parce que l’ORM paramètre la requête, mais il faut tout de même limiter les coûts et la longueur dans une application publique.\nLe formulaire de recherche peut être placé dans le template :\n&lt;form method=\"get\" role=\"search\"&gt;\n  &lt;label for=\"q\"&gt;Rechercher un cours&lt;/label&gt;\n  &lt;input id=\"q\" name=\"q\" value=\"{{ terme }}\" type=\"search\"&gt;\n  &lt;button type=\"submit\"&gt;Rechercher&lt;/button&gt;\n&lt;/form&gt;",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#lire-un-bug-de-template",
+    "href": "chapitres/04-vues-urls-templates.html#lire-un-bug-de-template",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Lire un bug de template",
+    "text": "Lire un bug de template\nPour une page vide, ne commencez pas par changer le CSS. Vérifiez :\nprint(queryset.query)\nprint(queryset.count())\nPuis inspectez le contrat :\n\nle contexte contient-il page_obj ?\nla boucle utilise-t-elle page_obj ?\nle filtre statut exclut-il vos données de test ?\nla route pointe-t-elle vers la bonne vue ?\nle fichier est-il bien sous templates/cours/ ?\n\nLe mode DEBUG fournit aussi des pages d’erreur détaillées, mais il ne faut jamais en laisser l’affichage actif en production.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/04-vues-urls-templates.html#exercices",
+    "href": "chapitres/04-vues-urls-templates.html#exercices",
+    "title": "Construire les pages : vues, URLs et templates",
+    "section": "Exercices",
+    "text": "Exercices\n\nAjoutez un lien « Voir la matière » sur chaque carte.\nConservez le terme q dans les liens de pagination.\nCréez une page 404 personnalisée avec un template 404.html.\nÉcrivez une vue qui affiche uniquement les cours d’une matière et vérifiez qu’une matière inexistante renvoie bien 404.\n\n\n\n\n\nDjango Software Foundation. 2025. « The Django Template Language ». https://docs.djangoproject.com/en/5.2/ref/templates/language/.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Construire les pages : vues, URLs et templates</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html",
+    "href": "chapitres/05-formulaires-admin.html",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "",
+    "text": "Pourquoi un formulaire HTML ne suffit pas\nUn formulaire est une frontière entre le navigateur et l’application. Le navigateur peut aider avec required, type=\"email\" ou maxlength, mais ces attributs ne sont pas des protections : n’importe quel client HTTP peut les contourner. La validation importante doit être exécutée côté serveur.\nDjango distingue trois étapes :\nUn formulaire non valide doit être réaffiché avec les valeurs acceptables et les erreurs lisibles. Un formulaire valide doit éviter de créer deux fois la même ressource lorsque l’utilisateur actualise la page. Ce dernier problème est résolu par le schéma POST/Redirect/GET.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#pourquoi-un-formulaire-html-ne-suffit-pas",
+    "href": "chapitres/05-formulaires-admin.html#pourquoi-un-formulaire-html-ne-suffit-pas",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "",
+    "text": "liaison : associer les données reçues à un formulaire ;\nvalidation : vérifier les champs et les règles métier ;\naction : sauvegarder ou effectuer une opération seulement si le formulaire est valide.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#créer-un-modelform",
+    "href": "chapitres/05-formulaires-admin.html#créer-un-modelform",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "Créer un ModelForm",
+    "text": "Créer un ModelForm\nCréez cours/forms.py :\nfrom django import forms\n\nfrom .models import Cours\n\n\nclass CoursForm(forms.ModelForm):\n    class Meta:\n        model = Cours\n        fields = [\"titre\", \"slug\", \"resume\", \"contenu\", \"matiere\"]\n        widgets = {\n            \"resume\": forms.Textarea(attrs={\"rows\": 3}),\n            \"contenu\": forms.Textarea(attrs={\"rows\": 12}),\n        }\n\n    def clean_titre(self):\n        titre = self.cleaned_data[\"titre\"].strip()\n        if len(titre) &lt; 5:\n            raise forms.ValidationError(\n                \"Le titre doit comporter au moins cinq caractères.\"\n            )\n        return titre\n\n    def clean(self):\n        cleaned_data = super().clean()\n        titre = cleaned_data.get(\"titre\")\n        resume = cleaned_data.get(\"resume\")\n        if titre and resume and titre.lower() in resume.lower():\n            self.add_error(\n                \"resume\",\n                \"Le résumé ne doit pas répéter le titre mot pour mot.\",\n            )\n        return cleaned_data\nModelForm déduit les champs à partir du modèle et réutilise ses contraintes de base. La liste fields doit être explicite : fields = \"__all__\" risque d’exposer un champ ajouté plus tard sans que l’on s’en rende compte (Django Software Foundation 2025).\n\nLes trois niveaux de validation\n\nclean_titre valide un champ et se concentre sur sa valeur ;\nclean valide une relation entre plusieurs champs ;\nModel.clean peut porter une règle de modèle indépendante de ce formulaire.\n\nUne validation ne doit pas seulement servir à afficher un message. Elle doit protéger l’invariant métier. Par exemple, si un cours publié doit toujours avoir un résumé, cette règle devrait être appliquée dans tous les chemins de création, pas uniquement sur la page HTML.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#la-vue-de-création",
+    "href": "chapitres/05-formulaires-admin.html#la-vue-de-création",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "La vue de création",
+    "text": "La vue de création\nAjoutez une route protégée plus tard par authentification :\npath(\"nouveau/\", views.creer_cours, name=\"creer\"),\nPuis la vue :\nfrom django.contrib import messages\nfrom django.contrib.auth.decorators import login_required\nfrom django.shortcuts import get_object_or_404, redirect, render\n\nfrom .forms import CoursForm\n\n\n@login_required\ndef creer_cours(request):\n    if request.method == \"POST\":\n        form = CoursForm(request.POST)\n        if form.is_valid():\n            cours = form.save()\n            messages.success(request, f\"Le cours « {cours.titre} » a été créé.\")\n            return redirect(cours.get_absolute_url())\n    else:\n        form = CoursForm()\n\n    return render(request, \"cours/formulaire.html\", {\"form\": form})\nLa méthode HTTP est une décision de sécurité et de sémantique :\n\nGET affiche le formulaire et ne doit pas modifier l’état ;\nPOST transmet une intention de modification ;\nune redirection après succès empêche un rafraîchissement de répéter le POST.\n\nLe décorateur login_required redirige les utilisateurs anonymes vers la page de connexion. Nous verrons la configuration de cette redirection au chapitre Authentification, sécurité et fichiers statiques.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#le-template-du-formulaire",
+    "href": "chapitres/05-formulaires-admin.html#le-template-du-formulaire",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "Le template du formulaire",
+    "text": "Le template du formulaire\ncours/templates/cours/formulaire.html :\n{% extends \"cours/base.html\" %}\n\n{% block title %}Nouveau cours — BiblioCours{% endblock %}\n\n{% block content %}\n  &lt;h1&gt;Créer un cours&lt;/h1&gt;\n\n  &lt;form method=\"post\" novalidate&gt;\n    {% csrf_token %}\n\n    {% if form.non_field_errors %}\n      &lt;div class=\"errors\" role=\"alert\"&gt;\n        {{ form.non_field_errors }}\n      &lt;/div&gt;\n    {% endif %}\n\n    {% for field in form %}\n      &lt;div class=\"form-field\"&gt;\n        {{ field.label_tag }}\n        {{ field }}\n        {% if field.help_text %}\n          &lt;p class=\"help\"&gt;{{ field.help_text }}&lt;/p&gt;\n        {% endif %}\n        {% for error in field.errors %}\n          &lt;p class=\"error\" role=\"alert\"&gt;{{ error }}&lt;/p&gt;\n        {% endfor %}\n      &lt;/div&gt;\n    {% endfor %}\n\n    &lt;button type=\"submit\"&gt;Enregistrer&lt;/button&gt;\n    &lt;a href=\"{% url 'cours:liste' %}\"&gt;Annuler&lt;/a&gt;\n  &lt;/form&gt;\n{% endblock %}\n{% csrf_token %} est obligatoire pour un POST provenant d’un formulaire Django. Le jeton associe la requête à la session et protège contre une partie des attaques CSRF. Il ne remplace pas l’authentification ni l’autorisation.\nnovalidate désactive la validation native du navigateur afin de rendre visibles les messages Django pendant l’apprentissage. Dans un projet réel, vous pouvez conserver la validation native en complément ; elle améliore l’expérience mais ne remplace jamais la validation serveur.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#modifier-un-objet-existant",
+    "href": "chapitres/05-formulaires-admin.html#modifier-un-objet-existant",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "Modifier un objet existant",
+    "text": "Modifier un objet existant\nLe même ModelForm peut être lié à une instance :\n@login_required\ndef modifier_cours(request, slug):\n    cours = get_object_or_404(Cours, slug=slug)\n\n    if request.method == \"POST\":\n        form = CoursForm(request.POST, instance=cours)\n        if form.is_valid():\n            form.save()\n            messages.success(request, \"Le cours a été mis à jour.\")\n            return redirect(cours.get_absolute_url())\n    else:\n        form = CoursForm(instance=cours)\n\n    return render(\n        request,\n        \"cours/formulaire.html\",\n        {\"form\": form, \"cours\": cours},\n    )\nLa présence d’instance change le comportement : sans elle, save() crée un objet ; avec elle, save() met à jour l’objet. La route de modification doit être distincte de la route de création et doit vérifier que l’utilisateur a le droit de modifier ce cours.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#supprimer-préférer-une-confirmation-explicite",
+    "href": "chapitres/05-formulaires-admin.html#supprimer-préférer-une-confirmation-explicite",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "Supprimer : préférer une confirmation explicite",
+    "text": "Supprimer : préférer une confirmation explicite\nLa suppression ne devrait pas être déclenchée par un lien GET :\n&lt;!-- À éviter : un robot ou un clic involontaire pourrait supprimer --&gt;\n&lt;a href=\"{% url 'cours:supprimer' cours.slug %}\"&gt;Supprimer&lt;/a&gt;\nUtilisez un formulaire POST avec CSRF et demandez une confirmation dans une page dédiée :\n@login_required\ndef supprimer_cours(request, slug):\n    cours = get_object_or_404(Cours, slug=slug)\n    if request.method == \"POST\":\n        titre = cours.titre\n        cours.delete()\n        messages.success(request, f\"Le cours « {titre} » a été supprimé.\")\n        return redirect(\"cours:liste\")\n    return render(request, \"cours/confirmer_suppression.html\", {\"cours\": cours})\nL’approbation visuelle n’est pas une mesure de sécurité ; l’autorisation et le POST protégé le sont. Une opération irréversible doit aussi être reflétée dans les tests et, selon le domaine, dans une stratégie d’archivage plutôt que de suppression physique.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#ladministration-django",
+    "href": "chapitres/05-formulaires-admin.html#ladministration-django",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "L’administration Django",
+    "text": "L’administration Django\nL’admin est une interface interne puissante pour les personnes qui gèrent le contenu. Elle ne remplace pas une interface publique : ses écrans, ses permissions et son modèle mental sont ceux d’un back-office. Elle permet néanmoins de peupler BiblioCours rapidement.\nDans cours/admin.py :\nfrom django.contrib import admin\n\nfrom .models import Cours, Matiere\n\n\n@admin.register(Matiere)\nclass MatiereAdmin(admin.ModelAdmin):\n    list_display = [\"nom\", \"slug\"]\n    search_fields = [\"nom\", \"description\"]\n    prepopulated_fields = {\"slug\": (\"nom\",)}\n\n\n@admin.register(Cours)\nclass CoursAdmin(admin.ModelAdmin):\n    list_display = [\n        \"titre\",\n        \"matiere\",\n        \"statut\",\n        \"date_creation\",\n        \"date_publication\",\n    ]\n    list_filter = [\"statut\", \"matiere\", \"date_creation\"]\n    search_fields = [\"titre\", \"resume\", \"contenu\"]\n    autocomplete_fields = [\"matiere\"]\n    prepopulated_fields = {\"slug\": (\"titre\",)}\n    readonly_fields = [\"date_creation\", \"date_modification\"]\nCréez un compte administrateur :\nuv run python manage.py createsuperuser\nuv run python manage.py runserver\nVisitez http://127.0.0.1:8000/admin/. list_display rend la liste utile, list_filter ajoute des filtres latéraux et search_fields construit une recherche. readonly_fields évite qu’une date technique soit modifiée à la main.\n\nL’admin et les performances\nSi une liste affiche une relation, Django peut charger chaque matière séparément. Ajoutez une optimisation à l’admin :\nclass CoursAdmin(admin.ModelAdmin):\n    # autres options…\n\n    def get_queryset(self, request):\n        return super().get_queryset(request).select_related(\"matiere\")\nMesurez avant d’optimiser, mais ne rendez pas l’admin inutilisable avec une requête N+1 lorsque le catalogue grandit.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#messages-utilisateur",
+    "href": "chapitres/05-formulaires-admin.html#messages-utilisateur",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "Messages utilisateur",
+    "text": "Messages utilisateur\nLes messages sont temporaires et associés à la prochaine réponse :\nfrom django.contrib import messages\n\nmessages.success(request, \"Le cours a été enregistré.\")\nmessages.error(request, \"Impossible de supprimer ce cours.\")\nDans base.html :\n{% if messages %}\n  &lt;div class=\"messages\" aria-live=\"polite\"&gt;\n    {% for message in messages %}\n      &lt;p class=\"message message-{{ message.tags }}\"&gt;{{ message }}&lt;/p&gt;\n    {% endfor %}\n  &lt;/div&gt;\n{% endif %}\nLe contexte est disponible grâce à django.contrib.messages.context_processors.messages, présent dans la configuration initiale. Un message ne doit pas être la seule façon de communiquer une erreur : le formulaire doit aussi porter les erreurs au niveau du champ.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/05-formulaires-admin.html#exercices",
+    "href": "chapitres/05-formulaires-admin.html#exercices",
+    "title": "Saisir et administrer les données : formulaires et admin",
+    "section": "Exercices",
+    "text": "Exercices\n\nAjoutez un ModelForm pour Matiere avec une validation de nom unique insensible à la casse.\nAjoutez une action d’administration qui publie les cours sélectionnés.\nFaites en sorte que seuls les utilisateurs ayant une permission puissent créer un cours.\nTestez les trois scénarios de creer_cours : GET, POST valide et POST invalide.\n\n\n\n\n\nDjango Software Foundation. 2025. « Working with Forms ». https://docs.djangoproject.com/en/5.2/topics/forms/.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Saisir et administrer les données : formulaires et admin</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html",
+    "href": "chapitres/06-authentification-securites-fichiers.html",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "",
+    "text": "Authentifier n’est pas autoriser\nDeux questions différentes sont souvent confondues :\nUn utilisateur connecté peut avoir le droit de lire un cours mais pas de le supprimer. La présence de request.user ne suffit donc jamais à autoriser une opération.\nDjango fournit un système d’utilisateurs, de sessions, de groupes et de permissions. Il faut le configurer et l’utiliser de manière explicite plutôt que d’inventer un mécanisme de mot de passe. Les recommandations de sécurité du framework et les contrôles OWASP complètent cette compréhension (Django Software Foundation 2025b; OWASP Foundation 2021).",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#authentifier-nest-pas-autoriser",
+    "href": "chapitres/06-authentification-securites-fichiers.html#authentifier-nest-pas-autoriser",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "",
+    "text": "authentification : « qui est cette personne ? » ;\nautorisation : « a-t-elle le droit de faire cette action ? ».",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#ajouter-les-routes-dauthentification",
+    "href": "chapitres/06-authentification-securites-fichiers.html#ajouter-les-routes-dauthentification",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Ajouter les routes d’authentification",
+    "text": "Ajouter les routes d’authentification\nDans config/urls.py :\nfrom django.contrib import admin\nfrom django.contrib.auth import views as auth_views\nfrom django.urls import include, path\n\nurlpatterns = [\n    path(\"admin/\", admin.site.urls),\n    path(\"cours/\", include(\"cours.urls\")),\n    path(\n        \"connexion/\",\n        auth_views.LoginView.as_view(template_name=\"registration/login.html\"),\n        name=\"login\",\n    ),\n    path(\"deconnexion/\", auth_views.LogoutView.as_view(), name=\"logout\"),\n]\nAjoutez dans config/settings.py :\nLOGIN_URL = \"login\"\nLOGIN_REDIRECT_URL = \"cours:liste\"\nLOGOUT_REDIRECT_URL = \"cours:liste\"\nLe template de connexion doit se trouver à l’emplacement attendu :\ntemplates/\n└── registration/\n    └── login.html\nPour que ce dossier global soit trouvé, ajoutez-le à TEMPLATES[0][\"DIRS\"] :\nTEMPLATES[0][\"DIRS\"] = [BASE_DIR / \"templates\"]\ntemplates/registration/login.html :\n{% extends \"cours/base.html\" %}\n\n{% block title %}Connexion — BiblioCours{% endblock %}\n\n{% block content %}\n  &lt;h1&gt;Se connecter&lt;/h1&gt;\n  &lt;form method=\"post\"&gt;\n    {% csrf_token %}\n    {{ form.as_p }}\n    &lt;button type=\"submit\"&gt;Se connecter&lt;/button&gt;\n  &lt;/form&gt;\n{% endblock %}\nDans base.html, adaptez la navigation :\n{% if user.is_authenticated %}\n  &lt;span&gt;Bonjour {{ user.get_username }}&lt;/span&gt;\n  &lt;form method=\"post\" action=\"{% url 'logout' %}\"&gt;\n    {% csrf_token %}\n    &lt;button type=\"submit\"&gt;Se déconnecter&lt;/button&gt;\n  &lt;/form&gt;\n{% else %}\n  &lt;a href=\"{% url 'login' %}?next={{ request.path }}\"&gt;\n    Se connecter\n  &lt;/a&gt;\n{% endif %}\nSur les versions récentes de Django, la déconnexion est traitée par POST. Utiliser un formulaire respecte le fait que la déconnexion modifie l’état de la session.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#protéger-une-vue-et-une-action",
+    "href": "chapitres/06-authentification-securites-fichiers.html#protéger-une-vue-et-une-action",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Protéger une vue et une action",
+    "text": "Protéger une vue et une action\nLe décorateur protège la présence d’une session :\nfrom django.contrib.auth.decorators import login_required\n\n\n@login_required\ndef creer_cours(request):\n    ...\nPour une permission :\nfrom django.contrib.auth.decorators import permission_required\n\n\n@permission_required(\"cours.add_cours\", raise_exception=True)\ndef creer_cours(request):\n    ...\nraise_exception=True renvoie une réponse interdite (403) au lieu de rediriger silencieusement. Choisissez le comportement en fonction du contexte. Une app publique peut vouloir masquer l’existence d’une ressource ; une interface interne doit souvent expliquer le manque de permission.\nDans l’admin, les permissions add, change, delete et view sont associées aux modèles. On peut affecter ces permissions à un groupe « Éditeurs » sans donner un accès complet de superutilisateur.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#csrf-protéger-les-requêtes-qui-changent-létat",
+    "href": "chapitres/06-authentification-securites-fichiers.html#csrf-protéger-les-requêtes-qui-changent-létat",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "CSRF : protéger les requêtes qui changent l’état",
+    "text": "CSRF : protéger les requêtes qui changent l’état\nUne attaque CSRF amène le navigateur d’une victime déjà connectée à envoyer une requête vers un site où elle est authentifiée. Le navigateur peut joindre les cookies automatiquement ; le serveur doit donc exiger un jeton que le site attaquant ne peut pas lire.\nDans un formulaire interne :\n&lt;form method=\"post\"&gt;\n  {% csrf_token %}\n  …\n&lt;/form&gt;\nPour un appel JavaScript, le jeton doit être envoyé selon la configuration Django. Ne désactivez pas CsrfViewMiddleware pour contourner une erreur : cherchez plutôt pourquoi le cookie ou le jeton ne correspond pas (Django Software Foundation 2025a).",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#échappement-injection-et-entrées-utilisateur",
+    "href": "chapitres/06-authentification-securites-fichiers.html#échappement-injection-et-entrées-utilisateur",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Échappement, injection et entrées utilisateur",
+    "text": "Échappement, injection et entrées utilisateur\n\nXSS et templates\nDjango échappe les variables dans les templates par défaut :\n{{ commentaire.texte }}\nSi un utilisateur enregistre &lt;img src=x onerror=alert(1)&gt;, cette valeur doit rester du texte. Le filtre safe supprime la protection :\n{{ contenu_html|safe }}\nNe l’utilisez que si le contenu a été nettoyé par une bibliothèque adaptée à votre format et à votre modèle de menace. Le fait qu’une donnée vienne de l’admin ne garantit pas que tous les administrateurs soient dignes de confiance ni que le champ soit toujours contrôlé.\n\n\nInjection SQL\nL’ORM paramètre les valeurs :\nCours.objects.filter(titre__icontains=terme)\nÉvitez de construire du SQL avec une f-string. Si une requête SQL brute est nécessaire, utilisez des paramètres et expliquez la raison dans le code :\nCours.objects.raw(\n    \"SELECT * FROM cours_cours WHERE titre LIKE %s\",\n    [f\"%{terme}%\"],\n)\nLe SQL brut n’est pas « plus professionnel ». Il augmente la responsabilité du développeur concernant les paramètres, les noms de tables, les performances et la portabilité.\n\n\nRedirections\nNe redirigez pas aveuglément vers une URL fournie par l’utilisateur. Un paramètre next doit être validé comme une destination sûre. Les utilitaires de Django et la configuration des hôtes autorisés aident à limiter les redirections ouvertes.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#secrets-et-configuration",
+    "href": "chapitres/06-authentification-securites-fichiers.html#secrets-et-configuration",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Secrets et configuration",
+    "text": "Secrets et configuration\nEn développement, SECRET_KEY peut être remplacé par une valeur locale. En production, lisez-la depuis une variable d’environnement :\nimport os\n\nSECRET_KEY = os.environ[\"DJANGO_SECRET_KEY\"]\nDEBUG = os.environ.get(\"DJANGO_DEBUG\", \"false\").lower() == \"true\"\nALLOWED_HOSTS = [\n    host.strip()\n    for host in os.environ.get(\"DJANGO_ALLOWED_HOSTS\", \"\").split(\",\")\n    if host.strip()\n]\nNe commitez ni clé secrète, ni mot de passe de base, ni token de service. Un fichier .env peut aider en local mais doit être ignoré par Git et ne doit pas être copié dans une archive de déploiement. En production, utilisez le système de secrets de l’hébergeur.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#fichiers-statiques",
+    "href": "chapitres/06-authentification-securites-fichiers.html#fichiers-statiques",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Fichiers statiques",
+    "text": "Fichiers statiques\nLes fichiers statiques sont le CSS, le JavaScript et les images livrés avec le code. Configurez config/settings.py :\nSTATIC_URL = \"static/\"\nSTATICFILES_DIRS = [BASE_DIR / \"static\"]\nSTATIC_ROOT = BASE_DIR / \"staticfiles\"\nAjoutez :\nstatic/\n└── cours/\n    └── site.css\nLe template les charge avec {% load static %} et {% static 'cours/site.css' %}. En développement, runserver les sert si DEBUG=True. En production, la commande suivante rassemble les fichiers :\nuv run python manage.py collectstatic\nSTATIC_ROOT est un dossier de sortie ; il ne doit pas être confondu avec STATICFILES_DIRS, qui contient les sources. Un serveur web ou un stockage objet servira ensuite le contenu rassemblé.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#téléversements-et-fichiers-média",
+    "href": "chapitres/06-authentification-securites-fichiers.html#téléversements-et-fichiers-média",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Téléversements et fichiers média",
+    "text": "Téléversements et fichiers média\nUn fichier envoyé par un utilisateur n’est pas un fichier statique. Configurez :\nMEDIA_URL = \"media/\"\nMEDIA_ROOT = BASE_DIR / \"media\"\nDans un modèle :\ndocument = models.FileField(upload_to=\"cours/%Y/%m\", blank=True)\nUn upload doit être limité par taille et type, renommé par Django et stocké avec des permissions correctes. Ne servez pas aveuglément un fichier comme du HTML actif. Pour des données sensibles ou volumineuses, un stockage séparé avec des URLs temporaires est souvent plus adapté.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#checklist-de-sécurité-locale",
+    "href": "chapitres/06-authentification-securites-fichiers.html#checklist-de-sécurité-locale",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Checklist de sécurité locale",
+    "text": "Checklist de sécurité locale\nAvant de publier :\n\nDEBUG=False ;\nSECRET_KEY fourni par l’environnement ;\nALLOWED_HOSTS renseigné ;\nHTTPS activé et cookies sécurisés configurés ;\nprotection CSRF conservée ;\npermissions testées avec un utilisateur normal ;\npas de secret dans Git ;\nuploads limités et traités comme non fiables ;\npython manage.py check --deploy exécuté.\n\nLa sécurité n’est pas une étape à la fin. Chaque champ, route et action doit répondre à la question : qui peut faire quoi, avec quelles données, et que se passe-t-il si la requête est fabriquée à la main ?",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/06-authentification-securites-fichiers.html#exercices",
+    "href": "chapitres/06-authentification-securites-fichiers.html#exercices",
+    "title": "Authentification, sécurité et fichiers statiques",
+    "section": "Exercices",
+    "text": "Exercices\n\nCréez un groupe Éditeurs et donnez-lui uniquement les permissions utiles pour créer et modifier des cours.\nAjoutez une page qui n’est visible que par les utilisateurs connectés.\nTestez un POST sans CSRF et observez la réponse ; ne désactivez pas la protection.\nConfigurez un fichier CSS et vérifiez qu’il est trouvé en développement puis rassemblé par collectstatic.\n\n\n\n\n\nDjango Software Foundation. 2025a. « Cross Site Request Forgery Protection ». https://docs.djangoproject.com/en/5.2/howto/csrf/.\n\n\nDjango Software Foundation. 2025b. « Security in Django ». https://docs.djangoproject.com/en/5.2/topics/security/.\n\n\nOWASP Foundation. 2021. « OWASP Top 10: 2021 ». https://owasp.org/Top10/.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Authentification, sécurité et fichiers statiques</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html",
+    "href": "chapitres/07-tests-debug-qualite.html",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "",
+    "text": "Un test décrit un contrat\nUn test utile ne vérifie pas que l’implémentation ressemble à ce que le développeur avait en tête. Il vérifie un comportement observable :\nCette formulation résiste mieux aux refactorings que « la vue appelle telle fonction ». Les tests de Django peuvent utiliser une base de données de test, un client HTTP de test et les outils reverse et assertContains (Django Software Foundation 2025). Cette manière de partir du comportement attendu rejoint l’approche de développement piloté par les tests décrite par Percival et Gregory (Percival et Gregory 2024).",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#un-test-décrit-un-contrat",
+    "href": "chapitres/07-tests-debug-qualite.html#un-test-décrit-un-contrat",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "",
+    "text": "lorsqu’un visiteur demande la liste, la réponse est 200 et ne montre que les cours publiés.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#lancer-la-suite",
+    "href": "chapitres/07-tests-debug-qualite.html#lancer-la-suite",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Lancer la suite",
+    "text": "Lancer la suite\nDjango fournit une commande intégrée :\nuv run python manage.py test\nElle découvre les classes SimpleTestCase, TestCase et les fonctions de test dans les modules dont le nom commence généralement par test. La base de test est créée temporairement et détruite à la fin.\nAjoutez un dossier dédié :\ncours/\n└── tests/\n    ├── __init__.py\n    ├── test_models.py\n    ├── test_views.py\n    └── test_forms.py",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#tester-le-modèle",
+    "href": "chapitres/07-tests-debug-qualite.html#tester-le-modèle",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Tester le modèle",
+    "text": "Tester le modèle\ncours/tests/test_models.py :\nfrom django.test import TestCase\n\nfrom cours.models import Cours, Matiere\n\n\nclass CoursModelTests(TestCase):\n    @classmethod\n    def setUpTestData(cls):\n        cls.matiere = Matiere.objects.create(\n            nom=\"Informatique\",\n            slug=\"informatique\",\n        )\n\n    def test_str_retourne_le_titre(self):\n        cours = Cours(\n            titre=\"Python\",\n            slug=\"python\",\n            resume=\"Un résumé suffisamment long.\",\n            contenu=\"Du contenu.\",\n            matiere=self.matiere,\n        )\n        self.assertEqual(str(cours), \"Python\")\n\n    def test_url_absolue_utilise_le_slug(self):\n        cours = Cours.objects.create(\n            titre=\"Python\",\n            slug=\"python\",\n            resume=\"Un résumé suffisamment long.\",\n            contenu=\"Du contenu.\",\n            matiere=self.matiere,\n        )\n        self.assertEqual(cours.get_absolute_url(), \"/cours/python/\")\nsetUpTestData crée les données une fois pour la classe, ce qui est souvent plus rapide que setUp, exécuté avant chaque méthode. Utilisez setUp si le test doit modifier son jeu de données sans contaminer les autres tests.\nLe test ne suppose pas que la table cours_cours existait déjà : Django applique les migrations à la base isolée. C’est une raison de tester les migrations sur une base vide plutôt que de compter sur votre SQLite locale.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#tester-les-urls-et-les-vues",
+    "href": "chapitres/07-tests-debug-qualite.html#tester-les-urls-et-les-vues",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Tester les URLs et les vues",
+    "text": "Tester les URLs et les vues\ncours/tests/test_views.py :\nfrom django.test import TestCase\nfrom django.urls import reverse\n\nfrom cours.models import Cours, Matiere\n\n\nclass ListeCoursTests(TestCase):\n    @classmethod\n    def setUpTestData(cls):\n        matiere = Matiere.objects.create(\n            nom=\"Informatique\",\n            slug=\"informatique\",\n        )\n        Cours.objects.create(\n            titre=\"Cours visible\",\n            slug=\"visible\",\n            resume=\"Résumé visible.\",\n            contenu=\"Contenu visible.\",\n            matiere=matiere,\n            statut=Cours.Statut.PUBLIE,\n        )\n        Cours.objects.create(\n            titre=\"Cours caché\",\n            slug=\"cache\",\n            resume=\"Résumé interne.\",\n            contenu=\"Brouillon.\",\n            matiere=matiere,\n            statut=Cours.Statut.BROUILLON,\n        )\n\n    def test_liste_repond_200(self):\n        response = self.client.get(reverse(\"cours:liste\"))\n\n        self.assertEqual(response.status_code, 200)\n        self.assertTemplateUsed(response, \"cours/liste.html\")\n        self.assertContains(response, \"Cours visible\")\n        self.assertNotContains(response, \"Cours caché\")\n\n    def test_detail_inconnu_renvoie_404(self):\n        response = self.client.get(\n            reverse(\"cours:detail\", kwargs={\"slug\": \"inexistant\"})\n        )\n\n        self.assertEqual(response.status_code, 404)\nself.client simule un navigateur sans lancer de serveur. reverse fait apparaître les erreurs de nom de route immédiatement. assertNotContains est important ici : un filtre qui afficherait aussi les brouillons serait une régression fonctionnelle et potentiellement une fuite d’information.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#tester-lauthentification-et-les-permissions",
+    "href": "chapitres/07-tests-debug-qualite.html#tester-lauthentification-et-les-permissions",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Tester l’authentification et les permissions",
+    "text": "Tester l’authentification et les permissions\nfrom django.contrib.auth import get_user_model\n\nUser = get_user_model()\n\n\nclass CreationCoursTests(TestCase):\n    def setUp(self):\n        self.user = User.objects.create_user(\n            username=\"alice\",\n            password=\"mot-de-passe-de-test\",\n        )\n\n    def test_visiteur_redirige_vers_connexion(self):\n        response = self.client.get(reverse(\"cours:creer\"))\n\n        self.assertEqual(response.status_code, 302)\n        self.assertIn(\"/connexion/\", response.url)\n\n    def test_utilisateur_connecte_peut_afficher_le_formulaire(self):\n        self.client.force_login(self.user)\n\n        response = self.client.get(reverse(\"cours:creer\"))\n\n        self.assertEqual(response.status_code, 200)\n        self.assertContains(response, \"Créer un cours\")\nforce_login évite de tester le formulaire de connexion en même temps que la vue de création. Un test doit isoler le comportement qu’il décrit.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#tester-un-formulaire",
+    "href": "chapitres/07-tests-debug-qualite.html#tester-un-formulaire",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Tester un formulaire",
+    "text": "Tester un formulaire\nfrom django.test import TestCase\n\nfrom cours.forms import CoursForm\nfrom cours.models import Matiere\n\n\nclass CoursFormTests(TestCase):\n    def setUp(self):\n        self.matiere = Matiere.objects.create(\n            nom=\"Python\",\n            slug=\"python\",\n        )\n\n    def test_titre_trop_court_invalide_le_formulaire(self):\n        form = CoursForm(\n            data={\n                \"titre\": \"Py\",\n                \"slug\": \"py\",\n                \"resume\": \"Un résumé.\",\n                \"contenu\": \"Contenu.\",\n                \"matiere\": self.matiere.pk,\n            }\n        )\n\n        self.assertFalse(form.is_valid())\n        self.assertIn(\"titre\", form.errors)\nLe test appelle is_valid() avant de consulter errors. Les valeurs de ForeignKey transmises à un formulaire HTTP sont des identifiants, pas des instances Python.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#déboguer-sans-deviner",
+    "href": "chapitres/07-tests-debug-qualite.html#déboguer-sans-deviner",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Déboguer sans deviner",
+    "text": "Déboguer sans deviner\nQuand un test échoue, lisez le premier échec et son traceback. Puis répondez aux questions suivantes :\n\nl’échec est-il dans l’arrangement des données, l’action, ou l’assertion ?\nl’exception appartient-elle au code de production ou au test ?\nle comportement attendu a-t-il changé volontairement ?\nun autre test échoue-t-il à cause d’un état partagé ?\n\nLes tests Django isolent la base, mais pas forcément les variables globales ou les fichiers que votre code écrit sur disque. Évitez les effets de bord et utilisez des répertoires temporaires pour les tests de fichiers.\nPour observer les requêtes exécutées dans un test :\nfrom django.test.utils import CaptureQueriesContext\nfrom django.db import connection\n\nwith CaptureQueriesContext(connection) as queries:\n    response = self.client.get(reverse(\"cours:liste\"))\n\nprint(len(queries))\nN’associez pas la qualité à un nombre arbitraire de requêtes : vérifiez que chaque requête est nécessaire et que le nombre ne croît pas avec le nombre d’objets.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#qualité-automatique-avec-ruff",
+    "href": "chapitres/07-tests-debug-qualite.html#qualité-automatique-avec-ruff",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Qualité automatique avec ruff",
+    "text": "Qualité automatique avec ruff\nAjoutez Ruff en dépendance de développement :\nuv add --dev ruff\nuv run ruff check .\nuv run ruff format --check .\nVous pouvez corriger automatiquement le formatage :\nuv run ruff format .\nUn outil de qualité ne remplace pas les tests : il détecte surtout des problèmes de style, d’imports ou de constructions suspectes. Les tests ne remplacent pas non plus la revue de conception. Ils se complètent.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#une-petite-stratégie-de-test",
+    "href": "chapitres/07-tests-debug-qualite.html#une-petite-stratégie-de-test",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Une petite stratégie de test",
+    "text": "Une petite stratégie de test\nPour BiblioCours, commencez par les comportements risqués :\n\nles cours brouillons ne sont jamais visibles publiquement ;\nun slug inconnu renvoie 404 ;\nun visiteur ne peut pas créer ou supprimer ;\nles champs obligatoires sont refusés ;\nle formulaire valide redirige après sauvegarde ;\nla recherche ne provoque pas d’erreur avec une chaîne vide ;\nles migrations partent d’une base vide.\n\nLes tests de modèle peuvent vérifier les propriétés locales. Les tests de vue vérifient la route, le statut, le template et les données affichées. Les tests d’intégration plus larges servent pour les parcours critiques. N’écrivez pas un test séparé pour chaque ligne de code ; écrivez-en pour les contrats qui doivent rester vrais.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/07-tests-debug-qualite.html#exercices",
+    "href": "chapitres/07-tests-debug-qualite.html#exercices",
+    "title": "Tester, diagnostiquer et faire évoluer le code",
+    "section": "Exercices",
+    "text": "Exercices\n\nAjoutez un test qui vérifie qu’un cours brouillon renvoie 404 sur sa page publique.\nAjoutez un test POST valide qui vérifie la redirection et l’objet créé.\nAjoutez un test POST invalide qui vérifie que la base ne contient aucun objet partiellement créé.\nMesurez le nombre de requêtes de la liste pour 1 puis 20 cours et corrigez une éventuelle croissance N+1.\n\n\n\n\n\nDjango Software Foundation. 2025. « Testing in Django ». https://docs.djangoproject.com/en/5.2/topics/testing/.\n\n\nPercival, Harry, et Bob Gregory. 2024. Test-Driven Development with Python. 3ᵉ éd. O’Reilly Media.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Tester, diagnostiquer et faire évoluer le code</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html",
+    "href": "chapitres/08-production.html",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "",
+    "text": "Développement et production n’ont pas le même but\nLe serveur runserver accélère l’apprentissage : il recharge le code, montre les tracebacks et sert certains fichiers statiques. Il n’est pas conçu pour recevoir du trafic public. En production, l’application est exécutée derrière un serveur applicatif et souvent un proxy qui gère TLS, compression, fichiers statiques et limites réseau.\nLe déploiement n’est pas une commande magique. Il consiste à rendre reproductibles plusieurs éléments :\nLe guide de déploiement Django rappelle que la configuration par défaut est adaptée au développement et doit être auditée avant exposition publique (Django Software Foundation 2025). Une démarche de déploiement progressive et documentée est également au cœur des ouvrages consacrés à Django en production (Hajian 2022).",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#développement-et-production-nont-pas-le-même-but",
+    "href": "chapitres/08-production.html#développement-et-production-nont-pas-le-même-but",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "",
+    "text": "la version de Python ;\nles dépendances ;\nles réglages et secrets ;\nle schéma de base ;\nles fichiers statiques ;\nle processus qui sert Django ;\nles sauvegardes et la supervision.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#séparer-la-configuration-du-code",
+    "href": "chapitres/08-production.html#séparer-la-configuration-du-code",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Séparer la configuration du code",
+    "text": "Séparer la configuration du code\nUne base minimale de réglages utilise l’environnement :\n# config/settings.py\nimport os\nfrom pathlib import Path\n\nBASE_DIR = Path(__file__).resolve().parent.parent\n\nSECRET_KEY = os.environ[\"DJANGO_SECRET_KEY\"]\nDEBUG = os.environ.get(\"DJANGO_DEBUG\", \"false\").lower() == \"true\"\n\nALLOWED_HOSTS = [\n    value.strip()\n    for value in os.environ.get(\"DJANGO_ALLOWED_HOSTS\", \"\").split(\",\")\n    if value.strip()\n]\nEn développement, vous pouvez fournir des valeurs temporaires dans le shell :\nexport DJANGO_SECRET_KEY=\"cle-locale-uniquement\"\nexport DJANGO_DEBUG=\"true\"\nexport DJANGO_ALLOWED_HOSTS=\"127.0.0.1,localhost\"\nuv run python manage.py runserver\nNe copiez pas ces valeurs dans settings.py si le dépôt peut devenir public. Le système de secrets de l’hébergeur est le bon emplacement en production.\nLes réglages de sécurité courants comprennent :\nSECURE_SSL_REDIRECT = True\nSESSION_COOKIE_SECURE = True\nCSRF_COOKIE_SECURE = True\nSECURE_HSTS_SECONDS = 31_536_000\nSECURE_HSTS_INCLUDE_SUBDOMAINS = True\nSECURE_CONTENT_TYPE_NOSNIFF = True\nN’activez HSTS qu’après avoir vérifié que tout le domaine fonctionne en HTTPS : une mauvaise configuration peut rendre un domaine difficile à récupérer dans un navigateur. Les options doivent être adaptées à votre proxy et à votre hébergeur.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#exécuter-les-vérifications-django",
+    "href": "chapitres/08-production.html#exécuter-les-vérifications-django",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Exécuter les vérifications Django",
+    "text": "Exécuter les vérifications Django\nAvant chaque déploiement :\nuv run python manage.py check --deploy\nuv run python manage.py test\nuv run ruff check .\nuv run python manage.py makemigrations --check --dry-run\nLa dernière commande échoue si des modifications de modèles ne sont pas accompagnées d’une migration. Elle évite de découvrir au moment du déploiement que le schéma de production est en retard.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#base-de-données-et-migrations",
+    "href": "chapitres/08-production.html#base-de-données-et-migrations",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Base de données et migrations",
+    "text": "Base de données et migrations\nSQLite est excellente pour un premier projet et un apprentissage local. Une application multi-utilisateur en production utilisera souvent PostgreSQL ou une base gérée par l’hébergeur. Le modèle Django reste similaire, mais les opérations, les performances, les sauvegardes et les droits diffèrent.\nLe processus de migration est :\nuv run python manage.py migrate\nIl doit être exécuté comme étape contrôlée du déploiement. Ne supprimez pas la base de production pour « repartir proprement » : une migration est une évolution du schéma, et la conservation des données fait partie du problème.\nUne sauvegarde n’est utile que si sa restauration a été testée. Documentez :\n\nqui peut lancer une restauration ;\nquelle est la fréquence des sauvegardes ;\nquelle perte de données maximale est acceptable ;\ncomment vérifier que l’application redémarre sur une copie restaurée.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#fichiers-statiques",
+    "href": "chapitres/08-production.html#fichiers-statiques",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Fichiers statiques",
+    "text": "Fichiers statiques\nEn production :\nuv run python manage.py collectstatic --noinput\nLe serveur applicatif ne devrait pas être responsable de servir efficacement chaque fichier CSS. Configurez un serveur web, un CDN ou un stockage objet pour STATIC_ROOT. Vérifiez ensuite qu’une page réelle charge le CSS avec le bon STATIC_URL.\nLes médias envoyés par des utilisateurs nécessitent une stratégie séparée : stockage persistant, contrôle d’accès, limites de taille, politique de rétention et sauvegarde. Un disque local éphémère peut faire disparaître les fichiers à chaque redéploiement.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#wsgi-asgi-et-processus",
+    "href": "chapitres/08-production.html#wsgi-asgi-et-processus",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "WSGI, ASGI et processus",
+    "text": "WSGI, ASGI et processus\nDjango peut être servi par WSGI pour les applications synchrones classiques :\nuv add gunicorn\nuv run gunicorn config.wsgi:application\nASGI permet aussi d’intégrer des usages asynchrones :\nuv add uvicorn\nuv run uvicorn config.asgi:application\nLe choix du serveur et ses options dépendent de l’hébergeur et de la charge. Une fonction async def ne rend pas automatiquement toutes les opérations rapides : un appel bloquant à une base ou à une API peut toujours bloquer le worker. L’asynchronisme est une décision d’architecture, pas un mot-clé à ajouter partout.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#journalisation-et-erreurs",
+    "href": "chapitres/08-production.html#journalisation-et-erreurs",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Journalisation et erreurs",
+    "text": "Journalisation et erreurs\nEn production, désactivez les pages de debug mais conservez des journaux exploitables :\nLOGGING = {\n    \"version\": 1,\n    \"disable_existing_loggers\": False,\n    \"handlers\": {\n        \"console\": {\"class\": \"logging.StreamHandler\"},\n    },\n    \"loggers\": {\n        \"django\": {\n            \"handlers\": [\"console\"],\n            \"level\": \"INFO\",\n        },\n    },\n}\nNe journalisez pas les mots de passe, tokens, cookies ou données personnelles inutiles. Un log est une copie de données qui peut vivre longtemps et être accessible à davantage de personnes que la base applicative.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#déployer-avec-un-pyproject.toml",
+    "href": "chapitres/08-production.html#déployer-avec-un-pyproject.toml",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Déployer avec un pyproject.toml",
+    "text": "Déployer avec un pyproject.toml\nLe fichier doit déclarer les dépendances d’exécution. Dans un pipeline de déploiement, on peut utiliser :\nuv sync --frozen\nuv run python manage.py migrate\nuv run python manage.py collectstatic --noinput\nuv run python manage.py check --deploy\n--frozen demande à uv de respecter uv.lock sans recalculer la résolution. Cela rend l’installation prévisible. Si pyproject.toml et uv.lock ne sont plus cohérents, le pipeline doit échouer : il ne faut pas réparer silencieusement la production en choisissant de nouvelles versions.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#une-checklist-finale",
+    "href": "chapitres/08-production.html#une-checklist-finale",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Une checklist finale",
+    "text": "Une checklist finale\nAvant de considérer BiblioCours comme publiable :\n[ ] DEBUG est désactivé\n[ ] SECRET_KEY et mots de passe viennent d'un gestionnaire de secrets\n[ ] ALLOWED_HOSTS et CSRF_TRUSTED_ORIGINS sont corrects\n[ ] HTTPS est actif\n[ ] les migrations sont versionnées et appliquées\n[ ] les fichiers statiques sont collectés et servis\n[ ] les médias sont persistants et protégés\n[ ] les tests passent dans un environnement propre\n[ ] les logs ne contiennent pas de secrets\n[ ] la base et les médias sont sauvegardés\n[ ] une procédure de restauration est documentée\n[ ] le serveur de développement n'est pas le serveur public\nCette liste ne remplace pas un audit. Elle fournit un point de départ concret pour ne pas oublier les réglages qui restent invisibles pendant le développement local.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#aller-plus-loin-une-progression-raisonnable",
+    "href": "chapitres/08-production.html#aller-plus-loin-une-progression-raisonnable",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Aller plus loin : une progression raisonnable",
+    "text": "Aller plus loin : une progression raisonnable\nUne fois le catalogue maîtrisé, ajoutez une seule capacité à la fois :\n\nvues génériques et class-based views pour réduire le code répétitif ;\ncomptes et profils avec un modèle utilisateur adapté avant la première migration d’un nouveau projet ;\nrecherche et filtres avec pagination et indexation mesurées ;\nAPI JSON avec Django REST Framework lorsque d’autres clients doivent consommer les données ;\ntâches asynchrones pour les courriels et traitements longs ;\nobservabilité pour connaître les temps de réponse et les erreurs ;\nCI pour exécuter tests, vérifications et migrations sur chaque modification.\n\nIl est préférable de comprendre une petite application de bout en bout que de superposer très tôt dix bibliothèques dont on ne connaît pas les responsabilités. La documentation de Django, du langage Python et des outils utilisés doit accompagner cette progression (Python Software Foundation 2025; Encode 2025).",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#projet-de-synthèse",
+    "href": "chapitres/08-production.html#projet-de-synthèse",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Projet de synthèse",
+    "text": "Projet de synthèse\nTerminez BiblioCours avec les exigences suivantes :\n\nune personne anonyme peut consulter les cours publiés ;\nun cours brouillon n’est jamais affiché sur une URL publique ;\nun éditeur authentifié peut créer et modifier un cours ;\nune matière ne peut pas être supprimée si elle contient des cours ;\nle formulaire affiche ses erreurs sans perdre les données valides ;\nles pages utilisent des URLs nommées et des templates hérités ;\nles tests couvrent le catalogue, les permissions et les formulaires ;\nuv sync --frozen permet de recréer l’environnement ;\ncheck --deploy n’affiche plus de problème connu non traité.\n\nPour chaque fonctionnalité, faites un commit qui raconte une décision :\ngit add .\ngit commit -m \"feat: protéger la création des cours\"\nUn historique lisible devient une documentation supplémentaire du projet. Il permet de comprendre non seulement l’état actuel, mais aussi la raison des évolutions.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "chapitres/08-production.html#exercices-de-consolidation",
+    "href": "chapitres/08-production.html#exercices-de-consolidation",
+    "title": "Préparer la production et continuer l’apprentissage",
+    "section": "Exercices de consolidation",
+    "text": "Exercices de consolidation\n\nConfigurez un environnement de test séparé et faites tourner la suite depuis une base vide.\nSimulez une variable manquante comme DJANGO_SECRET_KEY et rendez l’erreur compréhensible.\nÉcrivez une procédure de restauration locale à partir d’une sauvegarde SQLite de test.\nDocumentez dans le README les commandes uv sync --frozen, migrate, collectstatic, check --deploy et test.\n\n\n\n\n\nDjango Software Foundation. 2025. « How to Deploy Django ». https://docs.djangoproject.com/en/5.2/howto/deployment/.\n\n\nEncode. 2025. « Django REST Framework ». https://www.django-rest-framework.org/.\n\n\nHajian, William S. Vincent. 2022. Django for Professionals: Production Websites with Python and Django. 4ᵉ éd. Independently published.\n\n\nPython Software Foundation. 2025. « Python 3 Documentation ». https://docs.python.org/3/.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Préparer la production et continuer l'apprentissage</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Astral. 2025. “Uv Documentation.” https://docs.astral.sh/uv/.\n\n\nDjango Software Foundation. 2025a. “Cross Site Request Forgery\nProtection.” https://docs.djangoproject.com/en/5.2/howto/csrf/.\n\n\nDjango Software Foundation. 2025b. “Django Documentation.”\nhttps://docs.djangoproject.com/en/5.2/.\n\n\nDjango Software Foundation. 2025c. “Django Overview: Design\nPhilosophies.” https://docs.djangoproject.com/en/5.2/misc/design-philosophies/.\n\n\nDjango Software Foundation. 2025d. “How to Deploy Django.”\nhttps://docs.djangoproject.com/en/5.2/howto/deployment/.\n\n\nDjango Software Foundation. 2025e. “Models.” https://docs.djangoproject.com/en/5.2/topics/db/models/.\n\n\nDjango Software Foundation. 2025f. “Security in Django.” https://docs.djangoproject.com/en/5.2/topics/security/.\n\n\nDjango Software Foundation. 2025g. “Testing in Django.” https://docs.djangoproject.com/en/5.2/topics/testing/.\n\n\nDjango Software Foundation. 2025h. “The Django Template\nLanguage.” https://docs.djangoproject.com/en/5.2/ref/templates/language/.\n\n\nDjango Software Foundation. 2025i. “Working with Forms.” https://docs.djangoproject.com/en/5.2/topics/forms/.\n\n\nDjango Software Foundation. 2025j. “Writing Your First Django\nApp.” https://docs.djangoproject.com/en/5.2/intro/tutorial01/.\n\n\nEncode. 2025. “Django REST Framework.” https://www.django-rest-framework.org/.\n\n\nGreenfeld, Daniel Roy, and Audrey Roy Greenfeld. 2017. Two Scoops of\nDjango: Best Practices for Django 1.11. 1st ed. Two Scoops Press.\n\n\nHajian, William S. Vincent. 2022. Django for Professionals:\nProduction Websites with Python and Django. 4th ed. Independently\npublished.\n\n\nOWASP Foundation. 2021. “OWASP Top 10: 2021.” https://owasp.org/Top10/.\n\n\nPercival, Harry, and Bob Gregory. 2024. Test-Driven Development with\nPython. 3rd ed. O’Reilly Media.\n\n\nPython Software Foundation. 2025. “Python 3 Documentation.”\nhttps://docs.python.org/3/.",
+    "crumbs": [
+      "References"
+    ]
+  }
+]

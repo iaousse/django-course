@@ -1,0 +1,275 @@
+# Préparer la production et continuer l'apprentissage {#sec-production}
+
+## Développement et production n'ont pas le même but
+
+Le serveur `runserver` accélère l'apprentissage : il recharge le code, montre
+les tracebacks et sert certains fichiers statiques. Il n'est pas conçu pour
+recevoir du trafic public. En production, l'application est exécutée derrière
+un serveur applicatif et souvent un proxy qui gère TLS, compression, fichiers
+statiques et limites réseau.
+
+Le déploiement n'est pas une commande magique. Il consiste à rendre
+reproductibles plusieurs éléments :
+
+- la version de Python ;
+- les dépendances ;
+- les réglages et secrets ;
+- le schéma de base ;
+- les fichiers statiques ;
+- le processus qui sert Django ;
+- les sauvegardes et la supervision.
+
+Le guide de déploiement Django rappelle que la configuration par défaut est
+adaptée au développement et doit être auditée avant exposition publique
+[@django-deployment]. Une démarche de déploiement progressive et documentée
+est également au cœur des ouvrages consacrés à Django en production
+[@django-for-professionals].
+
+## Séparer la configuration du code
+
+Une base minimale de réglages utilise l'environnement :
+
+```python
+# config/settings.py
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
+
+ALLOWED_HOSTS = [
+    value.strip()
+    for value in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if value.strip()
+]
+```
+
+En développement, vous pouvez fournir des valeurs temporaires dans le shell :
+
+```bash
+export DJANGO_SECRET_KEY="cle-locale-uniquement"
+export DJANGO_DEBUG="true"
+export DJANGO_ALLOWED_HOSTS="127.0.0.1,localhost"
+uv run python manage.py runserver
+```
+
+Ne copiez pas ces valeurs dans `settings.py` si le dépôt peut devenir public.
+Le système de secrets de l'hébergeur est le bon emplacement en production.
+
+Les réglages de sécurité courants comprennent :
+
+```python
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31_536_000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+```
+
+N'activez HSTS qu'après avoir vérifié que tout le domaine fonctionne en HTTPS :
+une mauvaise configuration peut rendre un domaine difficile à récupérer dans
+un navigateur. Les options doivent être adaptées à votre proxy et à votre
+hébergeur.
+
+## Exécuter les vérifications Django
+
+Avant chaque déploiement :
+
+```bash
+uv run python manage.py check --deploy
+uv run python manage.py test
+uv run ruff check .
+uv run python manage.py makemigrations --check --dry-run
+```
+
+La dernière commande échoue si des modifications de modèles ne sont pas
+accompagnées d'une migration. Elle évite de découvrir au moment du déploiement
+que le schéma de production est en retard.
+
+## Base de données et migrations
+
+SQLite est excellente pour un premier projet et un apprentissage local. Une
+application multi-utilisateur en production utilisera souvent PostgreSQL ou
+une base gérée par l'hébergeur. Le modèle Django reste similaire, mais les
+opérations, les performances, les sauvegardes et les droits diffèrent.
+
+Le processus de migration est :
+
+```bash
+uv run python manage.py migrate
+```
+
+Il doit être exécuté comme étape contrôlée du déploiement. Ne supprimez pas la
+base de production pour « repartir proprement » : une migration est une
+évolution du schéma, et la conservation des données fait partie du problème.
+
+Une sauvegarde n'est utile que si sa restauration a été testée. Documentez :
+
+- qui peut lancer une restauration ;
+- quelle est la fréquence des sauvegardes ;
+- quelle perte de données maximale est acceptable ;
+- comment vérifier que l'application redémarre sur une copie restaurée.
+
+## Fichiers statiques
+
+En production :
+
+```bash
+uv run python manage.py collectstatic --noinput
+```
+
+Le serveur applicatif ne devrait pas être responsable de servir efficacement
+chaque fichier CSS. Configurez un serveur web, un CDN ou un stockage objet
+pour `STATIC_ROOT`. Vérifiez ensuite qu'une page réelle charge le CSS avec le
+bon `STATIC_URL`.
+
+Les médias envoyés par des utilisateurs nécessitent une stratégie séparée :
+stockage persistant, contrôle d'accès, limites de taille, politique de
+rétention et sauvegarde. Un disque local éphémère peut faire disparaître les
+fichiers à chaque redéploiement.
+
+## WSGI, ASGI et processus
+
+Django peut être servi par WSGI pour les applications synchrones classiques :
+
+```bash
+uv add gunicorn
+uv run gunicorn config.wsgi:application
+```
+
+ASGI permet aussi d'intégrer des usages asynchrones :
+
+```bash
+uv add uvicorn
+uv run uvicorn config.asgi:application
+```
+
+Le choix du serveur et ses options dépendent de l'hébergeur et de la charge.
+Une fonction `async def` ne rend pas automatiquement toutes les opérations
+rapides : un appel bloquant à une base ou à une API peut toujours bloquer le
+worker. L'asynchronisme est une décision d'architecture, pas un mot-clé à
+ajouter partout.
+
+## Journalisation et erreurs
+
+En production, désactivez les pages de debug mais conservez des journaux
+exploitables :
+
+```python
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    },
+}
+```
+
+Ne journalisez pas les mots de passe, tokens, cookies ou données personnelles
+inutiles. Un log est une copie de données qui peut vivre longtemps et être
+accessible à davantage de personnes que la base applicative.
+
+## Déployer avec un `pyproject.toml`
+
+Le fichier doit déclarer les dépendances d'exécution. Dans un pipeline de
+déploiement, on peut utiliser :
+
+```bash
+uv sync --frozen
+uv run python manage.py migrate
+uv run python manage.py collectstatic --noinput
+uv run python manage.py check --deploy
+```
+
+`--frozen` demande à `uv` de respecter `uv.lock` sans recalculer la résolution.
+Cela rend l'installation prévisible. Si `pyproject.toml` et `uv.lock` ne sont
+plus cohérents, le pipeline doit échouer : il ne faut pas réparer
+silencieusement la production en choisissant de nouvelles versions.
+
+## Une checklist finale
+
+Avant de considérer BiblioCours comme publiable :
+
+```text
+[ ] DEBUG est désactivé
+[ ] SECRET_KEY et mots de passe viennent d'un gestionnaire de secrets
+[ ] ALLOWED_HOSTS et CSRF_TRUSTED_ORIGINS sont corrects
+[ ] HTTPS est actif
+[ ] les migrations sont versionnées et appliquées
+[ ] les fichiers statiques sont collectés et servis
+[ ] les médias sont persistants et protégés
+[ ] les tests passent dans un environnement propre
+[ ] les logs ne contiennent pas de secrets
+[ ] la base et les médias sont sauvegardés
+[ ] une procédure de restauration est documentée
+[ ] le serveur de développement n'est pas le serveur public
+```
+
+Cette liste ne remplace pas un audit. Elle fournit un point de départ
+concret pour ne pas oublier les réglages qui restent invisibles pendant le
+développement local.
+
+## Aller plus loin : une progression raisonnable
+
+Une fois le catalogue maîtrisé, ajoutez une seule capacité à la fois :
+
+1. **vues génériques et class-based views** pour réduire le code répétitif ;
+2. **comptes et profils** avec un modèle utilisateur adapté avant la première
+   migration d'un nouveau projet ;
+3. **recherche et filtres** avec pagination et indexation mesurées ;
+4. **API JSON** avec Django REST Framework lorsque d'autres clients doivent
+   consommer les données ;
+5. **tâches asynchrones** pour les courriels et traitements longs ;
+6. **observabilité** pour connaître les temps de réponse et les erreurs ;
+7. **CI** pour exécuter tests, vérifications et migrations sur chaque
+   modification.
+
+Il est préférable de comprendre une petite application de bout en bout que de
+superposer très tôt dix bibliothèques dont on ne connaît pas les responsabilités.
+La documentation de Django, du langage Python et des outils utilisés doit
+accompagner cette progression [@python-docs; @djangorestframework].
+
+## Projet de synthèse
+
+Terminez BiblioCours avec les exigences suivantes :
+
+- une personne anonyme peut consulter les cours publiés ;
+- un cours brouillon n'est jamais affiché sur une URL publique ;
+- un éditeur authentifié peut créer et modifier un cours ;
+- une matière ne peut pas être supprimée si elle contient des cours ;
+- le formulaire affiche ses erreurs sans perdre les données valides ;
+- les pages utilisent des URLs nommées et des templates hérités ;
+- les tests couvrent le catalogue, les permissions et les formulaires ;
+- `uv sync --frozen` permet de recréer l'environnement ;
+- `check --deploy` n'affiche plus de problème connu non traité.
+
+Pour chaque fonctionnalité, faites un commit qui raconte une décision :
+
+```bash
+git add .
+git commit -m "feat: protéger la création des cours"
+```
+
+Un historique lisible devient une documentation supplémentaire du projet. Il
+permet de comprendre non seulement l'état actuel, mais aussi la raison des
+évolutions.
+
+## Exercices de consolidation
+
+1. Configurez un environnement de test séparé et faites tourner la suite depuis
+   une base vide.
+2. Simulez une variable manquante comme `DJANGO_SECRET_KEY` et rendez l'erreur
+   compréhensible.
+3. Écrivez une procédure de restauration locale à partir d'une sauvegarde
+   SQLite de test.
+4. Documentez dans le README les commandes `uv sync --frozen`, `migrate`,
+   `collectstatic`, `check --deploy` et `test`.

@@ -1,0 +1,304 @@
+# Authentification, sécurité et fichiers statiques {#sec-securite}
+
+## Authentifier n'est pas autoriser
+
+Deux questions différentes sont souvent confondues :
+
+- **authentification** : « qui est cette personne ? » ;
+- **autorisation** : « a-t-elle le droit de faire cette action ? ».
+
+Un utilisateur connecté peut avoir le droit de lire un cours mais pas de le
+supprimer. La présence de `request.user` ne suffit donc jamais à autoriser une
+opération.
+
+Django fournit un système d'utilisateurs, de sessions, de groupes et de
+permissions. Il faut le configurer et l'utiliser de manière explicite plutôt
+que d'inventer un mécanisme de mot de passe. Les recommandations de sécurité
+du framework et les contrôles OWASP complètent cette compréhension
+[@django-security; @owasp-top-ten].
+
+## Ajouter les routes d'authentification
+
+Dans `config/urls.py` :
+
+```python
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("cours/", include("cours.urls")),
+    path(
+        "connexion/",
+        auth_views.LoginView.as_view(template_name="registration/login.html"),
+        name="login",
+    ),
+    path("deconnexion/", auth_views.LogoutView.as_view(), name="logout"),
+]
+```
+
+Ajoutez dans `config/settings.py` :
+
+```python
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "cours:liste"
+LOGOUT_REDIRECT_URL = "cours:liste"
+```
+
+Le template de connexion doit se trouver à l'emplacement attendu :
+
+```text
+templates/
+└── registration/
+    └── login.html
+```
+
+Pour que ce dossier global soit trouvé, ajoutez-le à `TEMPLATES[0]["DIRS"]` :
+
+```python
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
+```
+
+`templates/registration/login.html` :
+
+```html
+{% extends "cours/base.html" %}
+
+{% block title %}Connexion — BiblioCours{% endblock %}
+
+{% block content %}
+  <h1>Se connecter</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Se connecter</button>
+  </form>
+{% endblock %}
+```
+
+Dans `base.html`, adaptez la navigation :
+
+```html
+{% if user.is_authenticated %}
+  <span>Bonjour {{ user.get_username }}</span>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Se déconnecter</button>
+  </form>
+{% else %}
+  <a href="{% url 'login' %}?next={{ request.path }}">
+    Se connecter
+  </a>
+{% endif %}
+```
+
+Sur les versions récentes de Django, la déconnexion est traitée par POST.
+Utiliser un formulaire respecte le fait que la déconnexion modifie l'état de
+la session.
+
+## Protéger une vue et une action
+
+Le décorateur protège la présence d'une session :
+
+```python
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def creer_cours(request):
+    ...
+```
+
+Pour une permission :
+
+```python
+from django.contrib.auth.decorators import permission_required
+
+
+@permission_required("cours.add_cours", raise_exception=True)
+def creer_cours(request):
+    ...
+```
+
+`raise_exception=True` renvoie une réponse interdite (`403`) au lieu de
+rediriger silencieusement. Choisissez le comportement en fonction du contexte.
+Une app publique peut vouloir masquer l'existence d'une ressource ; une
+interface interne doit souvent expliquer le manque de permission.
+
+Dans l'admin, les permissions `add`, `change`, `delete` et `view` sont
+associées aux modèles. On peut affecter ces permissions à un groupe
+« Éditeurs » sans donner un accès complet de superutilisateur.
+
+## CSRF : protéger les requêtes qui changent l'état
+
+Une attaque CSRF amène le navigateur d'une victime déjà connectée à envoyer une
+requête vers un site où elle est authentifiée. Le navigateur peut joindre les
+cookies automatiquement ; le serveur doit donc exiger un jeton que le site
+attaquant ne peut pas lire.
+
+Dans un formulaire interne :
+
+```html
+<form method="post">
+  {% csrf_token %}
+  …
+</form>
+```
+
+Pour un appel JavaScript, le jeton doit être envoyé selon la configuration
+Django. Ne désactivez pas `CsrfViewMiddleware` pour contourner une erreur :
+cherchez plutôt pourquoi le cookie ou le jeton ne correspond pas
+[@django-csrf].
+
+## Échappement, injection et entrées utilisateur
+
+### XSS et templates
+
+Django échappe les variables dans les templates par défaut :
+
+```html
+{{ commentaire.texte }}
+```
+
+Si un utilisateur enregistre `<img src=x onerror=alert(1)>`, cette valeur doit
+rester du texte. Le filtre `safe` supprime la protection :
+
+```html
+{{ contenu_html|safe }}
+```
+
+Ne l'utilisez que si le contenu a été nettoyé par une bibliothèque adaptée à
+votre format et à votre modèle de menace. Le fait qu'une donnée vienne de
+l'admin ne garantit pas que tous les administrateurs soient dignes de
+confiance ni que le champ soit toujours contrôlé.
+
+### Injection SQL
+
+L'ORM paramètre les valeurs :
+
+```python
+Cours.objects.filter(titre__icontains=terme)
+```
+
+Évitez de construire du SQL avec une f-string. Si une requête SQL brute est
+nécessaire, utilisez des paramètres et expliquez la raison dans le code :
+
+```python
+Cours.objects.raw(
+    "SELECT * FROM cours_cours WHERE titre LIKE %s",
+    [f"%{terme}%"],
+)
+```
+
+Le SQL brut n'est pas « plus professionnel ». Il augmente la responsabilité du
+développeur concernant les paramètres, les noms de tables, les performances et
+la portabilité.
+
+### Redirections
+
+Ne redirigez pas aveuglément vers une URL fournie par l'utilisateur. Un
+paramètre `next` doit être validé comme une destination sûre. Les utilitaires
+de Django et la configuration des hôtes autorisés aident à limiter les
+redirections ouvertes.
+
+## Secrets et configuration
+
+En développement, `SECRET_KEY` peut être remplacé par une valeur locale. En
+production, lisez-la depuis une variable d'environnement :
+
+```python
+import os
+
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if host.strip()
+]
+```
+
+Ne commitez ni clé secrète, ni mot de passe de base, ni token de service. Un
+fichier `.env` peut aider en local mais doit être ignoré par Git et ne doit pas
+être copié dans une archive de déploiement. En production, utilisez le système
+de secrets de l'hébergeur.
+
+## Fichiers statiques
+
+Les fichiers statiques sont le CSS, le JavaScript et les images livrés avec le
+code. Configurez `config/settings.py` :
+
+```python
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+```
+
+Ajoutez :
+
+```text
+static/
+└── cours/
+    └── site.css
+```
+
+Le template les charge avec `{% load static %}` et `{% static 'cours/site.css' %}`.
+En développement, `runserver` les sert si `DEBUG=True`. En production, la
+commande suivante rassemble les fichiers :
+
+```bash
+uv run python manage.py collectstatic
+```
+
+`STATIC_ROOT` est un dossier de sortie ; il ne doit pas être confondu avec
+`STATICFILES_DIRS`, qui contient les sources. Un serveur web ou un stockage
+objet servira ensuite le contenu rassemblé.
+
+## Téléversements et fichiers média
+
+Un fichier envoyé par un utilisateur n'est pas un fichier statique. Configurez :
+
+```python
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+```
+
+Dans un modèle :
+
+```python
+document = models.FileField(upload_to="cours/%Y/%m", blank=True)
+```
+
+Un upload doit être limité par taille et type, renommé par Django et stocké
+avec des permissions correctes. Ne servez pas aveuglément un fichier comme du
+HTML actif. Pour des données sensibles ou volumineuses, un stockage séparé
+avec des URLs temporaires est souvent plus adapté.
+
+## Checklist de sécurité locale
+
+Avant de publier :
+
+- `DEBUG=False` ;
+- `SECRET_KEY` fourni par l'environnement ;
+- `ALLOWED_HOSTS` renseigné ;
+- HTTPS activé et cookies sécurisés configurés ;
+- protection CSRF conservée ;
+- permissions testées avec un utilisateur normal ;
+- pas de secret dans Git ;
+- uploads limités et traités comme non fiables ;
+- `python manage.py check --deploy` exécuté.
+
+La sécurité n'est pas une étape à la fin. Chaque champ, route et action doit
+répondre à la question : **qui peut faire quoi, avec quelles données, et que se
+passe-t-il si la requête est fabriquée à la main ?**
+
+## Exercices
+
+1. Créez un groupe `Éditeurs` et donnez-lui uniquement les permissions utiles
+   pour créer et modifier des cours.
+2. Ajoutez une page qui n'est visible que par les utilisateurs connectés.
+3. Testez un POST sans CSRF et observez la réponse ; ne désactivez pas la
+   protection.
+4. Configurez un fichier CSS et vérifiez qu'il est trouvé en développement
+   puis rassemblé par `collectstatic`.

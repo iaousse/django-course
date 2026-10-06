@@ -1,0 +1,329 @@
+# Saisir et administrer les données : formulaires et admin {#sec-formulaires-admin}
+
+## Pourquoi un formulaire HTML ne suffit pas
+
+Un formulaire est une frontière entre le navigateur et l'application. Le
+navigateur peut aider avec `required`, `type="email"` ou `maxlength`, mais ces
+attributs ne sont pas des protections : n'importe quel client HTTP peut les
+contourner. La validation importante doit être exécutée côté serveur.
+
+Django distingue trois étapes :
+
+1. **liaison** : associer les données reçues à un formulaire ;
+2. **validation** : vérifier les champs et les règles métier ;
+3. **action** : sauvegarder ou effectuer une opération seulement si le
+   formulaire est valide.
+
+Un formulaire non valide doit être réaffiché avec les valeurs acceptables et
+les erreurs lisibles. Un formulaire valide doit éviter de créer deux fois la
+même ressource lorsque l'utilisateur actualise la page. Ce dernier problème
+est résolu par le schéma **POST/Redirect/GET**.
+
+## Créer un `ModelForm`
+
+Créez `cours/forms.py` :
+
+```python
+from django import forms
+
+from .models import Cours
+
+
+class CoursForm(forms.ModelForm):
+    class Meta:
+        model = Cours
+        fields = ["titre", "slug", "resume", "contenu", "matiere"]
+        widgets = {
+            "resume": forms.Textarea(attrs={"rows": 3}),
+            "contenu": forms.Textarea(attrs={"rows": 12}),
+        }
+
+    def clean_titre(self):
+        titre = self.cleaned_data["titre"].strip()
+        if len(titre) < 5:
+            raise forms.ValidationError(
+                "Le titre doit comporter au moins cinq caractères."
+            )
+        return titre
+
+    def clean(self):
+        cleaned_data = super().clean()
+        titre = cleaned_data.get("titre")
+        resume = cleaned_data.get("resume")
+        if titre and resume and titre.lower() in resume.lower():
+            self.add_error(
+                "resume",
+                "Le résumé ne doit pas répéter le titre mot pour mot.",
+            )
+        return cleaned_data
+```
+
+`ModelForm` déduit les champs à partir du modèle et réutilise ses contraintes
+de base. La liste `fields` doit être explicite : `fields = "__all__"` risque
+d'exposer un champ ajouté plus tard sans que l'on s'en rende compte
+[@django-forms].
+
+### Les trois niveaux de validation
+
+- `clean_titre` valide un champ et se concentre sur sa valeur ;
+- `clean` valide une relation entre plusieurs champs ;
+- `Model.clean` peut porter une règle de modèle indépendante de ce formulaire.
+
+Une validation ne doit pas seulement servir à afficher un message. Elle doit
+protéger l'invariant métier. Par exemple, si un cours publié doit toujours
+avoir un résumé, cette règle devrait être appliquée dans tous les chemins de
+création, pas uniquement sur la page HTML.
+
+## La vue de création
+
+Ajoutez une route protégée plus tard par authentification :
+
+```python
+path("nouveau/", views.creer_cours, name="creer"),
+```
+
+Puis la vue :
+
+```python
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import CoursForm
+
+
+@login_required
+def creer_cours(request):
+    if request.method == "POST":
+        form = CoursForm(request.POST)
+        if form.is_valid():
+            cours = form.save()
+            messages.success(request, f"Le cours « {cours.titre} » a été créé.")
+            return redirect(cours.get_absolute_url())
+    else:
+        form = CoursForm()
+
+    return render(request, "cours/formulaire.html", {"form": form})
+```
+
+La méthode HTTP est une décision de sécurité et de sémantique :
+
+- `GET` affiche le formulaire et ne doit pas modifier l'état ;
+- `POST` transmet une intention de modification ;
+- une redirection après succès empêche un rafraîchissement de répéter le POST.
+
+Le décorateur `login_required` redirige les utilisateurs anonymes vers la page
+de connexion. Nous verrons la configuration de cette redirection au chapitre
+@sec-securite.
+
+## Le template du formulaire
+
+`cours/templates/cours/formulaire.html` :
+
+```html
+{% extends "cours/base.html" %}
+
+{% block title %}Nouveau cours — BiblioCours{% endblock %}
+
+{% block content %}
+  <h1>Créer un cours</h1>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="errors" role="alert">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    {% for field in form %}
+      <div class="form-field">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+          <p class="help">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+          <p class="error" role="alert">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <button type="submit">Enregistrer</button>
+    <a href="{% url 'cours:liste' %}">Annuler</a>
+  </form>
+{% endblock %}
+```
+
+`{% csrf_token %}` est obligatoire pour un POST provenant d'un formulaire
+Django. Le jeton associe la requête à la session et protège contre une partie
+des attaques CSRF. Il ne remplace pas l'authentification ni l'autorisation.
+
+`novalidate` désactive la validation native du navigateur afin de rendre
+visibles les messages Django pendant l'apprentissage. Dans un projet réel,
+vous pouvez conserver la validation native en complément ; elle améliore
+l'expérience mais ne remplace jamais la validation serveur.
+
+## Modifier un objet existant
+
+Le même `ModelForm` peut être lié à une instance :
+
+```python
+@login_required
+def modifier_cours(request, slug):
+    cours = get_object_or_404(Cours, slug=slug)
+
+    if request.method == "POST":
+        form = CoursForm(request.POST, instance=cours)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Le cours a été mis à jour.")
+            return redirect(cours.get_absolute_url())
+    else:
+        form = CoursForm(instance=cours)
+
+    return render(
+        request,
+        "cours/formulaire.html",
+        {"form": form, "cours": cours},
+    )
+```
+
+La présence d'`instance` change le comportement : sans elle, `save()` crée un
+objet ; avec elle, `save()` met à jour l'objet. La route de modification doit
+être distincte de la route de création et doit vérifier que l'utilisateur a
+le droit de modifier ce cours.
+
+## Supprimer : préférer une confirmation explicite
+
+La suppression ne devrait pas être déclenchée par un lien GET :
+
+```html
+<!-- À éviter : un robot ou un clic involontaire pourrait supprimer -->
+<a href="{% url 'cours:supprimer' cours.slug %}">Supprimer</a>
+```
+
+Utilisez un formulaire POST avec CSRF et demandez une confirmation dans une
+page dédiée :
+
+```python
+@login_required
+def supprimer_cours(request, slug):
+    cours = get_object_or_404(Cours, slug=slug)
+    if request.method == "POST":
+        titre = cours.titre
+        cours.delete()
+        messages.success(request, f"Le cours « {titre} » a été supprimé.")
+        return redirect("cours:liste")
+    return render(request, "cours/confirmer_suppression.html", {"cours": cours})
+```
+
+L'approbation visuelle n'est pas une mesure de sécurité ; l'autorisation et le
+POST protégé le sont. Une opération irréversible doit aussi être reflétée dans
+les tests et, selon le domaine, dans une stratégie d'archivage plutôt que de
+suppression physique.
+
+## L'administration Django
+
+L'admin est une interface interne puissante pour les personnes qui gèrent le
+contenu. Elle ne remplace pas une interface publique : ses écrans, ses
+permissions et son modèle mental sont ceux d'un back-office. Elle permet
+néanmoins de peupler BiblioCours rapidement.
+
+Dans `cours/admin.py` :
+
+```python
+from django.contrib import admin
+
+from .models import Cours, Matiere
+
+
+@admin.register(Matiere)
+class MatiereAdmin(admin.ModelAdmin):
+    list_display = ["nom", "slug"]
+    search_fields = ["nom", "description"]
+    prepopulated_fields = {"slug": ("nom",)}
+
+
+@admin.register(Cours)
+class CoursAdmin(admin.ModelAdmin):
+    list_display = [
+        "titre",
+        "matiere",
+        "statut",
+        "date_creation",
+        "date_publication",
+    ]
+    list_filter = ["statut", "matiere", "date_creation"]
+    search_fields = ["titre", "resume", "contenu"]
+    autocomplete_fields = ["matiere"]
+    prepopulated_fields = {"slug": ("titre",)}
+    readonly_fields = ["date_creation", "date_modification"]
+```
+
+Créez un compte administrateur :
+
+```bash
+uv run python manage.py createsuperuser
+uv run python manage.py runserver
+```
+
+Visitez `http://127.0.0.1:8000/admin/`. `list_display` rend la liste utile,
+`list_filter` ajoute des filtres latéraux et `search_fields` construit une
+recherche. `readonly_fields` évite qu'une date technique soit modifiée à la
+main.
+
+### L'admin et les performances
+
+Si une liste affiche une relation, Django peut charger chaque matière
+séparément. Ajoutez une optimisation à l'admin :
+
+```python
+class CoursAdmin(admin.ModelAdmin):
+    # autres options…
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("matiere")
+```
+
+Mesurez avant d'optimiser, mais ne rendez pas l'admin inutilisable avec une
+requête N+1 lorsque le catalogue grandit.
+
+## Messages utilisateur
+
+Les messages sont temporaires et associés à la prochaine réponse :
+
+```python
+from django.contrib import messages
+
+messages.success(request, "Le cours a été enregistré.")
+messages.error(request, "Impossible de supprimer ce cours.")
+```
+
+Dans `base.html` :
+
+```html
+{% if messages %}
+  <div class="messages" aria-live="polite">
+    {% for message in messages %}
+      <p class="message message-{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+```
+
+Le contexte est disponible grâce à `django.contrib.messages.context_processors.messages`,
+présent dans la configuration initiale. Un message ne doit pas être la seule
+façon de communiquer une erreur : le formulaire doit aussi porter les erreurs
+au niveau du champ.
+
+## Exercices
+
+1. Ajoutez un `ModelForm` pour `Matiere` avec une validation de nom unique
+   insensible à la casse.
+2. Ajoutez une action d'administration qui publie les cours sélectionnés.
+3. Faites en sorte que seuls les utilisateurs ayant une permission puissent
+   créer un cours.
+4. Testez les trois scénarios de `creer_cours` : GET, POST valide et POST
+   invalide.

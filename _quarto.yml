@@ -1,0 +1,124 @@
+project:
+  type: book
+  output-dir: docs
+
+profile:
+  default: student
+lang: fr
+number-sections: false
+language:
+  title-block-author-single: "Auteur"
+  title-block-author-plural: "Auteurs"
+  author-title: "Auteur"
+  authors-title: "Auteurs"
+crossref:
+  fig-prefix: Figure     # (Par défaut "Figure")
+  tbl-prefix: Table    # (Par défaut "Table")
+  sec-prefix: Section    # (Par défaut "Section")
+  eq-prefix: Équation    # (Par défaut "Équation")
+  chapters: false
+
+book:
+  title: "Développement web avec Django"
+  sidebar:
+    logo: images/logo_estc.png
+    tools:
+      - icon: github
+        href: https://github.com/iaousse/
+        aria-label: GitHub
+        target: _blank
+      - icon: linkedin
+        href: https://www.linkedin.com/in/mbarekiaousse
+        aria-label: LinkedIn
+        target: _blank
+  author: "IAOUSSE M'barek"
+  date: "2026"
+  date-format: "YYYY"
+  # Navigation et options web
+  search: true
+  downloads: [pdf, epub]
+  
+  # Structure du livre (votre table des matières)
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - chapitres/01-demarrer.qmd
+    - chapitres/02-archetecture-routage.qmd
+    - chapitres/03-modeles-orm-migrations.qmd
+    - chapitres/04-vues-urls-templates.qmd
+    - chapitres/05-formulaires-admin.qmd
+    - chapitres/06-authentification-securites-fichiers.qmd
+    - chapitres/07-tests-debug-qualite.qmd
+    - chapitres/08-production.qmd
+    - references.qmd
+
+# Configuration pour le code Python
+execute:
+  freeze: auto   # Ne réexécute le code Python que si le fichier .qmd est modifié
+  echo: true     # Affiche le code par défaut dans le livre
+
+# Bibliographie
+bibliography: references.bib
+link-citations: true
+citations-hover: true
+
+# Styles d'exportation
+format:
+  html:
+    theme: spacelab             # Thème clair, lisible, avec des accents bleus
+    css: styles.css
+    title-block-banner: true    # Active le bloc d'en-tête (prend la couleur bleue du thème)
+    # title-block-banner: "#1a467e" # Optionnel : remplacez "true" par un code couleur précis pour correspondre au bleu de l'ESTC
+    
+    # Options pour une mise en page "pratique" :
+    toc: true                   # Affiche la table des matières de la page
+    toc-title: "Dans ce chapitre" 
+    toc-location: right         # Place la table des matières à droite (très pratique pour lire)
+    toc-depth: 3
+    number-sections: false
+    grid:
+      body-width: 1100px    # Augmente considérablement l'espace pour le contenu central
+      margin-width: 250px   # Maintient la marge de droite (Table des matières)
+      sidebar-width: 250px  # Maintient la marge de gauche (Menu des chapitres)
+ 
+    code-copy: true             # Ajoute un petit bouton pour copier le code Python
+    code-fold: show             # Permet de masquer/afficher les longs blocs de code
+    smooth-scroll: true         # Défilement fluide
+    
+  pdf:
+    documentclass: scrbook
+    pdf-engine: xelatex   # Ou pdflatex
+    fontsize: 11pt
+    papersize: a4
+    title-block: false
+    toc: false
+    toc-depth: 1
+    number-sections: false
+    colorlinks: true
+    citeproc: true
+    classoption:
+      - open=any
+    geometry:
+      - top=24mm
+      - bottom=24mm
+      - left=25mm
+      - right=25mm
+    header-includes:
+      - \usepackage{graphicx}
+      - \usepackage{ragged2e}
+      - \usepackage{microtype}
+      - \definecolor{django-primary}{HTML}{164E82}
+      - \definecolor{django-secondary}{HTML}{17324D}
+      - |
+        \makeatletter
+        \renewcommand{\maketitle}{}
+        \AtBeginDocument{\frontmatter\pagenumbering{gobble}\pagestyle{empty}}
+        \let\ps@plain\ps@empty
+        \makeatother
+  epub:
+    toc: true
+    toc-depth: 1
+    epub-cover-image: epub-cover.png
+    css:
+      - styles.css
+      - styles-epub.css

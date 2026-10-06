@@ -1,0 +1,77 @@
+---
+number-sections: false
+---
+
+```{=latex}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+\pagenumbering{gobble}
+\renewcommand{\thepage}{}
+\pagestyle{empty}
+\thispagestyle{empty}
+\centering
+\vspace*{1cm}
+\includegraphics[width=6cm]{images/logo_estc.png}
+\vfill
+{\Huge\bfseries\textcolor[HTML]{164E82}{Ouvrage pédagogique}\par}
+\vspace{.35cm}
+{\Huge\bfseries\textcolor[HTML]{17324D}{Développement web avec Django}\par}
+\vspace{0.5cm}
+{\Large\textcolor[HTML]{425466}{Conception et développement d'applications web}\par}
+\vspace{0.5cm}
+{\Large\textcolor[HTML]{17324D}{M'barek IAOUSSE}\par}
+\vspace{0.25cm}
+{\large\textcolor[HTML]{425466}{Formation continue ASERCS}\par}
+{\large\textcolor[HTML]{425466}{École Supérieure de Technologie de Casablanca}\par}
+{\large\textcolor[HTML]{425466}{Université Hassan II de Casablanca}\par}
+\vspace{0.4cm}
+{\large\textcolor[HTML]{425466}{Première édition — 2026}\par}
+\newpage
+\thispagestyle{empty}
+\centering
+\vspace*{\fill}
+{\Huge\textcolor[HTML]{164E82}{Version en ligne}\par}
+\vspace{1cm}
+\includegraphics[width=10.5cm]{images/qrcode.png}\par
+\vspace{0.5cm}
+{\large\textcolor[HTML]{425466}{Scannez ce code pour accéder à la version en ligne.}\par}
+\vspace*{\fill}
+\newpage
+```
+
+```{=html}
+<h1 class="visually-hidden">Développement web avec Django</h1>
+<section class="django-cover" aria-label="Couverture de l’ouvrage pédagogique">
+  <img class="django-cover-logo" src="images/logo_estc.png" alt="Logo de l'EST Casablanca" />
+  <p class="django-cover-type">Ouvrage pédagogique</p>
+  <h2>Développement web avec Django</h2>
+  <p class="django-cover-subtitle">Conception et développement d'applications web</p>
+  <p class="django-cover-author">M'barek IAOUSSE</p>
+  <p class="django-cover-institution">Formation continue ASERCS<br />École Supérieure de Technologie de Casablanca<br />Université Hassan II de Casablanca</p>
+  <p class="django-cover-year">Première édition — 2026</p>
+</section>
+```
+
+::: {.content-visible when-format="pdf"}
+{{< include _deuxieme_page.qmd >}}
+:::
+
+::: {.content-visible when-format="epub"}
+<section class="django-cover-qr-page" aria-label="Accès à la version en ligne">
+  <h1>Version en ligne</h1>
+  <img src="images/qrcode.png" alt="Code QR pour accéder à la version en ligne" />
+  <p>Scannez ce code pour accéder à la version en ligne.</p>
+</section>
+
+{{< include _deuxieme_page.qmd >}}
+:::
+
+::: {.content-visible when-format="html"}
+<section class="django-cover-qr-page django-cover-qr-page-html" aria-label="Accès à la version en ligne">
+  <h2>Version en ligne</h2>
+  <img src="images/qrcode.png" alt="Code QR pour accéder à la version en ligne" />
+  <p>Scannez ce code pour accéder à la version en ligne.</p>
+</section>
+{{< include _deuxieme_page.qmd >}}
+:::

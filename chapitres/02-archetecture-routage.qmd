@@ -1,0 +1,294 @@
+# Comprendre l'architecture Django et le routage {#sec-architecture}
+
+## Le chemin complet d'une requête
+
+Une bonne application Django n'est pas une collection de fichiers que l'on
+modifie au hasard. Elle est une chaîne de responsabilités. Pour une requête
+vers `/cours/12/`, le parcours conceptuel est :
+
+```text
+navigateur
+   │  requête HTTP
+   ▼
+config/urls.py
+   │  route choisie
+   ▼
+vue Python
+   │  lecture ou écriture
+   ▼
+modèle / ORM ─── base de données
+   │
+   ▼
+template ─── contexte Python
+   │  HTML
+   ▼
+navigateur
+```
+
+Django appelle souvent cette organisation **MVT** :
+
+| Élément Django | Responsabilité | Analogie MVC |
+|---|---|---|
+| Model | données, contraintes et accès à la base | Model |
+| View | traitement de la requête et choix de la réponse | Controller |
+| Template | représentation HTML | View |
+
+La comparaison avec MVC est utile mais imparfaite. Le nom importe moins que la
+règle : une vue ne devrait pas contenir tout le HTML, un template ne devrait
+pas interroger directement la base, et un modèle ne devrait pas connaître la
+mise en page. Le découpage rend chaque partie remplaçable et testable
+[@django-design]. Les bonnes pratiques de conception Django insistent aussi
+sur la lisibilité, la simplicité et le respect des conventions du framework
+[@two-scoops-django].
+
+## Les apps : découper par responsabilité
+
+L'app `cours` aura les responsabilités liées au catalogue pédagogique. Dans
+une application qui grandit, on pourrait ajouter :
+
+```text
+comptes/        utilisateurs, profils, permissions
+cours/          matières et cours
+inscriptions/   suivi de la progression
+notifications/  courriels et alertes
+```
+
+Une app bien découpée peut être déplacée dans un autre projet avec peu de
+modifications. Il ne faut pas créer une app pour chaque modèle : on crée une
+app pour un domaine fonctionnel cohérent.
+
+## Lire `settings.py` plutôt que le copier
+
+Le fichier `config/settings.py` configure le comportement du projet. Les
+sections importantes sont :
+
+```python
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = "à-remplacer-en-production"
+DEBUG = True
+ALLOWED_HOSTS = []
+
+INSTALLED_APPS = [
+    # Apps Django fournies
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # App du projet
+    "cours",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+ROOT_URLCONF = "config.urls"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = "config.wsgi.application"
+```
+
+`INSTALLED_APPS` active les composants. `MIDDLEWARE` forme une pile traversée
+par les requêtes et réponses. `TEMPLATES` indique comment trouver et rendre
+les templates. `ROOT_URLCONF` indique quel routeur commencer à lire.
+
+### Le secret et le mode debug
+
+`SECRET_KEY` est utilisé par plusieurs mécanismes cryptographiques de Django.
+Il ne doit pas être publié. `DEBUG = True` affiche des informations très
+détaillées en cas d'erreur ; c'est utile localement et dangereux sur Internet.
+Les réglages de production seront traités au @sec-production.
+
+## Déclarer les premières routes
+
+Le routeur principal reçoit une liste de motifs. Modifiez
+`config/urls.py` :
+
+```python
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("cours/", include("cours.urls")),
+]
+```
+
+Créez ensuite `cours/urls.py` :
+
+```python
+from django.urls import path
+
+from . import views
+
+app_name = "cours"
+
+urlpatterns = [
+    path("", views.liste_cours, name="liste"),
+]
+```
+
+Trois détails sont essentiels :
+
+1. `include` délègue un préfixe à l'app ;
+2. `app_name` crée un espace de noms ;
+3. `name` donne un identifiant stable à la route.
+
+Un template doit utiliser le nom de la route, pas recopier son URL. Ainsi, si
+`cours/` devient `catalogue/`, les liens générés par `{% url %}` restent
+cohérents après la modification du routeur.
+
+## Écrire une vue minimale
+
+Dans `cours/views.py` :
+
+```python
+from django.http import HttpRequest, HttpResponse
+
+
+def accueil(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Bienvenue dans BiblioCours")
+```
+
+Ajoutez temporairement la route :
+
+```python
+urlpatterns = [
+    path("", views.accueil, name="accueil"),
+]
+```
+
+Ouvrez `/cours/`. Une vue reçoit au minimum un objet `HttpRequest` et renvoie
+un objet de réponse. `HttpResponse` est idéal pour comprendre le mécanisme,
+mais une application HTML utilisera plutôt `render`, présenté au chapitre
+@sec-vues-templates.
+
+### Paramètres capturés dans l'URL
+
+Django sait convertir une partie de l'URL avant d'appeler la vue :
+
+```python
+urlpatterns = [
+    path("<int:pk>/", views.detail_cours, name="detail"),
+]
+```
+
+Pour `/cours/12/`, Django appelle :
+
+```python
+def detail_cours(request: HttpRequest, pk: int) -> HttpResponse:
+    return HttpResponse(f"Le cours demandé est {pk}")
+```
+
+Le convertisseur `int` refuse les valeurs qui ne sont pas des entiers. D'autres
+convertisseurs courants sont `str`, `slug`, `uuid` et `path`. Une URL porte
+donc une information structurée, et non une chaîne que la vue doit parser
+elle-même.
+
+## Comprendre la résolution des URLs
+
+Django parcourt `urlpatterns` de haut en bas et s'arrête au premier motif
+correspondant. L'ordre compte :
+
+```python
+urlpatterns = [
+    path("nouveau/", views.nouveau_cours, name="nouveau"),
+    path("<int:pk>/", views.detail_cours, name="detail"),
+]
+```
+
+La route statique doit précéder la route dynamique. Sinon, selon les motifs,
+un chemin prévu pour `nouveau/` peut être interprété comme un identifiant.
+
+Pour fabriquer une URL dans Python :
+
+```python
+from django.urls import reverse
+
+url = reverse("cours:detail", kwargs={"pk": 12})
+# "/cours/12/"
+```
+
+Cette technique est préférable à `"/cours/12/"` en dur. Elle sert notamment
+dans les redirections et les tests.
+
+## Requêtes et réponses : les distinctions importantes
+
+Une requête contient plusieurs catégories d'information :
+
+```python
+def rechercher(request):
+    terme = request.GET.get("q", "")
+    langue = request.headers.get("Accept-Language")
+    utilisateur = request.user
+    return HttpResponse(f"Recherche: {terme}")
+```
+
+- `request.GET` contient les paramètres de l'URL, donc des données de lecture ;
+- `request.POST` contient les données envoyées dans un formulaire ;
+- `request.user` représente l'utilisateur courant, éventuellement anonyme ;
+- les en-têtes décrivent le contexte HTTP, mais ne doivent pas être traités
+  comme des données fiables ;
+- `request.method` indique `GET`, `POST`, etc.
+
+Une vue ne doit pas faire confiance aux données reçues. Même un champ qui
+semble numérique ou une valeur provenant d'un navigateur doit être validé côté
+serveur. Les formulaires Django aideront à centraliser cette validation.
+
+## Premier modèle mental à retenir
+
+Quand une page ne fonctionne pas, diagnostiquez dans cet ordre :
+
+1. l'URL est-elle réellement atteinte ?
+2. la vue est-elle appelée avec les bons paramètres ?
+3. la requête vers la base renvoie-t-elle le résultat attendu ?
+4. le contexte transmis au template porte-t-il le bon nom ?
+5. le template affiche-t-il ce nom et cette valeur ?
+6. le navigateur reçoit-il le HTML attendu ?
+
+Cette méthode est plus rapide que de modifier simultanément le modèle, la vue,
+le template et le CSS.
+
+## Exercice guidé
+
+Ajoutez une page `/cours/a-propos/` :
+
+1. écrivez une vue qui renvoie une `HttpResponse` ;
+2. donnez-lui le nom `a_propos` ;
+3. appelez-la depuis `cours/urls.py` ;
+4. générez son adresse avec `reverse` dans le shell Django ;
+5. ajoutez un test qui vérifie que la réponse a le statut HTTP `200`.
+
+::: {.callout-tip}
+## Question de conception
+
+La route `/cours/12/` utilise un entier parce que la vue cherche un objet par
+clé primaire. Si l'URL devait être lisible, `/cours/python-pour-debutants/`
+pourrait utiliser un `slug`. Le choix de l'URL est à la fois une décision
+technique, une décision d'ergonomie et une décision de référencement.
+:::

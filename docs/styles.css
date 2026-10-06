@@ -1,0 +1,80 @@
+.django-cover {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 72vh;
+  page-break-after: always;
+  text-align: center;
+}
+
+body:has(.django-cover) #title-block-header {
+  display: none;
+}
+
+.django-cover-logo {
+  margin: 0 auto 2rem;
+  max-height: 12rem;
+  max-width: min(60vw, 24rem);
+  object-fit: contain;
+}
+
+.django-cover h2,
+.django-cover-qr-page h1 {
+  border: 0;
+  color: #17324d;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  margin: 0 0 0.5rem;
+}
+
+.django-cover-type {
+  color: #164e82;
+  display: none;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.django-cover-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.django-cover-author {
+  font-size: 1.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.django-cover-institution,
+.django-cover-year {
+  color: #425466;
+  font-size: 1.05rem;
+}
+
+.django-cover-year {
+  margin-top: 0.75rem;
+}
+
+.django-cover-qr-page {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 90vh;
+  page-break-before: always;
+  text-align: center;
+}
+
+.django-cover-qr-page img {
+  height: auto;
+  max-width: min(75vw, 28rem);
+  width: 100%;
+}
+
+.django-cover-qr-page p {
+  margin-top: 0.75rem;
+}
+
+.django-cover-qr-page-html {
+  display: none !important;
+}

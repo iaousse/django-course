@@ -1,0 +1,308 @@
+# Modéliser les données avec l'ORM et les migrations {#sec-modeles}
+
+## Penser d'abord au domaine
+
+Avant d'écrire `models.py`, décrivons les objets du métier. BiblioCours
+contient des **matières** et des **cours**. Une matière regroupe plusieurs
+cours ; un cours appartient à une seule matière. Cette phrase donne déjà une
+relation « un-à-plusieurs ».
+
+Un bon modèle répond à des questions concrètes :
+
+- quelles informations doivent être obligatoires ?
+- quelle taille maximale une valeur peut-elle avoir ?
+- deux enregistrements peuvent-ils porter la même valeur ?
+- que se passe-t-il si la matière d'un cours est supprimée ?
+- quelle date représente la création et quelle date représente la publication ?
+
+Le modèle n'est pas seulement un miroir de la table SQL. Il formalise des
+règles et fournit une interface Python pour manipuler les données. L'ORM de
+Django traduit cette interface en requêtes SQL adaptées à la base configurée
+[@django-models].
+
+## Écrire les modèles de BiblioCours
+
+Remplacez le contenu de `cours/models.py` par :
+
+```python
+from django.db import models
+from django.urls import reverse
+
+
+class Matiere(models.Model):
+    nom = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=110, unique=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["nom"]
+        verbose_name = "matière"
+        verbose_name_plural = "matières"
+
+    def __str__(self):
+        return self.nom
+
+
+class Cours(models.Model):
+    class Statut(models.TextChoices):
+        BROUILLON = "brouillon", "Brouillon"
+        PUBLIE = "publie", "Publié"
+
+    titre = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True)
+    resume = models.TextField(max_length=500)
+    contenu = models.TextField()
+    statut = models.CharField(
+        max_length=20,
+        choices=Statut.choices,
+        default=Statut.BROUILLON,
+    )
+    matiere = models.ForeignKey(
+        Matiere,
+        on_delete=models.PROTECT,
+        related_name="cours",
+    )
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now=True)
+    date_publication = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-date_creation"]
+        indexes = [
+            models.Index(fields=["statut", "-date_creation"]),
+        ]
+
+    def __str__(self):
+        return self.titre
+
+    def get_absolute_url(self):
+        return reverse("cours:detail", kwargs={"slug": self.slug})
+
+    @property
+    def est_publie(self):
+        return self.statut == self.Statut.PUBLIE
+```
+
+### Pourquoi ces champs ?
+
+`CharField` représente une chaîne bornée. `max_length` est utile pour la base,
+les formulaires et la documentation de l'intention. `TextField` convient au
+contenu dont la taille est plus libre. `SlugField` représente une valeur
+adaptée aux URLs, généralement composée de lettres minuscules, chiffres et
+tirets.
+
+`unique=True` crée une contrainte d'unicité. Ce n'est pas seulement une
+validation d'interface : la base elle-même empêchera deux matières d'avoir le
+même slug. La base est la dernière barrière, car deux requêtes concurrentes
+peuvent passer simultanément une validation purement applicative.
+
+`TextChoices` évite les chaînes dispersées dans le code. La valeur enregistrée
+est `"publie"` et le libellé affiché est `"Publié"`. On peut écrire
+`Cours.Statut.PUBLIE` dans le code et laisser Django gérer les choix.
+
+`auto_now_add` est évalué à la création ; `auto_now` à chaque sauvegarde.
+`null=True` concerne la valeur en base, tandis que `blank=True` concerne la
+validation des formulaires. Cette différence est importante : `blank=True`
+ne rend pas automatiquement une colonne SQL nullable.
+
+## Choisir `on_delete`
+
+La relation vers `Matiere` utilise `PROTECT`. Supprimer une matière qui possède
+encore des cours serait probablement une erreur métier ; Django lève donc une
+exception plutôt que d'effacer silencieusement le catalogue.
+
+Les comportements courants sont :
+
+- `CASCADE` : supprimer les objets liés ;
+- `PROTECT` : refuser la suppression ;
+- `SET_NULL` : mettre la relation à `NULL` si `null=True` ;
+- `SET_DEFAULT` : utiliser la valeur par défaut ;
+- `DO_NOTHING` : ne rien orchestrer, choix réservé aux cas maîtrisés.
+
+Il n'existe pas de choix universel. Pour une photo liée à un profil, `CASCADE`
+peut être logique. Pour une facture liée à un client, `PROTECT` est souvent
+plus sûr.
+
+## Les migrations : l'historique du schéma
+
+Un modèle Python et une table SQL ne sont pas la même chose. La migration est
+le fichier qui décrit une transformation du schéma. Après la modification des
+modèles :
+
+```bash
+uv run python manage.py makemigrations cours
+uv run python manage.py migrate
+```
+
+`makemigrations` compare l'état actuel des modèles avec l'historique des
+migrations et génère un fichier Python. `migrate` exécute les migrations non
+appliquées dans la base.
+
+Inspectez ce que Django prévoit :
+
+```bash
+uv run python manage.py showmigrations
+uv run python manage.py sqlmigrate cours 0001
+```
+
+`sqlmigrate` montre le SQL généré sans l'exécuter. C'est un excellent outil
+pour relier le code Python à la réalité de la base.
+
+::: {.callout-warning}
+## Ne modifiez pas une migration déjà partagée
+
+Une migration appliquée fait partie de l'histoire du schéma. En équipe, créez
+une nouvelle migration plutôt que de réécrire une ancienne. Modifier une
+migration déjà exécutée peut créer des divergences entre les bases des
+collaborateurs et la base de production.
+:::
+
+Les fichiers de migration doivent être versionnés. La base SQLite locale ne
+l'est généralement pas, mais les instructions permettant de la recréer le
+sont.
+
+## Créer et lire des objets dans le shell
+
+```bash
+uv run python manage.py shell
+```
+
+```python
+from cours.models import Cours, Matiere
+
+informatique = Matiere.objects.create(
+    nom="Informatique",
+    slug="informatique",
+    description="Comprendre les outils numériques.",
+)
+
+python_cours = Cours.objects.create(
+    titre="Python pour débutants",
+    slug="python-pour-debutants",
+    resume="Les bases du langage Python.",
+    contenu="Variables, fonctions et modules.",
+    matiere=informatique,
+    statut=Cours.Statut.PUBLIE,
+)
+
+python_cours.matiere
+informatique.cours.all()
+Cours.objects.filter(statut=Cours.Statut.PUBLIE)
+```
+
+Chaque accès à `.objects` construit ou exécute un `QuerySet`. Un QuerySet est
+évaluable de manière différée : écrire `cours = Cours.objects.filter(...)` ne
+signifie pas nécessairement qu'une requête SQL est déjà partie. L'évaluation
+arrive lors d'une itération, d'une conversion en liste, d'un `len`, ou de
+l'accès à certains résultats.
+
+### Filtrer, trier et limiter
+
+```python
+Cours.objects.filter(titre__icontains="python")
+Cours.objects.filter(matiere__slug="informatique")
+Cours.objects.filter(
+    statut=Cours.Statut.PUBLIE,
+    matiere__nom__iexact="informatique",
+)
+Cours.objects.exclude(statut=Cours.Statut.BROUILLON)
+Cours.objects.order_by("-date_publication")[:10]
+```
+
+Les doubles underscores traversent des relations et expriment des recherches.
+`filter` renvoie un QuerySet, `get` attend exactement un résultat et lève une
+exception si aucun ou plusieurs objets sont trouvés :
+
+```python
+cours = Cours.objects.get(slug="python-pour-debutants")
+```
+
+Pour une vue, `get_object_or_404` transforme l'absence en réponse HTTP 404,
+plutôt que de laisser remonter une exception non gérée.
+
+### `select_related` et `prefetch_related`
+
+Afficher une liste de cours et le nom de leur matière peut provoquer une
+requête par cours si l'on ne prépare pas la relation. C'est le problème
+classique du N+1 :
+
+```python
+cours = Cours.objects.select_related("matiere").filter(
+    statut=Cours.Statut.PUBLIE,
+)
+```
+
+`select_related` utilise une jointure SQL pour les relations à valeur unique
+comme `ForeignKey`. Pour une relation inverse ou plusieurs-à-plusieurs,
+utilisez `prefetch_related` :
+
+```python
+matieres = Matiere.objects.prefetch_related("cours").all()
+```
+
+Il ne faut pas ajouter ces méthodes mécaniquement. Mesurez les requêtes et
+choisissez l'outil adapté à la relation et à l'écran.
+
+## Modifier les données avec prudence
+
+Ces deux formes ne sont pas équivalentes :
+
+```python
+cours = Cours.objects.get(pk=1)
+cours.titre = "Nouveau titre"
+cours.save(update_fields=["titre", "date_modification"])
+```
+
+et :
+
+```python
+Cours.objects.filter(pk=1).update(titre="Nouveau titre")
+```
+
+`save` passe par le cycle de sauvegarde de l'instance. `update` exécute une
+mise à jour SQL directe et ne déclenche pas les méthodes `save` personnalisées.
+Pour une opération en masse, `update` est efficace, mais il faut connaître ses
+conséquences.
+
+Pour une opération composée de plusieurs écritures, utilisez une transaction :
+
+```python
+from django.db import transaction
+
+
+@transaction.atomic
+def publier(cours):
+    cours.statut = Cours.Statut.PUBLIE
+    cours.save(update_fields=["statut", "date_modification"])
+```
+
+Si une exception survient dans le bloc atomique, Django annule les opérations
+de la transaction. La transaction protège la cohérence des données ; elle ne
+remplace pas la validation métier.
+
+## Concevoir avant de migrer
+
+Ajoutez les champs uniquement lorsqu'ils correspondent à un besoin. Un champ
+`description` et un champ `contenu` ne sont pas interchangeables si leurs
+contraintes et leurs usages diffèrent. À l'inverse, ne créez pas un champ
+`est_publie` en plus de `statut` : deux sources de vérité peuvent diverger.
+
+Le bon flux est :
+
+1. décrire la règle métier ;
+2. choisir le type et les contraintes ;
+3. modifier le modèle ;
+4. lire la migration générée ;
+5. appliquer et tester la migration ;
+6. essayer les cas normaux et les cas limites.
+
+## Exercices
+
+1. Ajoutez un champ `niveau` avec trois choix : débutant, intermédiaire,
+   avancé.
+2. Empêchez la création d'un cours publié sans date de publication en ajoutant
+   une validation de modèle adaptée.
+3. Écrivez une requête qui retourne les cinq cours publiés les plus récents
+   d'une matière donnée.
+4. Activez les logs SQL en développement et comparez une liste avec et sans
+   `select_related("matiere")`.
