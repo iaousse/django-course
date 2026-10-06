@@ -86,6 +86,7 @@ format:
     smooth-scroll: true         # Défilement fluide
     
   pdf:
+    linkcolor: blue
     documentclass: scrbook
     pdf-engine: xelatex   # Ou pdflatex
     fontsize: 11pt
