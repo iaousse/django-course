@@ -74,7 +74,3 @@ body:has(.django-cover) #title-block-header {
 .django-cover-qr-page p {
   margin-top: 0.75rem;
 }
-
-.django-cover-qr-page-html {
-  display: none !important;
-}
