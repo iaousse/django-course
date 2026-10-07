@@ -1,6 +1,7 @@
 # Python-generated files
 __pycache__/
 *.py[oc]
+.DS_Store
 build/
 dist/
 wheels/
@@ -11,3 +12,4 @@ wheels/
 
 /.quarto/
 **/*.quarto_ipynb
+chapitre_copy/

@@ -1,10 +1,33 @@
 # Comprendre l'architecture Django et le routage {#sec-architecture}
 
+::: {.callout-note}
+## Objectifs d'apprentissage
+
+À la fin de ce chapitre, vous saurez :
+
+- décrire le chemin complet d'une requête dans Django et le rôle du modèle, de la vue et du template (MVT) ;
+- lire un fichier `settings.py` et expliquer ses sections principales ;
+- déclarer des routes avec `path`, `include`, `app_name` et `name` ;
+- capturer des paramètres dans une URL grâce aux convertisseurs ;
+- expliquer pourquoi l'ordre des routes compte et le démontrer ;
+- générer une URL avec `reverse` plutôt que de l'écrire en dur ;
+- manipuler `HttpRequest` et `HttpResponse` et diagnostiquer une page qui ne fonctionne pas.
+:::
+
+## Où en sommes-nous ?
+
+Au chapitre précédent, nous avons obtenu un projet qui démarre, une app `cours`
+déclarée dans `INSTALLED_APPS` et un dépôt Git propre. L'app est encore vide :
+aucune page n'existe en dehors de la fusée de Django. Ce chapitre construit les
+**routes** (qui répondent à « quelle URL mène à quel code ? ») et les premières
+**vues**, sans base de données ni HTML : nous voulons comprendre le mécanisme
+avant d'ajouter des couches.
+
 ## Le chemin complet d'une requête
 
 Une bonne application Django n'est pas une collection de fichiers que l'on
 modifie au hasard. Elle est une chaîne de responsabilités. Pour une requête
-vers `/cours/12/`, le parcours conceptuel est :
+vers `/cours/python-pour-debutants/`, le parcours conceptuel est :
 
 ```text
 navigateur
@@ -25,7 +48,7 @@ template ─── contexte Python
 navigateur
 ```
 
-Django appelle souvent cette organisation **MVT** :
+Django appelle souvent cette organisation **MVT** (Modèle–Vue–Template) :
 
 | Élément Django | Responsabilité | Analogie MVC |
 |---|---|---|
@@ -33,13 +56,49 @@ Django appelle souvent cette organisation **MVT** :
 | View | traitement de la requête et choix de la réponse | Controller |
 | Template | représentation HTML | View |
 
-La comparaison avec MVC est utile mais imparfaite. Le nom importe moins que la
-règle : une vue ne devrait pas contenir tout le HTML, un template ne devrait
-pas interroger directement la base, et un modèle ne devrait pas connaître la
-mise en page. Le découpage rend chaque partie remplaçable et testable
-[@django-design]. Les bonnes pratiques de conception Django insistent aussi
-sur la lisibilité, la simplicité et le respect des conventions du framework
-[@two-scoops-django].
+La comparaison avec MVC est utile mais imparfaite : le mot « vue » désigne dans
+Django ce que d'autres frameworks appellent un contrôleur. Le nom importe moins
+que la règle : une vue ne devrait pas contenir tout le HTML, un template ne
+devrait pas interroger directement la base, et un modèle ne devrait pas
+connaître la mise en page. Le découpage rend chaque partie remplaçable et
+testable [@django-design]. Les bonnes pratiques de conception Django insistent
+aussi sur la lisibilité, la simplicité et le respect des conventions du
+framework [@two-scoops-django].
+
+### À quelle couche appartient ce code ?
+
+Face à une règle ou à un morceau de code, demandez-vous où le ranger :
+
+| Si cela concerne… | Cela va dans… | Exemple dans BiblioCours |
+|---|---|---|
+| la forme des données et leurs contraintes | le **modèle** | un slug est unique |
+| la décision à prendre pour une requête | la **vue** | n'afficher que les cours publiés |
+| la mise en page HTML | le **template** | la carte d'un cours |
+| quelle URL mène où | le **routeur** (`urls.py`) | `/cours/<slug>/` |
+| la validation d'une saisie | le **formulaire** (chapitre 5) | titre de 5 caractères minimum |
+
+## Quelques notions HTTP indispensables
+
+Deux informations accompagnent chaque échange : la **méthode** de la requête et
+le **code de statut** de la réponse.
+
+| Méthode | Usage habituel | Modifie des données ? |
+|---|---|---|
+| `GET` | lire une page | non |
+| `POST` | envoyer un formulaire, déclencher une action | oui |
+
+| Statut | Signification | Exemple |
+|---|---|---|
+| `200 OK` | succès | la page s'affiche |
+| `301` / `302` | redirection permanente / temporaire | après un formulaire valide |
+| `403 Forbidden` | identifié (ou non) mais interdit | permission manquante |
+| `404 Not Found` | ressource inconnue | slug qui n'existe pas |
+| `405 Method Not Allowed` | méthode non acceptée | `GET` sur une vue réservée à `POST` |
+| `500 Internal Server Error` | erreur dans le code serveur | exception non gérée |
+
+Retenez la famille du premier chiffre : **2xx** succès, **3xx** redirection,
+**4xx** erreur du client (la requête est incorrecte), **5xx** erreur du serveur
+(le code est en cause). Cette lecture vous aidera à savoir où chercher.
 
 ## Les apps : découper par responsabilité
 
@@ -55,12 +114,14 @@ notifications/  courriels et alertes
 
 Une app bien découpée peut être déplacée dans un autre projet avec peu de
 modifications. Il ne faut pas créer une app pour chaque modèle : on crée une
-app pour un domaine fonctionnel cohérent.
+app pour un domaine fonctionnel cohérent. Ici, `Matiere` et `Cours` forment
+ensemble un seul domaine, le catalogue : une seule app suffit.
 
 ## Lire `settings.py` plutôt que le copier
 
-Le fichier `config/settings.py` configure le comportement du projet. Les
-sections importantes sont :
+Le fichier `config/settings.py` configure le comportement du projet. Ce n'est
+pas un fichier à mémoriser, mais à savoir **lire**. Voici ses sections
+importantes, dans l'ordre :
 
 ```python
 from pathlib import Path
@@ -113,16 +174,84 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ```
 
-`INSTALLED_APPS` active les composants. `MIDDLEWARE` forme une pile traversée
-par les requêtes et réponses. `TEMPLATES` indique comment trouver et rendre
-les templates. `ROOT_URLCONF` indique quel routeur commencer à lire.
+Passons-les en revue :
+
+- `BASE_DIR` est le dossier racine du projet. On construit les autres chemins à
+  partir de lui, pour que le projet fonctionne quel que soit son emplacement ;
+- `INSTALLED_APPS` active les composants ;
+- `MIDDLEWARE` forme une pile traversée par les requêtes et les réponses (voir
+  l'encadré ci-dessous) ;
+- `ROOT_URLCONF` indique quel routeur commencer à lire ;
+- `TEMPLATES` indique comment trouver et rendre les templates ;
+- `WSGI_APPLICATION` désigne le point d'entrée pour les serveurs de production.
+
+::: {.callout-tip}
+## Les middlewares : une pelure d'oignon
+
+Chaque middleware est une couche qui enveloppe la vue. La requête traverse les
+couches **de haut en bas** de la liste avant d'atteindre la vue ; la réponse
+les retraverse **de bas en haut**.
+
+```text
+requête  →  Security → Session → Common → Csrf → Auth → … → VUE
+réponse  ←  Security ← Session ← Common ← Csrf ← Auth ← … ← VUE
+```
+
+C'est ainsi que `request.user` existe dans toutes les vues (grâce à
+`SessionMiddleware` et `AuthenticationMiddleware`) et que les formulaires sont
+protégés contre le CSRF (grâce à `CsrfViewMiddleware`). L'ordre compte : un
+middleware peut dépendre de ce qu'un autre a préparé avant lui.
+:::
+
+### Ce qui se trouve plus bas dans le fichier
+
+Trois autres réglages produits par `startproject` méritent un regard :
+
+```python
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
+USE_TZ = True
+
+STATIC_URL = "static/"
+```
+
+- `DATABASES` indique **quelle base** utiliser. Par défaut, SQLite, un simple
+  fichier `db.sqlite3` : idéal pour apprendre, car il n'y a rien à installer ;
+- `LANGUAGE_CODE` détermine la langue des messages de Django (erreurs de
+  formulaire, administration) ;
+- `TIME_ZONE` et `USE_TZ` gèrent les dates. Avec `USE_TZ = True`, Django stocke
+  les dates en UTC dans la base et les convertit dans le fuseau configuré à
+  l'affichage ;
+- `STATIC_URL` est le préfixe des fichiers CSS et JavaScript (voir
+  @sec-securite).
+
+Pour que BiblioCours parle français, modifiez :
+
+```python
+LANGUAGE_CODE = "fr"
+TIME_ZONE = "Europe/Paris"  # remplacez par votre fuseau horaire
+```
+
+Redémarrez le serveur et ouvrez `/admin/` : la page de connexion est désormais
+en français.
 
 ### Le secret et le mode debug
 
-`SECRET_KEY` est utilisé par plusieurs mécanismes cryptographiques de Django.
-Il ne doit pas être publié. `DEBUG = True` affiche des informations très
-détaillées en cas d'erreur ; c'est utile localement et dangereux sur Internet.
-Les réglages de production seront traités au @sec-production.
+`SECRET_KEY` est utilisé par plusieurs mécanismes cryptographiques de Django
+(signature des sessions, des jetons CSRF…). Il ne doit pas être publié.
+`DEBUG = True` affiche des informations très détaillées en cas d'erreur ; c'est
+utile localement et dangereux sur Internet. `ALLOWED_HOSTS` liste les noms de
+domaine que Django accepte de servir ; vide, il n'accepte que `localhost` et
+`127.0.0.1` tant que `DEBUG` est actif. Nous apprendrons à protéger ces trois
+réglages au @sec-securite, et à les configurer pour la production au
+@sec-production.
 
 ## Déclarer les premières routes
 
@@ -149,19 +278,33 @@ from . import views
 app_name = "cours"
 
 urlpatterns = [
-    path("", views.liste_cours, name="liste"),
+    path("", views.accueil, name="accueil"),
 ]
 ```
 
-Trois détails sont essentiels :
+La fonction `path(route, vue, name=...)` associe un motif à une vue. Trois
+détails sont essentiels :
 
-1. `include` délègue un préfixe à l'app ;
-2. `app_name` crée un espace de noms ;
+1. `include` délègue un préfixe à l'app : toute URL commençant par `cours/`
+   est confiée à `cours/urls.py`, qui ne voit alors que **la suite** du
+   chemin ;
+2. `app_name` crée un **espace de noms** : la route s'appellera
+   `cours:accueil`, pas simplement `accueil` ;
 3. `name` donne un identifiant stable à la route.
 
 Un template doit utiliser le nom de la route, pas recopier son URL. Ainsi, si
 `cours/` devient `catalogue/`, les liens générés par `{% url %}` restent
 cohérents après la modification du routeur.
+
+::: {.callout-note}
+## Pourquoi tous ces `/` finaux ?
+
+Django a l'habitude de terminer les URLs par `/`. Si vous demandez `/cours`
+(sans le `/` final), `CommonMiddleware` répond par une redirection vers
+`/cours/`. Cela évite que deux adresses différentes présentent la même page,
+ce que les moteurs de recherche n'apprécient pas. Écrivez donc toujours vos
+routes avec un `/` final.
+:::
 
 ## Écrire une vue minimale
 
@@ -175,67 +318,179 @@ def accueil(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Bienvenue dans BiblioCours")
 ```
 
-Ajoutez temporairement la route :
+Démarrez le serveur et ouvrez `http://127.0.0.1:8000/cours/`. Vous devriez voir
+le message. Une vue est une simple fonction qui reçoit au minimum un objet
+`HttpRequest` et renvoie un objet de réponse. `HttpResponse` est idéal pour
+comprendre le mécanisme, mais une application HTML utilisera plutôt `render`,
+présenté au @sec-vues-templates.
+
+Observez le journal du terminal : une ligne `"GET /cours/ HTTP/1.1" 200 …`
+confirme que la requête est arrivée, a été routée et a produit un `200`.
+
+### Paramètres capturés dans l'URL
+
+Django sait convertir une partie de l'URL avant d'appeler la vue. Ajoutez une
+route de détail à `cours/urls.py` :
 
 ```python
 urlpatterns = [
     path("", views.accueil, name="accueil"),
+    path("<slug:slug>/", views.detail_cours, name="detail"),
 ]
 ```
 
-Ouvrez `/cours/`. Une vue reçoit au minimum un objet `HttpRequest` et renvoie
-un objet de réponse. `HttpResponse` est idéal pour comprendre le mécanisme,
-mais une application HTML utilisera plutôt `render`, présenté au chapitre
-@sec-vues-templates.
-
-### Paramètres capturés dans l'URL
-
-Django sait convertir une partie de l'URL avant d'appeler la vue :
+La syntaxe `<convertisseur:nom>` capture un segment de l'URL et le transmet à la
+vue comme argument nommé. Pour `/cours/python-pour-debutants/`, Django appelle
+`detail_cours(request, slug="python-pour-debutants")`. Ajoutez la vue :
 
 ```python
-urlpatterns = [
-    path("<int:pk>/", views.detail_cours, name="detail"),
-]
+def detail_cours(request: HttpRequest, slug: str) -> HttpResponse:
+    return HttpResponse(f"Le cours demandé est : {slug}")
 ```
 
-Pour `/cours/12/`, Django appelle :
+Le nom entre chevrons doit correspondre exactement au nom du paramètre de la
+vue. Les convertisseurs disponibles sont :
 
-```python
-def detail_cours(request: HttpRequest, pk: int) -> HttpResponse:
-    return HttpResponse(f"Le cours demandé est {pk}")
-```
+| Convertisseur | Accepte | Exemple de segment valide | Valeur Python |
+|---|---|---|---|
+| `str` | tout texte sans `/` (défaut) | `bonjour` | `str` |
+| `int` | entiers positifs ou nuls | `12` | `int` |
+| `slug` | lettres, chiffres, `-` et `_` | `python-pour-debutants` | `str` |
+| `uuid` | un UUID formaté | `075194d3-6885-417e-a8a8-6c931e272f00` | `UUID` |
+| `path` | texte **avec** des `/` | `docs/guide/intro` | `str` |
 
-Le convertisseur `int` refuse les valeurs qui ne sont pas des entiers. D'autres
-convertisseurs courants sont `str`, `slug`, `uuid` et `path`. Une URL porte
-donc une information structurée, et non une chaîne que la vue doit parser
-elle-même.
+Un segment qui ne correspond pas au convertisseur n'est pas une erreur de la
+vue : la route ne correspond simplement pas, et Django essaie la suivante, puis
+renvoie une 404 s'il n'en reste aucune. Une URL porte donc une information
+structurée, et non une chaîne que la vue doit parser elle-même.
+
+::: {.callout-tip}
+## Question de conception
+
+Le projet utilisera un `slug` (`/cours/python-pour-debutants/`) plutôt qu'un
+identifiant entier (`/cours/12/`). L'URL est plus lisible, plus parlante pour
+un moteur de recherche et ne révèle pas le nombre de cours. L'identifiant
+entier, lui, est plus compact et immuable. Le choix de l'URL est à la fois une
+décision technique, une décision d'ergonomie et une décision de référencement.
+:::
 
 ## Comprendre la résolution des URLs
 
-Django parcourt `urlpatterns` de haut en bas et s'arrête au premier motif
-correspondant. L'ordre compte :
+Django parcourt `urlpatterns` de haut en bas et s'arrête au **premier** motif
+correspondant. L'ordre compte. Ajoutons une page statique « À propos » :
 
 ```python
 urlpatterns = [
-    path("nouveau/", views.nouveau_cours, name="nouveau"),
-    path("<int:pk>/", views.detail_cours, name="detail"),
+    path("", views.accueil, name="accueil"),
+    path("a-propos/", views.a_propos, name="a_propos"),
+    path("<slug:slug>/", views.detail_cours, name="detail"),
 ]
 ```
 
-La route statique doit précéder la route dynamique. Sinon, selon les motifs,
-un chemin prévu pour `nouveau/` peut être interprété comme un identifiant.
+et sa vue :
 
-Pour fabriquer une URL dans Python :
+```python
+def a_propos(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("BiblioCours est un projet d'apprentissage de Django.")
+```
+
+La route statique `a-propos/` précède la route dynamique `<slug:slug>/`. Si
+vous inversiez l'ordre, le mot `a-propos` serait un slug valide : la route
+dynamique le capturerait et la page « À propos » deviendrait inaccessible.
+
+::: {.callout-warning}
+## Expérience à faire
+
+Échangez temporairement l'ordre de `a-propos/` et de `<slug:slug>/` dans
+`cours/urls.py`, puis ouvrez `/cours/a-propos/`. Que voyez-vous ? Remettez
+ensuite l'ordre correct. Retenez la règle : **les routes les plus
+spécifiques d'abord, les routes génériques ensuite.**
+:::
+
+Corollaire : un cours dont le slug vaudrait `a-propos` serait inaccessible. Nous
+reviendrons sur ce piège quand nous validerons les slugs (@sec-formulaires-admin).
+
+## Fabriquer une URL : `reverse` et les noms de routes
+
+Pour obtenir une URL depuis son nom, ouvrez le shell Django :
+
+```bash
+uv run python manage.py shell
+```
 
 ```python
 from django.urls import reverse
 
-url = reverse("cours:detail", kwargs={"pk": 12})
-# "/cours/12/"
+reverse("cours:a_propos")
+# "/cours/a-propos/"
+
+reverse("cours:detail", kwargs={"slug": "python-pour-debutants"})
+# "/cours/python-pour-debutants/"
 ```
 
-Cette technique est préférable à `"/cours/12/"` en dur. Elle sert notamment
-dans les redirections et les tests.
+Cette technique est préférable à `"/cours/a-propos/"` écrit en dur : si le
+préfixe `cours/` change dans `config/urls.py`, tous les liens suivent
+automatiquement. Elle sert notamment dans les redirections, les modèles
+(`get_absolute_url`) et les tests. Dans un template, l'équivalent est la balise
+`{% url 'cours:a_propos' %}`.
+
+Le préfixe `cours:` (l'espace de noms défini par `app_name`) évite les
+collisions : si une autre app définissait aussi une route `accueil`, on
+distinguerait `cours:accueil` et `autre:accueil`.
+
+Si vous donnez de mauvais arguments, Django lève `NoReverseMatch`. Essayez
+`reverse("cours:detail", kwargs={"pk": 1})` : le message d'erreur indique le
+nom des paramètres attendus. Apprenez à lire ces messages, ils sont précis.
+
+## Un premier test automatique
+
+Nous allons vérifier nos routes par un test. `startapp` a créé un fichier
+`cours/tests.py`. Comme nous aurons plusieurs fichiers de tests, remplacez-le
+par un **paquet** :
+
+```bash
+rm cours/tests.py
+mkdir cours/tests
+touch cours/tests/__init__.py
+```
+
+(Un fichier `tests.py` et un dossier `tests/` ne peuvent pas coexister : Python
+ne saurait pas lequel importer.) Créez `cours/tests/test_urls.py` :
+
+```python
+from django.test import SimpleTestCase
+from django.urls import resolve, reverse
+
+from cours import views
+
+
+class RoutesTests(SimpleTestCase):
+    def test_reverse_a_propos(self):
+        self.assertEqual(reverse("cours:a_propos"), "/cours/a-propos/")
+
+    def test_a_propos_repond_200(self):
+        response = self.client.get(reverse("cours:a_propos"))
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_a_propos_n_est_pas_capturee_par_le_detail(self):
+        correspondance = resolve("/cours/a-propos/")
+
+        self.assertEqual(correspondance.func, views.a_propos)
+```
+
+Lancez-les :
+
+```bash
+uv run python manage.py test
+```
+
+Trois éléments sont nouveaux : `self.client` simule un navigateur sans lancer de
+serveur ; `resolve` fait l'opération inverse de `reverse` (de l'URL vers la
+vue) ; `SimpleTestCase` est la classe de test la plus légère, qui **interdit**
+tout accès à la base de données. Le @sec-tests détaillera les autres classes de
+test. Le troisième test est précieux : il échouerait si quelqu'un inversait
+l'ordre des routes.
 
 ## Requêtes et réponses : les distinctions importantes
 
@@ -246,19 +501,36 @@ def rechercher(request):
     terme = request.GET.get("q", "")
     langue = request.headers.get("Accept-Language")
     utilisateur = request.user
-    return HttpResponse(f"Recherche: {terme}")
+    return HttpResponse(
+        f"Recherche : {terme}",
+        content_type="text/plain; charset=utf-8",
+    )
 ```
 
-- `request.GET` contient les paramètres de l'URL, donc des données de lecture ;
-- `request.POST` contient les données envoyées dans un formulaire ;
-- `request.user` représente l'utilisateur courant, éventuellement anonyme ;
-- les en-têtes décrivent le contexte HTTP, mais ne doivent pas être traités
-  comme des données fiables ;
-- `request.method` indique `GET`, `POST`, etc.
+| Attribut | Contenu | Remarque |
+|---|---|---|
+| `request.method` | `"GET"`, `"POST"`… | décide de l'action à mener |
+| `request.GET` | paramètres de l'URL (`?q=django`) | données de lecture, saisies par l'utilisateur |
+| `request.POST` | données d'un formulaire envoyé | saisies par l'utilisateur |
+| `request.user` | utilisateur courant, éventuellement anonyme | fourni par un middleware |
+| `request.headers` | en-têtes HTTP | décrivent le contexte, **non fiables** |
+| `request.path` | chemin demandé | |
 
 Une vue ne doit pas faire confiance aux données reçues. Même un champ qui
 semble numérique ou une valeur provenant d'un navigateur doit être validé côté
 serveur. Les formulaires Django aideront à centraliser cette validation.
+
+Remarquez le `content_type="text/plain"` dans l'exemple ci-dessus. Par défaut,
+une `HttpResponse` est du HTML : si l'on y recopiait `terme` tel quel et que
+l'utilisateur tapait `<script>…</script>`, le navigateur l'exécuterait (c'est
+une faille XSS, étudiée au @sec-securite). En déclarant la réponse comme du
+texte brut, le navigateur n'interprète rien. Les templates, eux, échappent
+automatiquement les variables.
+
+Pour construire une réponse, `HttpResponse(contenu, status=200, content_type=...)`
+accepte aussi un statut explicite. Pour signaler une page inexistante, on
+lèvera plutôt `Http404` (`from django.http import Http404`), que Django
+transforme en réponse 404.
 
 ## Premier modèle mental à retenir
 
@@ -272,23 +544,86 @@ Quand une page ne fonctionne pas, diagnostiquez dans cet ordre :
 6. le navigateur reçoit-il le HTML attendu ?
 
 Cette méthode est plus rapide que de modifier simultanément le modèle, la vue,
-le template et le CSS.
+le template et le CSS. Deux outils aident déjà aux étapes 1 et 2 : le **journal
+du terminal** (la requête est-elle arrivée ? quel statut ?) et la **page 404 de
+débogage** de Django, qui, en mode `DEBUG`, liste toutes les routes qu'elle a
+essayées dans l'ordre.
 
-## Exercice guidé
+## Checkpoint
 
-Ajoutez une page `/cours/a-propos/` :
+À ce stade, `cours/urls.py` contient trois routes et `cours/views.py` trois
+vues. Vérifiez :
 
-1. écrivez une vue qui renvoie une `HttpResponse` ;
-2. donnez-lui le nom `a_propos` ;
-3. appelez-la depuis `cours/urls.py` ;
-4. générez son adresse avec `reverse` dans le shell Django ;
-5. ajoutez un test qui vérifie que la réponse a le statut HTTP `200`.
+- [ ] `/cours/` affiche « Bienvenue dans BiblioCours » ;
+- [ ] `/cours/a-propos/` affiche la page « À propos » ;
+- [ ] `/cours/python-pour-debutants/` affiche « Le cours demandé est : python-pour-debutants » ;
+- [ ] `uv run python manage.py test` rapporte 3 tests réussis ;
+- [ ] `uv run python manage.py check` ne signale aucun problème ;
+- [ ] vous avez fait un commit (`feat: premières routes et vues`).
 
-::: {.callout-tip}
-## Question de conception
+## Erreurs fréquentes
 
-La route `/cours/12/` utilise un entier parce que la vue cherche un objet par
-clé primaire. Si l'URL devait être lisible, `/cours/python-pour-debutants/`
-pourrait utiliser un `slug`. Le choix de l'URL est à la fois une décision
-technique, une décision d'ergonomie et une décision de référencement.
-:::
+| Symptôme | Cause probable | Remède |
+|---|---|---|
+| 404 sur `/cours/` | `include("cours.urls")` absent ou faute dans le préfixe | relire `config/urls.py` |
+| `ModuleNotFoundError: cours.urls` | fichier `cours/urls.py` non créé | le créer |
+| `NoReverseMatch` | nom de route, espace de noms ou argument incorrect | lire le message : il liste ce qui est attendu |
+| `/cours/a-propos/` affiche « Le cours demandé est… » | route dynamique placée avant la route statique | inverser l'ordre |
+| `TypeError: … got an unexpected keyword argument` | nom du convertisseur différent du paramètre de la vue | aligner les deux noms |
+| `Ran 0 tests` | `__init__.py` manquant ou fichier ne commençant pas par `test` | vérifier le paquet `cours/tests/` |
+
+## À retenir
+
+- Le chemin est : navigateur → routeur → vue → (modèle) → template → navigateur.
+- Le routeur lit les motifs **dans l'ordre** et s'arrête au premier qui
+  correspond : le spécifique avant le générique.
+- `include` délègue, `app_name` isole, `name` identifie.
+- On fabrique les URLs avec `reverse` (Python) ou `{% url %}` (template), jamais
+  à la main.
+- Les données d'une requête (`GET`, `POST`, en-têtes) viennent de l'extérieur :
+  on les valide toujours.
+- Un code de statut en `4xx` oriente vers le client, en `5xx` vers le serveur.
+
+## Exercices
+
+1. Décrivez, dans l'ordre, tous les éléments traversés par la requête
+   `GET /cours/python-pour-debutants/` dans BiblioCours, depuis le navigateur
+   jusqu'à la réponse.
+2. Pour chacun des éléments suivants, dites s'il relève du modèle, de la vue,
+   du template ou du routeur : (a) l'en-tête HTML de la page ; (b) « un cours
+   brouillon est invisible au public » ; (c) « `/cours/matiere/<slug>/` » ;
+   (d) le format de date affiché.
+3. Donnez deux scénarios concrets où écrire `"/cours/12/"` en dur dans un
+   template causerait des problèmes.
+4. Avec les routes dans l'ordre `["<slug:slug>/", "a-propos/"]`, que renvoie
+   `/cours/a-propos/` ? Justifiez, puis vérifiez expérimentalement.
+5. Parmi `12/`, `-3/`, `abc/`, `012/`, lesquels correspondent au motif
+   `<int:pk>/` ? Faites d'abord une prédiction, puis vérifiez-la après
+   l'exercice 6, en appelant `resolve("/cours/exemple/12/")` (et les autres
+   valeurs) dans le shell.
+
+6. Ajoutez temporairement la route `exemple/<int:numero>/` qui renvoie le
+   double de `numero`. Que se passe-t-il pour `/cours/exemple/abc/` ? Pourquoi
+   la vue n'est-elle jamais appelée ? Supprimez ensuite la route.
+7. Ajoutez la route `recherche/` (avant la route dynamique) et la vue
+   `rechercher` de ce chapitre. Testez `/cours/recherche/?q=django` puis
+   `/cours/recherche/` sans paramètre. Quel est le comportement dans le second
+   cas, et pourquoi ?
+8. Dans le shell, provoquez volontairement un `NoReverseMatch` avec
+   `reverse("cours:detail", kwargs={"pk": 1})`. Lisez le message et corrigez
+   l'appel.
+9. Écrivez un test qui vérifie que `reverse("cours:detail", kwargs={"slug":
+   "python"})` vaut `/cours/python/` et que `resolve("/cours/python/")`
+   transmet bien `slug="python"` (indice : consultez l'attribut `kwargs` de la
+   correspondance).
+10. Avec `DEBUG = True`, ouvrez `/cours/a/b/c/` et lisez la page 404 de
+    débogage. Quelles routes ont été essayées, et dans quel ordre ?
+
+11. Créez une seconde app temporaire `demo` avec une route nommée `accueil`,
+    incluse sous `demo/`. Vérifiez que `reverse("cours:accueil")` et
+    `reverse("demo:accueil")` donnent des URLs différentes. Que se
+    passerait-il sans espace de noms ? Supprimez ensuite l'app (ne la
+    commitez pas).
+12. Rédigez un tableau de toutes les routes de BiblioCours à ce stade (URL,
+    nom, vue, méthode attendue). Gardez-le à jour au fil des chapitres : c'est
+    une documentation précieuse.

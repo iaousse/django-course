@@ -18,7 +18,7 @@
 }
 
 .django-cover-qr-page-html {
-  display: flex !important;
+  display: none !important;
 }
 
 .django-cover-qr-page img {

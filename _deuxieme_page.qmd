@@ -11,7 +11,7 @@
 ::: {layout="[12,-1,40]" layout-valign="center"}
 ![](images/CC/by.png)   
 
-\justifying\small Sauf indications contraires, le contenu de ce manuel électronique est disponible 
+\justifying\small Sauf indications contraires, le contenu de cet ouvrage électronique est disponible 
 en vertu des termes de la [Licence Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/deed.fr).
 :::
 
@@ -28,6 +28,6 @@ en vertu des termes de la [Licence Creative Commons Attribution 4.0 Internationa
 \filbreak
 
 © M'barek IAOUSSE (2026)\
-Pour citer ce manuel : M'barek IAOUSSE. (2026).
-**Développement web avec Django**. École Supérieure de Technologie de Casablanca.
+Pour citer cet ouvrage : M'barek IAOUSSE. (2026).
+**Développement web avec Django, Conception et développement d'applications web**. École Supérieure de Technologie de Casablanca.
 Sous licence CC BY 4.0.

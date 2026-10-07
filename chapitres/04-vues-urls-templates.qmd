@@ -1,5 +1,26 @@
 # Construire les pages : vues, URLs et templates {#sec-vues-templates}
 
+::: {.callout-note}
+## Objectifs d'apprentissage
+
+À la fin de ce chapitre, vous saurez :
+
+- écrire des vues de liste et de détail qui interrogent la base ;
+- lire et écrire du code dans le langage de templates de Django (variables, balises, filtres) ;
+- organiser des templates avec un squelette parent, des enfants et des fragments réutilisables ;
+- paginer une liste et ajouter une recherche par paramètre GET ;
+- expliquer l'échappement automatique et pourquoi éviter `|safe` ;
+- diagnostiquer une page vide ou une erreur de template.
+:::
+
+## Où en sommes-nous ?
+
+Nous avons des routes (chapitre 2) et des données (chapitre 3) : 26 cours
+publiés, 1 brouillon et 2 matières. Mais les vues répondent encore par du texte
+brut. Nous allons maintenant remplacer la vue provisoire `accueil` par une vraie
+liste de cours, transformer `detail_cours` en page de détail, et produire du
+HTML avec des templates.
+
 ## De la donnée à une page HTML
 
 Une page dynamique ne devrait pas construire son HTML par concaténation de
@@ -14,15 +35,62 @@ Pour BiblioCours, nous voulons :
 /cours/                    liste des cours publiés
 /cours/<slug>/             détail d'un cours
 /cours/matiere/<slug>/     cours d'une matière
+/cours/a-propos/           page statique (déjà créée)
 ```
 
 Les noms de routes restent stables même si leur forme évolue. C'est pourquoi
 nous avons défini `app_name = "cours"` et des noms explicites
 [@django-templates].
 
+## Le langage de templates en bref
+
+Un template est un fichier HTML enrichi de trois constructions, qui ne
+s'exécutent jamais côté navigateur : Django les évalue **avant** d'envoyer la
+page.
+
+| Syntaxe | Rôle | Exemple |
+|---|---|---|
+| `{{ variable }}` | afficher une valeur | `{{ cours.titre }}` |
+| `{% balise %}` | exécuter une logique | `{% for … %}`, `{% if … %}`, `{% url … %}` |
+| `{{ valeur\|filtre }}` | transformer une valeur à l'affichage | `{{ cours.date_publication\|date:"d/m/Y" }}` |
+| `{# … #}` | commentaire invisible dans le HTML | `{# à revoir #}` |
+
+La notation pointée `cours.matiere.nom` est polyvalente : Django essaie
+successivement une clé de dictionnaire, un attribut, puis un appel de méthode
+sans argument (ce qui explique que `{{ cours.get_absolute_url }}` fonctionne
+sans parenthèses). Les balises les plus utiles de ce chapitre :
+
+| Balise | Usage |
+|---|---|
+| `{% extends "…" %}` | hériter d'un template parent (doit être **la première** balise) |
+| `{% block nom %}…{% endblock %}` | définir ou remplacer une zone |
+| `{% include "…" %}` | insérer un fragment réutilisable |
+| `{% for x in liste %}…{% empty %}…{% endfor %}` | boucler, avec un cas « liste vide » |
+| `{% if %}…{% elif %}…{% else %}…{% endif %}` | condition |
+| `{% url 'app:nom' arg %}` | générer une URL à partir du nom d'une route |
+| `{% load static %}` / `{% static 'chemin' %}` | adresse d'un fichier statique |
+
+Quelques filtres fréquents : `date` (formater une date), `linebreaks`
+(retours à la ligne vers paragraphes), `truncatewords:20` (couper un texte),
+`default:"—"` (valeur de repli), `length` (longueur), `pluralize` (« s » selon
+le nombre).
+
+::: {.callout-warning}
+## Les templates échouent en silence
+
+Une variable inconnue, une faute de frappe dans un nom d'attribut ou une clé
+absente du contexte ne provoquent **pas** d'erreur : Django affiche une chaîne
+vide. C'est pratique pour un site en production, mais piégeux pour apprendre :
+une page « vide » est souvent le signe d'un nom mal orthographié. Nous
+reviendrons sur le diagnostic en fin de chapitre.
+:::
+
 ## Les vues de liste et de détail
 
-Complétez `cours/urls.py` :
+### Les routes
+
+Complétez `cours/urls.py`. La vue provisoire `accueil` disparaît : la liste
+des cours devient la page d'accueil de l'app.
 
 ```python
 from django.urls import path
@@ -32,66 +100,82 @@ from . import views
 app_name = "cours"
 
 urlpatterns = [
-    path("matiere/<slug:slug>/", views.cours_par_matiere, name="par_matiere"),
     path("", views.liste_cours, name="liste"),
+    path("a-propos/", views.a_propos, name="a_propos"),
+    path("matiere/<slug:slug>/", views.cours_par_matiere, name="par_matiere"),
     path("<slug:slug>/", views.detail_cours, name="detail"),
 ]
 ```
 
-L'ordre mérite attention : la route `matiere/<slug:slug>/` doit apparaître
-avant `"<slug:slug>/"`, sinon le mot `matiere` peut être capturé comme le slug
-d'un cours.
+L'ordre mérite attention. La route statique `a-propos/` doit apparaître avant
+`"<slug:slug>/"` : sinon le mot `a-propos` serait capturé comme le slug d'un
+cours (voir @sec-architecture). La route `matiere/<slug:slug>/` compte deux
+segments : le convertisseur `slug` n'acceptant pas de `/`, elle ne peut pas
+entrer en conflit avec `<slug:slug>/`. Nous la plaçons pourtant avant, par
+principe : « le plus spécifique d'abord » est une habitude qui évite les
+surprises quand le routeur grandit.
 
-Dans `cours/views.py` :
+### Les vues
+
+Voici `cours/views.py` complet à ce stade :
 
 ```python
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from .models import Cours, Matiere
 
+COURS_PAR_PAGE = 10
+
+
+def _cours_publies():
+    """QuerySet de base : les cours publiés, avec leur matière préchargée."""
+    return Cours.objects.filter(statut=Cours.Statut.PUBLIE).select_related(
+        "matiere"
+    )
+
+
+def _paginer(request, queryset):
+    """Découpe un QuerySet en pages et renvoie la page demandée."""
+    paginator = Paginator(queryset, COURS_PAR_PAGE)
+    return paginator.get_page(request.GET.get("page"))
+
+
+def a_propos(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("BiblioCours est un projet d'apprentissage de Django.")
+
 
 def liste_cours(request):
     """Affiche les cours publiés, dix par page."""
-    queryset = (
-        Cours.objects
-        .filter(statut=Cours.Statut.PUBLIE)
-        .select_related("matiere")
-    )
-    paginator = Paginator(queryset, 10)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-    return render(
-        request,
-        "cours/liste.html",
-        {"page_obj": page_obj},
-    )
+    page_obj = _paginer(request, _cours_publies())
+    return render(request, "cours/liste.html", {"page_obj": page_obj})
 
 
 def detail_cours(request, slug):
-    cours = get_object_or_404(
-        Cours.objects.select_related("matiere"),
-        slug=slug,
-        statut=Cours.Statut.PUBLIE,
-    )
+    cours = get_object_or_404(_cours_publies(), slug=slug)
     return render(request, "cours/detail.html", {"cours": cours})
 
 
 def cours_par_matiere(request, slug):
     matiere = get_object_or_404(Matiere, slug=slug)
-    cours = (
-        matiere.cours
-        .filter(statut=Cours.Statut.PUBLIE)
-        .select_related("matiere")
-    )
+    page_obj = _paginer(request, _cours_publies().filter(matiere=matiere))
     return render(
         request,
         "cours/liste.html",
-        {"page_obj": cours, "matiere": matiere},
+        {"page_obj": page_obj, "matiere": matiere},
     )
 ```
+
+Deux fonctions utilitaires (préfixées par `_`, convention Python pour un usage
+interne) évitent de répéter le filtre « cours publiés » et la pagination dans
+chaque vue. Si la règle de publication change, on la modifie à un seul endroit.
+Remarquez aussi que `cours_par_matiere` passe **un objet `Page`** au template,
+exactement comme `liste_cours` : les deux pages partagent le même template.
+
+`Paginator` découpe un QuerySet en pages de `COURS_PAR_PAGE` éléments ;
+`get_page` est tolérant : une page absente, négative ou non numérique donne la
+première ou la dernière page plutôt qu'une erreur.
 
 ### Pourquoi `render` ?
 
@@ -101,7 +185,7 @@ def cours_par_matiere(request, slug):
 2. lui transmet un dictionnaire de contexte ;
 3. produit une réponse HTTP avec le HTML.
 
-La clé `"page_obj"` est un contrat entre la vue et le template. Si la vue
+La clé `"page_obj"` est un **contrat** entre la vue et le template. Si la vue
 emploie `"cours"` mais que le template parcourt `page_obj`, la page semble vide
 sans que la base soit nécessairement en cause.
 
@@ -109,9 +193,11 @@ sans que la base soit nécessairement en cause.
 
 `get_object_or_404` exprime qu'un objet demandé doit exister. Une URL inconnue
 renvoie alors un statut `404 Not Found`, ce qui est correct pour le navigateur,
-les moteurs de recherche et les tests. Il ne faut pas attraper toutes les
-exceptions et renvoyer une page générique : cela masque les erreurs de
-programmation et transforme parfois un 404 en 500.
+les moteurs de recherche et les tests. Remarquez aussi que `detail_cours`
+cherche **parmi les cours publiés uniquement** : un brouillon renvoie la même
+404 qu'un cours inexistant, ce qui ne révèle même pas son existence. Il ne faut
+pas attraper toutes les exceptions et renvoyer une page générique : cela masque
+les erreurs de programmation et transforme parfois un 404 en 500.
 
 ## Organiser les templates
 
@@ -119,6 +205,9 @@ Créez :
 
 ```text
 cours/
+├── static/
+│   └── cours/
+│       └── site.css
 └── templates/
     └── cours/
         ├── base.html
@@ -129,8 +218,19 @@ cours/
 ```
 
 Avec `APP_DIRS = True`, Django cherche un dossier `templates` dans les apps
-installées. Le sous-dossier `cours/` évite les collisions si deux apps
-possèdent un fichier `liste.html`.
+installées. Le sous-dossier `cours/` (on répète le nom de l'app) évite les
+collisions : si deux apps possédaient chacune un fichier `liste.html`, Django
+prendrait le premier trouvé. C'est pourquoi on référence toujours
+`"cours/liste.html"`.
+
+La logique d'héritage est la suivante :
+
+```text
+base.html           ← squelette : <html>, en-tête, pied de page, blocs
+  ├── liste.html    ← remplit les blocs `title` et `content`
+  │     └── (include) partials/carte_cours.html
+  └── detail.html   ← remplit les blocs `title` et `content`
+```
 
 ## Le template parent
 
@@ -151,6 +251,7 @@ possèdent un fichier `liste.html`.
     <nav aria-label="Navigation principale">
       <a href="{% url 'cours:liste' %}">BiblioCours</a>
       <a href="{% url 'cours:liste' %}">Tous les cours</a>
+      <a href="{% url 'cours:a_propos' %}">À propos</a>
     </nav>
   </header>
 
@@ -167,8 +268,41 @@ possèdent un fichier `liste.html`.
 
 `{% extends %}` et les blocs permettent aux pages enfants de réutiliser le
 document entier. `block title` et `block content` sont des points d'extension.
-Cette technique applique le principe DRY sans rendre toutes les pages
-identiques.
+Cette technique applique le principe DRY (*Don't Repeat Yourself*) sans rendre
+toutes les pages identiques.
+
+### La feuille de style
+
+Le template charge `cours/site.css` avec `{% static %}`. Les fichiers statiques
+placés dans le dossier `static/` d'une app sont trouvés automatiquement par
+Django en développement. Créez `cours/static/cours/site.css` :
+
+```css
+:root { --principale: #1f4e79; --texte: #222; --fond: #fafafa; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: system-ui, sans-serif;
+  color: var(--texte); background: var(--fond); line-height: 1.6;
+}
+.container { max-width: 48rem; margin: 0 auto; padding: 1rem; }
+.site-header, .site-footer { background: var(--principale); color: #fff; padding: .75rem 1rem; }
+.site-header a, .site-footer a { color: #fff; margin-right: 1rem; }
+.course-card { background: #fff; border: 1px solid #ddd; border-radius: .5rem; padding: 1rem; margin-bottom: 1rem; }
+.eyebrow { text-transform: uppercase; font-size: .75rem; letter-spacing: .05em; color: #666; margin: 0; }
+.meta { color: #666; font-size: .875rem; }
+.pagination { display: flex; gap: 1rem; align-items: center; }
+.messages .message { padding: .5rem 1rem; border-radius: .25rem; background: #e8f1fb; }
+.message-success { background: #e6f4ea; }
+.message-error { background: #fdecea; }
+.errors, .error { color: #b00020; }
+.form-field { margin-bottom: 1rem; }
+.form-field input, .form-field textarea, .form-field select { width: 100%; padding: .5rem; }
+.inline-form { display: inline; }
+```
+
+Ce CSS volontairement sobre sera aussi utilisé par les formulaires et les
+messages des chapitres suivants. La configuration complète des fichiers
+statiques est expliquée au @sec-securite.
 
 ## Afficher une collection avec `liste.html`
 
@@ -217,9 +351,14 @@ identiques.
 {% endblock %}
 ```
 
+Ce template sert à deux vues : quand `matiere` est présent dans le contexte, il
+affiche l'en-tête de la matière ; sinon l'en-tête du catalogue. Une variable
+absente du contexte vaut « faux » dans un `{% if %}`.
+
 Le bloc `{% empty %}` évite une page silencieuse quand le QuerySet ne contient
 aucun élément. Les attributs `has_previous` et `has_next` appartiennent à
-l'objet `Page` produit par `Paginator`.
+l'objet `Page` produit par `Paginator`. Le lien `?page=2` est un lien
+**relatif** : il garde le chemin courant et ne change que le paramètre.
 
 Le partial `partials/carte_cours.html` :
 
@@ -236,8 +375,11 @@ Le partial `partials/carte_cours.html` :
 </article>
 ```
 
-`include` rend un fragment réutilisable dans le contexte courant. Le modèle
-fournit `get_absolute_url`, ce qui centralise la construction du lien.
+`include` rend un fragment réutilisable dans le contexte courant : il voit donc
+la variable de boucle `cours`. Le modèle fournit `get_absolute_url`, ce qui
+centralise la construction du lien. Et grâce à `select_related("matiere")` dans
+la vue, afficher `cours.matiere.nom` pour chaque carte ne coûte aucune requête
+supplémentaire.
 
 ## Afficher le détail
 
@@ -267,10 +409,20 @@ fournit `get_absolute_url`, ce qui centralise la construction du lien.
 {% endblock %}
 ```
 
-Les variables sont échappées automatiquement. C'est un mécanisme essentiel :
+::: {.callout-important}
+## `{% load %}` n'est pas hérité
+
+Un template enfant n'hérite pas des `{% load %}` de son parent. Si `detail.html`
+utilisait `{% static %}`, il devrait contenir lui-même `{% load static %}`
+(juste après `{% extends %}`). L'erreur typique est
+`Invalid block tag on line 4: 'static'`.
+:::
+
+Les variables sont **échappées automatiquement**. C'est un mécanisme essentiel :
 si le contenu contient `<script>`, Django l'affiche comme du texte au lieu de
-l'exécuter. Le filtre `linebreaks` transforme des retours à la ligne en
-paragraphes et éléments `<br>`.
+l'exécuter. Concrètement, `<` devient `&lt;` dans le HTML envoyé. Le filtre
+`linebreaks` transforme des retours à la ligne en paragraphes et éléments
+`<br>`, et échappe le texte avant de le faire.
 
 N'utilisez pas `|safe` simplement pour « faire marcher » un affichage. Il
 désactive l'échappement et doit être réservé à du HTML produit par une source
@@ -279,35 +431,36 @@ est expliquée au @sec-securite.
 
 ## Rechercher avec un paramètre GET
 
-Ajoutons une recherche simple. Dans la vue :
+Ajoutons une recherche simple. **Remplacez** la vue `liste_cours` par :
 
 ```python
+from django.db.models import Q
+
+
 def liste_cours(request):
+    """Affiche les cours publiés, filtrés par le terme `q` s'il est fourni."""
     terme = request.GET.get("q", "").strip()
-    queryset = (
-        Cours.objects
-        .filter(statut=Cours.Statut.PUBLIE)
-        .select_related("matiere")
-    )
+    queryset = _cours_publies()
     if terme:
         queryset = queryset.filter(
-            Q(titre__icontains=terme)
-            | Q(resume__icontains=terme)
+            Q(titre__icontains=terme) | Q(resume__icontains=terme)
         )
-    paginator = Paginator(queryset, 10)
-    return render(
-        request,
-        "cours/liste.html",
-        {"page_obj": paginator.get_page(request.GET.get("page")), "terme": terme},
-    )
+    contexte = {"page_obj": _paginer(request, queryset), "terme": terme}
+    return render(request, "cours/liste.html", contexte)
 ```
 
-Les paramètres GET sont des chaînes fournies
-par l'utilisateur ; `icontains` protège contre l'injection SQL parce que l'ORM
-paramètre la requête, mais il faut tout de même limiter les coûts et la
-longueur dans une application publique.
+(Placez l'import avec les autres, en haut du fichier.) Les arguments multiples de
+`filter(a=1, b=2)` sont combinés par **ET**. Pour exprimer un **OU**, on utilise
+des objets `Q` combinés avec `|` ; `&` donne un ET et `~` un NON. Ici : le
+terme apparaît dans le titre **ou** dans le résumé.
 
-Le formulaire de recherche peut être placé dans le template :
+Les paramètres GET sont des chaînes fournies par l'utilisateur ; `icontains`
+protège contre l'injection SQL parce que l'ORM paramètre la requête, mais il
+faut tout de même limiter les coûts et la longueur dans une application
+publique.
+
+Le formulaire de recherche se place dans `liste.html`, juste avant la section
+des cours :
 
 ```html
 <form method="get" role="search">
@@ -317,9 +470,15 @@ Le formulaire de recherche peut être placé dans le template :
 </form>
 ```
 
+Un formulaire `method="get"` ajoute ses champs à l'URL : valider avec « python »
+mène à `/cours/?q=python`. Remarquez `value="{{ terme }}"` : l'échappement
+automatique protège cet attribut, même si l'utilisateur tape des guillemets ou
+du HTML.
+
 ## Lire un bug de template
 
-Pour une page vide, ne commencez pas par changer le CSS. Vérifiez :
+Pour une page vide, ne commencez pas par changer le CSS. Vérifiez, dans le
+shell ou dans la vue :
 
 ```python
 print(queryset.query)
@@ -334,13 +493,93 @@ Puis inspectez le contrat :
 - la route pointe-t-elle vers la bonne vue ?
 - le fichier est-il bien sous `templates/cours/` ?
 
-Le mode `DEBUG` fournit aussi des pages d'erreur détaillées, mais il ne faut
-jamais en laisser l'affichage actif en production.
+Deux outils aident à voir ce que le template reçoit : la balise `{% debug %}`
+(qui affiche tout le contexte et les modules importés) et, dans une vue,
+`print(contexte)`. Le mode `DEBUG` fournit aussi des pages d'erreur détaillées,
+mais il ne faut jamais en laisser l'affichage actif en production.
+
+## Checkpoint
+
+Lancez le serveur et vérifiez :
+
+- [ ] `/cours/` affiche dix cours et « Page 1 sur 3 » ; le lien « Suivant » fonctionne ;
+- [ ] `/cours/cours-de-demo-1/` affiche le détail avec le lien de la matière ;
+- [ ] `/cours/algebre-lineaire/` (un brouillon) renvoie **404** ;
+- [ ] `/cours/matiere/informatique/` liste les cours de la matière ;
+- [ ] `/cours/matiere/mathematiques/` affiche « Aucun cours publié » (son seul cours est un brouillon) ;
+- [ ] `/cours/matiere/inconnue/` renvoie 404 ;
+- [ ] `/cours/?q=python` ne montre que « Python pour débutants » ;
+- [ ] la page est stylée (le CSS est chargé : onglet *Réseau* du navigateur, statut 200) ;
+- [ ] `uv run python manage.py test` passe toujours.
+
+## Erreurs fréquentes
+
+| Symptôme | Cause probable | Remède |
+|---|---|---|
+| `TemplateDoesNotExist: cours/liste.html` | mauvais dossier ou nom | vérifier `cours/templates/cours/liste.html` ; la page de debug liste les chemins explorés |
+| page de liste vide alors que la base contient des cours | nom du contexte différent de celui du template, ou filtre trop strict | comparer clé de contexte et variable ; `print(queryset.count())` |
+| `NoReverseMatch` dans `{% url %}` | mauvais nom ou mauvais nombre d'arguments | vérifier `app_name`, `name` et les arguments |
+| `Invalid block tag … 'static'` | `{% load static %}` manquant | l'ajouter dans le template qui utilise `{% static %}` |
+| `TemplateSyntaxError: Unclosed tag` | `{% endif %}`, `{% endfor %}` ou `{% endblock %}` oublié | refermer chaque balise ouverte |
+| CSS non appliqué | fichier mal placé (404 sur `/static/…`) | vérifier `cours/static/cours/site.css` |
+| la page 2 d'une recherche ignore le terme | le lien de pagination ne contient pas `q` | voir l'exercice 7 |
+| `UnorderedObjectListWarning` | pagination d'un QuerySet non trié | garder `ordering` dans `Meta` |
+
+## À retenir
+
+- La vue **prépare** (données, contexte) ; le template **présente** (HTML).
+- Le contexte est un contrat : une clé mal nommée donne une page vide, sans erreur.
+- Les routes spécifiques précèdent les routes génériques.
+- `extends`/`block` factorisent le squelette ; `include` factorise un fragment ;
+  `{% load %}` n'est pas hérité.
+- Les variables sont échappées automatiquement ; `|safe` désactive cette protection.
+- Un objet absent ou non publié se traduit par une 404, pas par une page vide.
+- Utilisez `select_related` quand un template parcourt une relation.
 
 ## Exercices
 
-1. Ajoutez un lien « Voir la matière » sur chaque carte.
-2. Conservez le terme `q` dans les liens de pagination.
-3. Créez une page 404 personnalisée avec un template `404.html`.
-4. Écrivez une vue qui affiche uniquement les cours d'une matière et vérifiez
-   qu'une matière inexistante renvoie bien `404`.
+1. Dessinez l'arbre d'héritage de `liste.html` : quel template le parent
+   fournit-il, quels blocs sont remplacés, quel fragment est inclus ?
+2. Qu'affiche Django pour `{{ cours.auteur }}` si le modèle n'a pas de champ
+   `auteur` ? Pourquoi est-ce un piège ?
+3. Pourquoi `detail_cours` renvoie-t-il une 404 pour un brouillon plutôt qu'une
+   erreur « accès refusé » (403) ?
+4. Quelle est la différence entre `{{ cours.contenu }}` et
+   `{{ cours.contenu|safe }}` si le contenu vaut `<b>Bonjour</b>` ? Dans quel
+   cas le second est-il dangereux ?
+5. Pourquoi le template de la liste utilise-t-il `{% empty %}` plutôt qu'un
+   `{% if %}` séparé ?
+
+6. Ajoutez sur chaque carte un lien « Voir la matière » qui mène à la liste des
+   cours de cette matière (utilisez `{% url %}`).
+7. **Corrigez un bug.** Avec `COURS_PAR_PAGE = 2`, cherchez `python`, puis
+   cliquez sur « Suivant » : que devient le terme de recherche ? Corrigez les
+   liens de pagination pour qu'ils conservent `q`.
+
+    **Indice :** un lien peut contenir plusieurs paramètres :
+    `?page=2&q=python`. Utilisez `{{ terme|urlencode }}` pour protéger les
+    caractères spéciaux.
+
+8. Créez une page 404 personnalisée avec un template `404.html` (à la racine
+   d'un dossier de templates) étendant `cours/base.html`. Vérifiez qu'elle
+   s'affiche avec `DEBUG = False`.
+
+    **Indice :** avec `DEBUG = True`, Django affiche toujours sa page de debug.
+    Pour tester, basculez temporairement `DEBUG = False` et ajoutez `"localhost"`
+    à `ALLOWED_HOSTS`. Le dossier `templates/` global sera configuré au
+    @sec-securite ; en attendant, placez le fichier dans
+    `cours/templates/404.html`.
+
+9. Transformez la page « À propos » : remplacez `HttpResponse` par un vrai
+   template `cours/a_propos.html` étendant `base.html`. La route et son nom ne
+   doivent pas changer.
+10. Utilisez le filtre `truncatewords` pour n'afficher que les 25 premiers mots
+    du résumé dans les cartes. Que se passe-t-il pour un résumé plus court ?
+
+11. Ajoutez une vue et une page `/cours/matieres/` qui liste toutes les
+    matières avec le nombre de cours publiés de chacune. Évitez le problème N+1
+    (indice : `annotate` et `Count` avec un filtre, ou `prefetch_related`).
+    Pensez à l'ordre des routes !
+12. Ajoutez un tri `?tri=recent` / `?tri=titre` à la liste. Quelles valeurs de
+    `tri` acceptez-vous ? Que faites-vous d'une valeur inconnue ? Pourquoi
+    ne faut-il jamais passer `request.GET["tri"]` directement à `order_by` ?

@@ -212,12 +212,14 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">index.html</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">index.html</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Préface</span></a>
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -287,7 +289,7 @@ div.csl-indent {
   <li><a href="#une-checklist-finale" id="toc-une-checklist-finale" class="nav-link" data-scroll-target="#une-checklist-finale">Une checklist finale</a></li>
   <li><a href="#aller-plus-loin-une-progression-raisonnable" id="toc-aller-plus-loin-une-progression-raisonnable" class="nav-link" data-scroll-target="#aller-plus-loin-une-progression-raisonnable">Aller plus loin : une progression raisonnable</a></li>
   <li><a href="#projet-de-synthèse" id="toc-projet-de-synthèse" class="nav-link" data-scroll-target="#projet-de-synthèse">Projet de synthèse</a></li>
-  <li><a href="#exercices-de-consolidation" id="toc-exercices-de-consolidation" class="nav-link" data-scroll-target="#exercices-de-consolidation">Exercices de consolidation</a></li>
+  <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices">Exercices</a></li>
   </ul>
 </nav>
     </div>
@@ -311,6 +313,7 @@ div.csl-indent {
 <li>le processus qui sert Django ;</li>
 <li>les sauvegardes et la supervision.</li>
 </ul>
+<p>Ce chapitre prépare une mise en production et enseigne les contrôles communs à toute plateforme. Il ne décrit pas le déploiement complet chez un hébergeur particulier : les étapes de création du service, des variables secrètes, de la base de données et du domaine dépendent du fournisseur choisi. Avant une mise en ligne réelle, suivez aussi son guide officiel et testez la procédure sur un environnement de préproduction.</p>
 <p>Le guide de déploiement Django rappelle que la configuration par défaut est adaptée au développement et doit être auditée avant exposition publique <span class="citation" data-cites="django-deployment">(<a href="../references.html#ref-django-deployment" role="doc-biblioref">Django Software Foundation 2025</a>)</span>. Une démarche de déploiement progressive et documentée est également au cœur des ouvrages consacrés à Django en production <span class="citation" data-cites="django-for-professionals">(<a href="../references.html#ref-django-for-professionals" role="doc-biblioref">Hajian 2022</a>)</span>.</p>
 </section>
 <section id="séparer-la-configuration-du-code" class="level2">
@@ -457,13 +460,34 @@ div.csl-indent {
 <li><code>uv sync --frozen</code> permet de recréer l’environnement ;</li>
 <li><code>check --deploy</code> n’affiche plus de problème connu non traité.</li>
 </ul>
+<p>À la fin du parcours, les fichiers principaux doivent se répartir ainsi (certains fichiers générés par Django ne sont pas représentés) :</p>
+<pre class="text"><code>bibliocours/
+├── .env.example
+├── pyproject.toml
+├── uv.lock
+├── manage.py
+├── config/
+│   ├── settings.py
+│   └── urls.py
+├── cours/
+│   ├── migrations/
+│   ├── static/cours/site.css
+│   ├── templates/cours/
+│   ├── tests/
+│   ├── admin.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
+└── templates/registration/login.html</code></pre>
+<p>Le fichier <code>.env</code> local, <code>.venv/</code>, <code>db.sqlite3</code> et <code>staticfiles/</code> ne sont pas versionnés. Comparez cette carte à votre dépôt ; si un fichier est ailleurs, vérifiez que le réglage ou le chemin des templates et des fichiers statiques correspond.</p>
 <p>Pour chaque fonctionnalité, faites un commit qui raconte une décision :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"feat: protéger la création des cours"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"feat: protéger la création des cours"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Un historique lisible devient une documentation supplémentaire du projet. Il permet de comprendre non seulement l’état actuel, mais aussi la raison des évolutions.</p>
 </section>
-<section id="exercices-de-consolidation" class="level2">
-<h2 class="anchored" data-anchor-id="exercices-de-consolidation">Exercices de consolidation</h2>
+<section id="exercices" class="level2">
+<h2 class="anchored" data-anchor-id="exercices">Exercices</h2>
 <ol type="1">
 <li>Configurez un environnement de test séparé et faites tourner la suite depuis une base vide.</li>
 <li>Simulez une variable manquante comme <code>DJANGO_SECRET_KEY</code> et rendez l’erreur compréhensible.</li>

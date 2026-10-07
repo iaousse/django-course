@@ -118,7 +118,7 @@ format:
         \makeatother
   epub:
     toc: true
-    toc-depth: 1
+    toc-depth: 2
     epub-cover-image: epub-cover.png
     css:
       - styles.css

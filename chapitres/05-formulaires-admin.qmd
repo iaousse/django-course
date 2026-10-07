@@ -1,11 +1,39 @@
 # Saisir et administrer les données : formulaires et admin {#sec-formulaires-admin}
 
+::: {.callout-note}
+## Objectifs d'apprentissage
+
+À la fin de ce chapitre, vous saurez :
+
+- expliquer pourquoi la validation doit se faire côté serveur et décrire le cycle liaison → validation → action ;
+- écrire un `ModelForm` avec validation par champ et validation croisée ;
+- implémenter les vues de création, de modification et de suppression selon le schéma POST/Redirect/GET ;
+- rendre un formulaire dans un template, avec ses erreurs et son jeton CSRF ;
+- configurer l'administration Django (liste, filtres, recherche, actions) ;
+- afficher des messages utilisateur après une action.
+:::
+
+## Où en sommes-nous ?
+
+BiblioCours affiche son catalogue (chapitre 4), mais pour ajouter un cours il
+faut passer par le shell. Dans ce chapitre, nous construisons deux outils de
+saisie complémentaires :
+
+- des **formulaires publics**, par lesquels un éditeur crée et modifie des
+  **brouillons** ;
+- l'**administration Django**, par laquelle une personne habilitée relit et
+  **publie** les cours.
+
+Ce partage des rôles est une décision de conception : un éditeur qui rédige ne
+publie pas lui-même, et le formulaire ne propose donc pas le champ `statut`.
+
 ## Pourquoi un formulaire HTML ne suffit pas
 
 Un formulaire est une frontière entre le navigateur et l'application. Le
 navigateur peut aider avec `required`, `type="email"` ou `maxlength`, mais ces
-attributs ne sont pas des protections : n'importe quel client HTTP peut les
-contourner. La validation importante doit être exécutée côté serveur.
+attributs ne sont pas des protections : n'importe quel client HTTP (un script,
+l'outil `curl`, un navigateur modifié) peut les contourner. La validation
+importante doit être exécutée côté serveur.
 
 Django distingue trois étapes :
 
@@ -17,7 +45,31 @@ Django distingue trois étapes :
 Un formulaire non valide doit être réaffiché avec les valeurs acceptables et
 les erreurs lisibles. Un formulaire valide doit éviter de créer deux fois la
 même ressource lorsque l'utilisateur actualise la page. Ce dernier problème
-est résolu par le schéma **POST/Redirect/GET**.
+est résolu par le schéma **POST/Redirect/GET** (PRG) :
+
+```text
+1. GET  /cours/nouveau/     → le serveur renvoie le formulaire vide        (200)
+2. POST /cours/nouveau/     → données invalides : formulaire réaffiché     (200)
+3. POST /cours/nouveau/     → données valides : sauvegarde, puis redirection (302)
+4. GET  /cours/<slug>/modifier/ → le navigateur suit la redirection       (200)
+```
+
+Sans l'étape 3, l'utilisateur qui actualise la page après un succès renverrait
+le POST et créerait un doublon. Avec la redirection, l'actualisation répète
+seulement le GET de l'étape 4, qui est inoffensif.
+
+### Les deux états d'un formulaire
+
+Un formulaire Django existe sous deux formes :
+
+| État | Création | `is_valid()` | Usage |
+|---|---|---|---|
+| **non lié** (*unbound*) | `CoursForm()` | toujours `False` | afficher un formulaire vide ou pré-rempli |
+| **lié** (*bound*) | `CoursForm(request.POST)` | valide les données | traiter une soumission |
+
+Une fois `is_valid()` appelé, deux attributs deviennent disponibles :
+`form.cleaned_data` (les valeurs validées et converties en types Python) et
+`form.errors` (les messages d'erreur par champ).
 
 ## Créer un `ModelForm`
 
@@ -59,30 +111,61 @@ class CoursForm(forms.ModelForm):
 ```
 
 `ModelForm` déduit les champs à partir du modèle et réutilise ses contraintes
-de base. La liste `fields` doit être explicite : `fields = "__all__"` risque
-d'exposer un champ ajouté plus tard sans que l'on s'en rende compte
-[@django-forms].
+de base (longueur maximale, unicité, champ obligatoire). La liste `fields` doit
+être explicite : `fields = "__all__"` risque d'exposer un champ ajouté plus
+tard sans que l'on s'en rende compte [@django-forms].
 
-### Les trois niveaux de validation
+Notre liste omet volontairement `statut` et `date_publication`. Même si un
+utilisateur malveillant ajoutait `statut=publie` à la requête POST, Django
+**ignorerait** ce champ inconnu : un éditeur ne peut pas se publier lui-même.
+C'est une protection très concrète contre les modifications non autorisées de
+champs sensibles.
 
-- `clean_titre` valide un champ et se concentre sur sa valeur ;
-- `clean` valide une relation entre plusieurs champs ;
-- `Model.clean` peut porter une règle de modèle indépendante de ce formulaire.
+### Les niveaux de validation
+
+Quand on appelle `is_valid()`, Django enchaîne les validations dans cet ordre :
+
+1. **par champ** : conversion et contraintes de base (obligatoire, longueur,
+   format) ;
+2. **`clean_<champ>()`** : règle propre à un champ (`clean_titre`) ;
+3. **`clean()` du formulaire** : règle qui compare plusieurs champs ;
+4. **validation du modèle** : `Model.clean()` (notre règle sur la date de
+   publication) et contraintes d'unicité (`slug` unique).
+
+Chaque méthode a un rôle précis :
+
+- `clean_titre` valide un champ et se concentre sur sa valeur ; elle **doit
+  renvoyer** la valeur nettoyée ;
+- `clean` valide une relation entre plusieurs champs ; on y accède aux champs
+  déjà validés via `cleaned_data.get(...)` (un champ invalide peut manquer) ;
+- `Model.clean` porte une règle de modèle indépendante de ce formulaire.
 
 Une validation ne doit pas seulement servir à afficher un message. Elle doit
 protéger l'invariant métier. Par exemple, si un cours publié doit toujours
 avoir un résumé, cette règle devrait être appliquée dans tous les chemins de
-création, pas uniquement sur la page HTML.
+création, pas uniquement sur la page HTML : on la place dans le modèle (voir
+l'exercice 7 du @sec-modeles).
 
 ## La vue de création
 
-Ajoutez une route protégée plus tard par authentification :
+Ajoutez la route à `cours/urls.py`. Elle doit précéder la route générique
+`<slug:slug>/`, sans quoi `nouveau` serait traité comme le slug d'un cours.
+Voici la liste complète des routes à ce stade, qui inclut aussi celles de
+modification et de suppression :
 
 ```python
-path("nouveau/", views.creer_cours, name="creer"),
+urlpatterns = [
+    path("", views.liste_cours, name="liste"),
+    path("a-propos/", views.a_propos, name="a_propos"),
+    path("nouveau/", views.creer_cours, name="creer"),
+    path("matiere/<slug:slug>/", views.cours_par_matiere, name="par_matiere"),
+    path("<slug:slug>/", views.detail_cours, name="detail"),
+    path("<slug:slug>/modifier/", views.modifier_cours, name="modifier"),
+    path("<slug:slug>/supprimer/", views.supprimer_cours, name="supprimer"),
+]
 ```
 
-Puis la vue :
+Puis, dans `cours/views.py`, ajoutez les imports et la vue :
 
 ```python
 from django.contrib import messages
@@ -98,12 +181,15 @@ def creer_cours(request):
         form = CoursForm(request.POST)
         if form.is_valid():
             cours = form.save()
-            messages.success(request, f"Le cours « {cours.titre} » a été créé.")
-            return redirect(cours.get_absolute_url())
+            messages.success(
+                request, f"Le brouillon « {cours.titre} » a été créé."
+            )
+            return redirect("cours:modifier", slug=cours.slug)
     else:
         form = CoursForm()
 
-    return render(request, "cours/formulaire.html", {"form": form})
+    contexte = {"form": form, "titre_page": "Créer un cours"}
+    return render(request, "cours/formulaire.html", contexte)
 ```
 
 La méthode HTTP est une décision de sécurité et de sémantique :
@@ -112,9 +198,33 @@ La méthode HTTP est une décision de sécurité et de sémantique :
 - `POST` transmet une intention de modification ;
 - une redirection après succès empêche un rafraîchissement de répéter le POST.
 
+Remarquez la structure `if POST … else GET` : si le formulaire est **invalide**,
+on ne redirige pas, on laisse la vue atteindre le `render` final avec le
+formulaire lié, qui contient les valeurs saisies et les erreurs.
+
+::: {.callout-important}
+## Pourquoi rediriger vers la page de modification et non vers le détail ?
+
+Un cours fraîchement créé est un **brouillon**, et `detail_cours` ne montre que
+les cours publiés : rediriger vers `cours.get_absolute_url()` mènerait à une
+404. On redirige donc vers `cours:modifier`, qui existe quel que soit le statut.
+La destination d'une redirection doit toujours être une page que l'utilisateur
+peut effectivement voir.
+:::
+
 Le décorateur `login_required` redirige les utilisateurs anonymes vers la page
-de connexion. Nous verrons la configuration de cette redirection au chapitre
-@sec-securite.
+de connexion. Nous verrons la configuration de cette redirection, et son
+remplacement par un contrôle de permission, au @sec-securite.
+
+::: {.callout-note}
+## Tester sans page de connexion
+
+La page de connexion n'existe pas encore (elle arrive au chapitre 6), donc un
+visiteur anonyme est redirigé vers `/accounts/login/`, qui renvoie une 404 :
+c'est attendu. Pour tester vos vues dès maintenant, connectez-vous par
+l'administration (`/admin/`, après `createsuperuser`, voir plus bas). La session
+ouverte est partagée par tout le site.
+:::
 
 ## Le template du formulaire
 
@@ -123,10 +233,10 @@ de connexion. Nous verrons la configuration de cette redirection au chapitre
 ```html
 {% extends "cours/base.html" %}
 
-{% block title %}Nouveau cours — BiblioCours{% endblock %}
+{% block title %}{{ titre_page }} — BiblioCours{% endblock %}
 
 {% block content %}
-  <h1>Créer un cours</h1>
+  <h1>{{ titre_page }}</h1>
 
   <form method="post" novalidate>
     {% csrf_token %}
@@ -152,13 +262,22 @@ de connexion. Nous verrons la configuration de cette redirection au chapitre
 
     <button type="submit">Enregistrer</button>
     <a href="{% url 'cours:liste' %}">Annuler</a>
+    {% if cours %}
+      <a href="{% url 'cours:supprimer' cours.slug %}">Supprimer</a>
+    {% endif %}
   </form>
 {% endblock %}
 ```
 
+Ce template sert à la création **et** à la modification : seul le titre de la
+page (`titre_page`) et la présence de `cours` dans le contexte changent. Le
+parcours `{% for field in form %}` donne un contrôle fin sur le rendu, mais on
+peut aussi écrire simplement `{{ form.as_p }}` pour un rendu rapide.
+
 `{% csrf_token %}` est obligatoire pour un POST provenant d'un formulaire
 Django. Le jeton associe la requête à la session et protège contre une partie
-des attaques CSRF. Il ne remplace pas l'authentification ni l'autorisation.
+des attaques CSRF (@sec-securite). Il ne remplace ni l'authentification ni
+l'autorisation. Sans lui, le POST est refusé avec une erreur 403.
 
 `novalidate` désactive la validation native du navigateur afin de rendre
 visibles les messages Django pendant l'apprentissage. Dans un projet réel,
@@ -177,23 +296,28 @@ def modifier_cours(request, slug):
     if request.method == "POST":
         form = CoursForm(request.POST, instance=cours)
         if form.is_valid():
-            form.save()
+            cours = form.save()
             messages.success(request, "Le cours a été mis à jour.")
-            return redirect(cours.get_absolute_url())
+            if cours.est_publie:
+                return redirect(cours)
+            return redirect("cours:modifier", slug=cours.slug)
     else:
         form = CoursForm(instance=cours)
 
-    return render(
-        request,
-        "cours/formulaire.html",
-        {"form": form, "cours": cours},
-    )
+    contexte = {"form": form, "cours": cours, "titre_page": "Modifier le cours"}
+    return render(request, "cours/formulaire.html", contexte)
 ```
 
 La présence d'`instance` change le comportement : sans elle, `save()` crée un
-objet ; avec elle, `save()` met à jour l'objet. La route de modification doit
-être distincte de la route de création et doit vérifier que l'utilisateur a
-le droit de modifier ce cours.
+objet ; avec elle, `save()` met à jour l'objet. La vue utilise ici
+`get_object_or_404(Cours, slug=slug)` : à la différence de la page publique,
+elle accepte aussi les brouillons, puisqu'on veut pouvoir les éditer.
+
+Après un succès, deux cas se présentent : un cours publié renvoie vers sa page
+publique (`redirect(cours)` utilise automatiquement `get_absolute_url`), un
+brouillon revient sur le formulaire. La route de modification doit être
+distincte de la route de création et doit vérifier que l'utilisateur a le droit
+de modifier ce cours : ce contrôle d'autorisation sera ajouté au @sec-securite.
 
 ## Supprimer : préférer une confirmation explicite
 
@@ -204,8 +328,10 @@ La suppression ne devrait pas être déclenchée par un lien GET :
 <a href="{% url 'cours:supprimer' cours.slug %}">Supprimer</a>
 ```
 
-Utilisez un formulaire POST avec CSRF et demandez une confirmation dans une
-page dédiée :
+Un lien GET est suivi par les robots d'indexation, préchargé par certains
+navigateurs et déclenché par un simple clic distrait. On affiche donc d'abord
+une **page de confirmation** (en GET, inoffensive), et c'est le **formulaire POST**
+de cette page, protégé par le jeton CSRF, qui supprime vraiment :
 
 ```python
 @login_required
@@ -219,6 +345,24 @@ def supprimer_cours(request, slug):
     return render(request, "cours/confirmer_suppression.html", {"cours": cours})
 ```
 
+`cours/templates/cours/confirmer_suppression.html` :
+
+```html
+{% extends "cours/base.html" %}
+
+{% block title %}Supprimer — BiblioCours{% endblock %}
+
+{% block content %}
+  <h1>Supprimer « {{ cours.titre }} » ?</h1>
+  <p>Cette action est définitive.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Oui, supprimer</button>
+    <a href="{% url 'cours:modifier' cours.slug %}">Annuler</a>
+  </form>
+{% endblock %}
+```
+
 L'approbation visuelle n'est pas une mesure de sécurité ; l'autorisation et le
 POST protégé le sont. Une opération irréversible doit aussi être reflétée dans
 les tests et, selon le domaine, dans une stratégie d'archivage plutôt que de
@@ -229,12 +373,13 @@ suppression physique.
 L'admin est une interface interne puissante pour les personnes qui gèrent le
 contenu. Elle ne remplace pas une interface publique : ses écrans, ses
 permissions et son modèle mental sont ceux d'un back-office. Elle permet
-néanmoins de peupler BiblioCours rapidement.
+néanmoins de peupler BiblioCours rapidement et de **publier** les brouillons.
 
 Dans `cours/admin.py` :
 
 ```python
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils import timezone
 
 from .models import Cours, Matiere
 
@@ -260,6 +405,18 @@ class CoursAdmin(admin.ModelAdmin):
     autocomplete_fields = ["matiere"]
     prepopulated_fields = {"slug": ("titre",)}
     readonly_fields = ["date_creation", "date_modification"]
+    list_select_related = ["matiere"]
+    actions = ["publier"]
+
+    @admin.action(description="Publier les cours sélectionnés")
+    def publier(self, request, queryset):
+        maintenant = timezone.now()
+        nombre = queryset.exclude(statut=Cours.Statut.PUBLIE).update(
+            statut=Cours.Statut.PUBLIE,
+            date_publication=maintenant,
+            date_modification=maintenant,
+        )
+        self.message_user(request, f"{nombre} cours publié(s).", messages.SUCCESS)
 ```
 
 Créez un compte administrateur :
@@ -269,22 +426,42 @@ uv run python manage.py createsuperuser
 uv run python manage.py runserver
 ```
 
-Visitez `http://127.0.0.1:8000/admin/`. `list_display` rend la liste utile,
-`list_filter` ajoute des filtres latéraux et `search_fields` construit une
-recherche. `readonly_fields` évite qu'une date technique soit modifiée à la
-main.
+Visitez `http://127.0.0.1:8000/admin/`. Chaque option a un rôle précis :
+
+| Option | Effet |
+|---|---|
+| `list_display` | colonnes affichées dans la liste |
+| `list_filter` | filtres latéraux |
+| `search_fields` | champs interrogés par la barre de recherche |
+| `autocomplete_fields` | champ de sélection avec recherche (exige `search_fields` sur l'admin de la cible : d'où `MatiereAdmin`) |
+| `prepopulated_fields` | pré-remplit le slug depuis le titre pendant la saisie |
+| `readonly_fields` | affiche un champ sans permettre de le modifier ; indispensable pour afficher les champs `auto_now` |
+| `list_select_related` | précharge une relation pour éviter le N+1 dans la liste |
+| `actions` | opérations en masse sur les lignes cochées |
+
+Essayez de créer un cours en choisissant le statut « Publié » **sans** date de
+publication : l'admin appelle `full_clean()`, donc la règle de `Cours.clean()`
+(chapitre 3) s'applique et affiche l'erreur à côté du champ. Les règles du
+modèle valent partout.
+
+### Une action personnalisée
+
+L'action `publier` illustre deux conséquences du chapitre 3. D'abord, `update()`
+ne met **pas** à jour `auto_now` : nous renseignons donc `date_modification`
+nous-mêmes. Ensuite, `update()` ne lance pas `clean()` : l'action doit donc
+elle-même respecter la règle « publié ⇒ date de publication », ce qu'elle fait
+en écrivant les deux champs ensemble. `exclude(statut=PUBLIE)` évite d'écraser la
+date d'un cours déjà publié.
 
 ### L'admin et les performances
 
 Si une liste affiche une relation, Django peut charger chaque matière
-séparément. Ajoutez une optimisation à l'admin :
+séparément. `list_select_related = ["matiere"]` résout cela pour les colonnes de
+liste. Pour un contrôle total, on peut aussi redéfinir `get_queryset` :
 
 ```python
-class CoursAdmin(admin.ModelAdmin):
-    # autres options…
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related("matiere")
+def get_queryset(self, request):
+    return super().get_queryset(request).select_related("matiere")
 ```
 
 Mesurez avant d'optimiser, mais ne rendez pas l'admin inutilisable avec une
@@ -292,7 +469,9 @@ requête N+1 lorsque le catalogue grandit.
 
 ## Messages utilisateur
 
-Les messages sont temporaires et associés à la prochaine réponse :
+Les messages sont temporaires et associés à la prochaine réponse : on les
+« poste » dans une vue, puis ils s'affichent **une seule fois** sur la page
+suivante (typiquement après une redirection).
 
 ```python
 from django.contrib import messages
@@ -301,29 +480,105 @@ messages.success(request, "Le cours a été enregistré.")
 messages.error(request, "Impossible de supprimer ce cours.")
 ```
 
-Dans `base.html` :
+Les niveaux disponibles sont `debug`, `info`, `success`, `warning` et `error`.
+Dans `base.html`, ajoutez le bloc d'affichage juste avant `{% block content %}` :
 
 ```html
-{% if messages %}
-  <div class="messages" aria-live="polite">
-    {% for message in messages %}
-      <p class="message message-{{ message.tags }}">{{ message }}</p>
-    {% endfor %}
-  </div>
-{% endif %}
+  <main class="container">
+    {% if messages %}
+      <div class="messages" aria-live="polite">
+        {% for message in messages %}
+          <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
 ```
 
-Le contexte est disponible grâce à `django.contrib.messages.context_processors.messages`,
-présent dans la configuration initiale. Un message ne doit pas être la seule
-façon de communiquer une erreur : le formulaire doit aussi porter les erreurs
-au niveau du champ.
+Le contexte est disponible grâce à
+`django.contrib.messages.context_processors.messages`, présent dans la
+configuration initiale. La classe `message-{{ message.tags }}` (par exemple
+`message-success`) permet au CSS de colorer chaque niveau. Un message ne doit
+pas être la seule façon de communiquer une erreur : le formulaire doit aussi
+porter les erreurs au niveau du champ.
+
+## Checkpoint
+
+Après `createsuperuser` et connexion via `/admin/` :
+
+- [ ] `/cours/nouveau/` affiche un formulaire vide ;
+- [ ] un titre de moins de cinq caractères réaffiche le formulaire avec l'erreur, **sans perdre** les autres valeurs ;
+- [ ] une soumission valide crée un **brouillon** et vous redirige vers sa page de modification, avec un message vert ;
+- [ ] actualiser la page (F5) après ce succès ne crée **pas** de doublon ;
+- [ ] `/cours/<slug>/` du brouillon renvoie 404, même pour un utilisateur connecté ;
+- [ ] l'action « Publier les cours sélectionnés » rend le cours visible sur `/cours/` ;
+- [ ] `/cours/<slug>/supprimer/` affiche la confirmation ; seul le bouton POST supprime ;
+- [ ] `uv run python manage.py check` ne signale aucun problème.
+
+## Erreurs fréquentes
+
+| Symptôme | Cause probable | Remède |
+|---|---|---|
+| `Forbidden (403) CSRF verification failed` | `{% csrf_token %}` absent du formulaire | l'ajouter dans la balise `<form method="post">` |
+| formulaire invalide, mais aucune erreur affichée | le template ne parcourt pas `field.errors` | afficher les erreurs, ou utiliser `{{ form.as_p }}` |
+| 404 juste après la création d'un cours | redirection vers la page publique d'un brouillon | rediriger vers `cours:modifier` |
+| `ImproperlyConfigured: Creating a ModelForm without either the 'fields' attribute…` | `Meta.fields` absent | lister explicitement les champs |
+| `admin.E039` ou erreur sur `autocomplete_fields` | `search_fields` absent de l'admin de la cible | ajouter `search_fields` à `MatiereAdmin` |
+| `NoReverseMatch` sur `cours:modifier` | route absente ou mal nommée | vérifier `cours/urls.py` |
+| « Ce champ est obligatoire » sur un champ absent du formulaire | champ du modèle ni obligatoire ni dans `fields` | donner un `default` au modèle ou l'ajouter à `fields` |
+| anonyme redirigé vers une 404 `/accounts/login/` | page de connexion pas encore créée | normal : voir le @sec-securite |
+
+## À retenir
+
+- La validation importante se fait **côté serveur** ; les attributs HTML ne
+  protègent rien.
+- Le cycle est liaison → validation → action, suivi d'une redirection (PRG).
+- `fields` est une liste explicite : un champ absent ne peut pas être
+  modifié par une requête forgée.
+- `GET` ne modifie jamais l'état ; suppression et modification passent par
+  `POST` avec jeton CSRF.
+- `instance=` fait passer un `ModelForm` de la création à la modification.
+- Une règle métier se place dans le modèle pour valoir partout (formulaire,
+  admin, scripts).
+- `update()` contourne `clean()` et `auto_now` : on les gère soi-même.
+- Les messages sont affichés une fois, après une redirection.
 
 ## Exercices
 
-1. Ajoutez un `ModelForm` pour `Matiere` avec une validation de nom unique
-   insensible à la casse.
-2. Ajoutez une action d'administration qui publie les cours sélectionnés.
-3. Faites en sorte que seuls les utilisateurs ayant une permission puissent
-   créer un cours.
-4. Testez les trois scénarios de `creer_cours` : GET, POST valide et POST
-   invalide.
+1. Dans quel ordre Django exécute-t-il `clean_titre`, `clean` du formulaire et
+   `Model.clean` ? Donnez un exemple de règle adaptée à chaque niveau.
+2. Que se passe-t-il, pas à pas, si un utilisateur actualise la page juste
+   après une création réussie, selon que la vue redirige ou non ?
+3. Pourquoi la suppression passe-t-elle par une page de confirmation et un
+   POST plutôt que par un lien direct ?
+4. Pourquoi `statut` n'est-il pas dans `CoursForm.Meta.fields` ? Que se
+   passerait-il si `fields = "__all__"` était utilisé ?
+5. Quelle est la différence entre `null=True` et `blank=True` du point de vue
+   d'un formulaire ? Que se passe-t-il pour `date_publication` ?
+
+6. Ajoutez un `ModelForm` pour `Matiere` avec une validation de nom unique
+   insensible à la casse (« Python » et « python » sont des doublons). Où
+   placez-vous la règle ?
+7. Ajoutez à l'administration une action **Repasser en brouillon**. Que
+   devient `date_publication` ? Justifiez votre choix.
+8. Ajoutez des libellés (`labels`) et des textes d'aide (`help_texts`) en
+   français dans `CoursForm.Meta`. Vérifiez qu'ils s'affichent.
+9. Effectuez manuellement les trois scénarios de `creer_cours` (GET, POST
+   valide, POST invalide) avec l'onglet *Réseau* des outils de développement
+   du navigateur. Notez les méthodes, statuts et redirections. Nous les
+   automatiserons au @sec-tests.
+10. Dans l'admin, essayez d'enregistrer un cours « Publié » sans date de
+    publication, puis avec une date. Quel message obtenez-vous ? D'où
+    vient-il ?
+
+11. Rendez le champ `slug` facultatif dans le formulaire et générez-le
+    automatiquement à partir du titre avec `django.utils.text.slugify` s'il est
+    vide. Attention aux doublons : que faites-vous si le slug existe déjà ?
+12. Ajoutez dans `clean_slug` une liste de slugs **réservés** (`nouveau`,
+    `a-propos`, `matiere`) qui sont refusés. Expliquez le lien avec l'ordre des
+    routes du @sec-architecture.
+13. Empêchez la modification du slug d'un cours existant (changer le slug casse
+    les liens). Indice : `self.fields["slug"].disabled = True` dans `__init__`
+    quand `self.instance.pk` existe.

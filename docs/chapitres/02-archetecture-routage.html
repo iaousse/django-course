@@ -212,12 +212,14 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">index.html</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">index.html</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Préface</span></a>
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -276,10 +278,16 @@ div.csl-indent {
     <h2 id="toc-title">Dans ce chapitre</h2>
    
   <ul>
-  <li><a href="#le-chemin-complet-dune-requête" id="toc-le-chemin-complet-dune-requête" class="nav-link active" data-scroll-target="#le-chemin-complet-dune-requête">Le chemin complet d’une requête</a></li>
+  <li><a href="#où-en-sommes-nous" id="toc-où-en-sommes-nous" class="nav-link active" data-scroll-target="#où-en-sommes-nous">Où en sommes-nous ?</a></li>
+  <li><a href="#le-chemin-complet-dune-requête" id="toc-le-chemin-complet-dune-requête" class="nav-link" data-scroll-target="#le-chemin-complet-dune-requête">Le chemin complet d’une requête</a>
+  <ul class="collapse">
+  <li><a href="#à-quelle-couche-appartient-ce-code" id="toc-à-quelle-couche-appartient-ce-code" class="nav-link" data-scroll-target="#à-quelle-couche-appartient-ce-code">À quelle couche appartient ce code ?</a></li>
+  </ul></li>
+  <li><a href="#quelques-notions-http-indispensables" id="toc-quelques-notions-http-indispensables" class="nav-link" data-scroll-target="#quelques-notions-http-indispensables">Quelques notions HTTP indispensables</a></li>
   <li><a href="#les-apps-découper-par-responsabilité" id="toc-les-apps-découper-par-responsabilité" class="nav-link" data-scroll-target="#les-apps-découper-par-responsabilité">Les apps : découper par responsabilité</a></li>
   <li><a href="#lire-settings.py-plutôt-que-le-copier" id="toc-lire-settings.py-plutôt-que-le-copier" class="nav-link" data-scroll-target="#lire-settings.py-plutôt-que-le-copier">Lire <code>settings.py</code> plutôt que le copier</a>
   <ul class="collapse">
+  <li><a href="#ce-qui-se-trouve-plus-bas-dans-le-fichier" id="toc-ce-qui-se-trouve-plus-bas-dans-le-fichier" class="nav-link" data-scroll-target="#ce-qui-se-trouve-plus-bas-dans-le-fichier">Ce qui se trouve plus bas dans le fichier</a></li>
   <li><a href="#le-secret-et-le-mode-debug" id="toc-le-secret-et-le-mode-debug" class="nav-link" data-scroll-target="#le-secret-et-le-mode-debug">Le secret et le mode debug</a></li>
   </ul></li>
   <li><a href="#déclarer-les-premières-routes" id="toc-déclarer-les-premières-routes" class="nav-link" data-scroll-target="#déclarer-les-premières-routes">Déclarer les premières routes</a></li>
@@ -288,9 +296,14 @@ div.csl-indent {
   <li><a href="#paramètres-capturés-dans-lurl" id="toc-paramètres-capturés-dans-lurl" class="nav-link" data-scroll-target="#paramètres-capturés-dans-lurl">Paramètres capturés dans l’URL</a></li>
   </ul></li>
   <li><a href="#comprendre-la-résolution-des-urls" id="toc-comprendre-la-résolution-des-urls" class="nav-link" data-scroll-target="#comprendre-la-résolution-des-urls">Comprendre la résolution des URLs</a></li>
+  <li><a href="#fabriquer-une-url-reverse-et-les-noms-de-routes" id="toc-fabriquer-une-url-reverse-et-les-noms-de-routes" class="nav-link" data-scroll-target="#fabriquer-une-url-reverse-et-les-noms-de-routes">Fabriquer une URL : <code>reverse</code> et les noms de routes</a></li>
+  <li><a href="#un-premier-test-automatique" id="toc-un-premier-test-automatique" class="nav-link" data-scroll-target="#un-premier-test-automatique">Un premier test automatique</a></li>
   <li><a href="#requêtes-et-réponses-les-distinctions-importantes" id="toc-requêtes-et-réponses-les-distinctions-importantes" class="nav-link" data-scroll-target="#requêtes-et-réponses-les-distinctions-importantes">Requêtes et réponses : les distinctions importantes</a></li>
   <li><a href="#premier-modèle-mental-à-retenir" id="toc-premier-modèle-mental-à-retenir" class="nav-link" data-scroll-target="#premier-modèle-mental-à-retenir">Premier modèle mental à retenir</a></li>
-  <li><a href="#exercice-guidé" id="toc-exercice-guidé" class="nav-link" data-scroll-target="#exercice-guidé">Exercice guidé</a></li>
+  <li><a href="#checkpoint" id="toc-checkpoint" class="nav-link" data-scroll-target="#checkpoint">Checkpoint</a></li>
+  <li><a href="#erreurs-fréquentes" id="toc-erreurs-fréquentes" class="nav-link" data-scroll-target="#erreurs-fréquentes">Erreurs fréquentes</a></li>
+  <li><a href="#à-retenir" id="toc-à-retenir" class="nav-link" data-scroll-target="#à-retenir">À retenir</a></li>
+  <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices">Exercices</a></li>
   </ul>
 </nav>
     </div>
@@ -301,9 +314,35 @@ div.csl-indent {
 
 
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Objectifs d’apprentissage
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>À la fin de ce chapitre, vous saurez :</p>
+<ul>
+<li>décrire le chemin complet d’une requête dans Django et le rôle du modèle, de la vue et du template (MVT) ;</li>
+<li>lire un fichier <code>settings.py</code> et expliquer ses sections principales ;</li>
+<li>déclarer des routes avec <code>path</code>, <code>include</code>, <code>app_name</code> et <code>name</code> ;</li>
+<li>capturer des paramètres dans une URL grâce aux convertisseurs ;</li>
+<li>expliquer pourquoi l’ordre des routes compte et le démontrer ;</li>
+<li>générer une URL avec <code>reverse</code> plutôt que de l’écrire en dur ;</li>
+<li>manipuler <code>HttpRequest</code> et <code>HttpResponse</code> et diagnostiquer une page qui ne fonctionne pas.</li>
+</ul>
+</div>
+</div>
+<section id="où-en-sommes-nous" class="level2">
+<h2 class="anchored" data-anchor-id="où-en-sommes-nous">Où en sommes-nous ?</h2>
+<p>Au chapitre précédent, nous avons obtenu un projet qui démarre, une app <code>cours</code> déclarée dans <code>INSTALLED_APPS</code> et un dépôt Git propre. L’app est encore vide : aucune page n’existe en dehors de la fusée de Django. Ce chapitre construit les <strong>routes</strong> (qui répondent à « quelle URL mène à quel code ? ») et les premières <strong>vues</strong>, sans base de données ni HTML : nous voulons comprendre le mécanisme avant d’ajouter des couches.</p>
+</section>
 <section id="le-chemin-complet-dune-requête" class="level2">
 <h2 class="anchored" data-anchor-id="le-chemin-complet-dune-requête">Le chemin complet d’une requête</h2>
-<p>Une bonne application Django n’est pas une collection de fichiers que l’on modifie au hasard. Elle est une chaîne de responsabilités. Pour une requête vers <code>/cours/12/</code>, le parcours conceptuel est :</p>
+<p>Une bonne application Django n’est pas une collection de fichiers que l’on modifie au hasard. Elle est une chaîne de responsabilités. Pour une requête vers <code>/cours/python-pour-debutants/</code>, le parcours conceptuel est :</p>
 <pre class="text"><code>navigateur
    │  requête HTTP
    ▼
@@ -320,7 +359,7 @@ template ─── contexte Python
    │  HTML
    ▼
 navigateur</code></pre>
-<p>Django appelle souvent cette organisation <strong>MVT</strong> :</p>
+<p>Django appelle souvent cette organisation <strong>MVT</strong> (Modèle–Vue–Template) :</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -347,7 +386,124 @@ navigateur</code></pre>
 </tr>
 </tbody>
 </table>
-<p>La comparaison avec MVC est utile mais imparfaite. Le nom importe moins que la règle : une vue ne devrait pas contenir tout le HTML, un template ne devrait pas interroger directement la base, et un modèle ne devrait pas connaître la mise en page. Le découpage rend chaque partie remplaçable et testable <span class="citation" data-cites="django-design">(<a href="../references.html#ref-django-design" role="doc-biblioref">Django Software Foundation 2025</a>)</span>. Les bonnes pratiques de conception Django insistent aussi sur la lisibilité, la simplicité et le respect des conventions du framework <span class="citation" data-cites="two-scoops-django">(<a href="../references.html#ref-two-scoops-django" role="doc-biblioref">Greenfeld et Roy Greenfeld 2017</a>)</span>.</p>
+<p>La comparaison avec MVC est utile mais imparfaite : le mot « vue » désigne dans Django ce que d’autres frameworks appellent un contrôleur. Le nom importe moins que la règle : une vue ne devrait pas contenir tout le HTML, un template ne devrait pas interroger directement la base, et un modèle ne devrait pas connaître la mise en page. Le découpage rend chaque partie remplaçable et testable <span class="citation" data-cites="django-design">(<a href="../references.html#ref-django-design" role="doc-biblioref">Django Software Foundation 2025</a>)</span>. Les bonnes pratiques de conception Django insistent aussi sur la lisibilité, la simplicité et le respect des conventions du framework <span class="citation" data-cites="two-scoops-django">(<a href="../references.html#ref-two-scoops-django" role="doc-biblioref">Greenfeld et Roy Greenfeld 2017</a>)</span>.</p>
+<section id="à-quelle-couche-appartient-ce-code" class="level3">
+<h3 class="anchored" data-anchor-id="à-quelle-couche-appartient-ce-code">À quelle couche appartient ce code ?</h3>
+<p>Face à une règle ou à un morceau de code, demandez-vous où le ranger :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Si cela concerne…</th>
+<th>Cela va dans…</th>
+<th>Exemple dans BiblioCours</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>la forme des données et leurs contraintes</td>
+<td>le <strong>modèle</strong></td>
+<td>un slug est unique</td>
+</tr>
+<tr class="even">
+<td>la décision à prendre pour une requête</td>
+<td>la <strong>vue</strong></td>
+<td>n’afficher que les cours publiés</td>
+</tr>
+<tr class="odd">
+<td>la mise en page HTML</td>
+<td>le <strong>template</strong></td>
+<td>la carte d’un cours</td>
+</tr>
+<tr class="even">
+<td>quelle URL mène où</td>
+<td>le <strong>routeur</strong> (<code>urls.py</code>)</td>
+<td><code>/cours/&lt;slug&gt;/</code></td>
+</tr>
+<tr class="odd">
+<td>la validation d’une saisie</td>
+<td>le <strong>formulaire</strong> (chapitre 5)</td>
+<td>titre de 5 caractères minimum</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="quelques-notions-http-indispensables" class="level2">
+<h2 class="anchored" data-anchor-id="quelques-notions-http-indispensables">Quelques notions HTTP indispensables</h2>
+<p>Deux informations accompagnent chaque échange : la <strong>méthode</strong> de la requête et le <strong>code de statut</strong> de la réponse.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Méthode</th>
+<th>Usage habituel</th>
+<th>Modifie des données ?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>GET</code></td>
+<td>lire une page</td>
+<td>non</td>
+</tr>
+<tr class="even">
+<td><code>POST</code></td>
+<td>envoyer un formulaire, déclencher une action</td>
+<td>oui</td>
+</tr>
+</tbody>
+</table>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Statut</th>
+<th>Signification</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>200 OK</code></td>
+<td>succès</td>
+<td>la page s’affiche</td>
+</tr>
+<tr class="even">
+<td><code>301</code> / <code>302</code></td>
+<td>redirection permanente / temporaire</td>
+<td>après un formulaire valide</td>
+</tr>
+<tr class="odd">
+<td><code>403 Forbidden</code></td>
+<td>identifié (ou non) mais interdit</td>
+<td>permission manquante</td>
+</tr>
+<tr class="even">
+<td><code>404 Not Found</code></td>
+<td>ressource inconnue</td>
+<td>slug qui n’existe pas</td>
+</tr>
+<tr class="odd">
+<td><code>405 Method Not Allowed</code></td>
+<td>méthode non acceptée</td>
+<td><code>GET</code> sur une vue réservée à <code>POST</code></td>
+</tr>
+<tr class="even">
+<td><code>500 Internal Server Error</code></td>
+<td>erreur dans le code serveur</td>
+<td>exception non gérée</td>
+</tr>
+</tbody>
+</table>
+<p>Retenez la famille du premier chiffre : <strong>2xx</strong> succès, <strong>3xx</strong> redirection, <strong>4xx</strong> erreur du client (la requête est incorrecte), <strong>5xx</strong> erreur du serveur (le code est en cause). Cette lecture vous aidera à savoir où chercher.</p>
 </section>
 <section id="les-apps-découper-par-responsabilité" class="level2">
 <h2 class="anchored" data-anchor-id="les-apps-découper-par-responsabilité">Les apps : découper par responsabilité</h2>
@@ -356,11 +512,11 @@ navigateur</code></pre>
 cours/          matières et cours
 inscriptions/   suivi de la progression
 notifications/  courriels et alertes</code></pre>
-<p>Une app bien découpée peut être déplacée dans un autre projet avec peu de modifications. Il ne faut pas créer une app pour chaque modèle : on crée une app pour un domaine fonctionnel cohérent.</p>
+<p>Une app bien découpée peut être déplacée dans un autre projet avec peu de modifications. Il ne faut pas créer une app pour chaque modèle : on crée une app pour un domaine fonctionnel cohérent. Ici, <code>Matiere</code> et <code>Cours</code> forment ensemble un seul domaine, le catalogue : une seule app suffit.</p>
 </section>
 <section id="lire-settings.py-plutôt-que-le-copier" class="level2">
 <h2 class="anchored" data-anchor-id="lire-settings.py-plutôt-que-le-copier">Lire <code>settings.py</code> plutôt que le copier</h2>
-<p>Le fichier <code>config/settings.py</code> configure le comportement du projet. Les sections importantes sont :</p>
+<p>Le fichier <code>config/settings.py</code> configure le comportement du projet. Ce n’est pas un fichier à mémoriser, mais à savoir <strong>lire</strong>. Voici ses sections importantes, dans l’ordre :</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>BASE_DIR <span class="op">=</span> Path(<span class="va">__file__</span>).resolve().parent.parent</span>
@@ -409,96 +565,320 @@ notifications/  courriels et alertes</code></pre>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>WSGI_APPLICATION <span class="op">=</span> <span class="st">"config.wsgi.application"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>INSTALLED_APPS</code> active les composants. <code>MIDDLEWARE</code> forme une pile traversée par les requêtes et réponses. <code>TEMPLATES</code> indique comment trouver et rendre les templates. <code>ROOT_URLCONF</code> indique quel routeur commencer à lire.</p>
+<p>Passons-les en revue :</p>
+<ul>
+<li><code>BASE_DIR</code> est le dossier racine du projet. On construit les autres chemins à partir de lui, pour que le projet fonctionne quel que soit son emplacement ;</li>
+<li><code>INSTALLED_APPS</code> active les composants ;</li>
+<li><code>MIDDLEWARE</code> forme une pile traversée par les requêtes et les réponses (voir l’encadré ci-dessous) ;</li>
+<li><code>ROOT_URLCONF</code> indique quel routeur commencer à lire ;</li>
+<li><code>TEMPLATES</code> indique comment trouver et rendre les templates ;</li>
+<li><code>WSGI_APPLICATION</code> désigne le point d’entrée pour les serveurs de production.</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Les middlewares : une pelure d’oignon
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Chaque middleware est une couche qui enveloppe la vue. La requête traverse les couches <strong>de haut en bas</strong> de la liste avant d’atteindre la vue ; la réponse les retraverse <strong>de bas en haut</strong>.</p>
+<pre class="text"><code>requête  →  Security → Session → Common → Csrf → Auth → … → VUE
+réponse  ←  Security ← Session ← Common ← Csrf ← Auth ← … ← VUE</code></pre>
+<p>C’est ainsi que <code>request.user</code> existe dans toutes les vues (grâce à <code>SessionMiddleware</code> et <code>AuthenticationMiddleware</code>) et que les formulaires sont protégés contre le CSRF (grâce à <code>CsrfViewMiddleware</code>). L’ordre compte : un middleware peut dépendre de ce qu’un autre a préparé avant lui.</p>
+</div>
+</div>
+<section id="ce-qui-se-trouve-plus-bas-dans-le-fichier" class="level3">
+<h3 class="anchored" data-anchor-id="ce-qui-se-trouve-plus-bas-dans-le-fichier">Ce qui se trouve plus bas dans le fichier</h3>
+<p>Trois autres réglages produits par <code>startproject</code> méritent un regard :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>DATABASES <span class="op">=</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"default"</span>: {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ENGINE"</span>: <span class="st">"django.db.backends.sqlite3"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"NAME"</span>: BASE_DIR <span class="op">/</span> <span class="st">"db.sqlite3"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>LANGUAGE_CODE <span class="op">=</span> <span class="st">"en-us"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>TIME_ZONE <span class="op">=</span> <span class="st">"UTC"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>USE_TZ <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>STATIC_URL <span class="op">=</span> <span class="st">"static/"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>DATABASES</code> indique <strong>quelle base</strong> utiliser. Par défaut, SQLite, un simple fichier <code>db.sqlite3</code> : idéal pour apprendre, car il n’y a rien à installer ;</li>
+<li><code>LANGUAGE_CODE</code> détermine la langue des messages de Django (erreurs de formulaire, administration) ;</li>
+<li><code>TIME_ZONE</code> et <code>USE_TZ</code> gèrent les dates. Avec <code>USE_TZ = True</code>, Django stocke les dates en UTC dans la base et les convertit dans le fuseau configuré à l’affichage ;</li>
+<li><code>STATIC_URL</code> est le préfixe des fichiers CSS et JavaScript (voir <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>).</li>
+</ul>
+<p>Pour que BiblioCours parle français, modifiez :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>LANGUAGE_CODE <span class="op">=</span> <span class="st">"fr"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>TIME_ZONE <span class="op">=</span> <span class="st">"Europe/Paris"</span>  <span class="co"># remplacez par votre fuseau horaire</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Redémarrez le serveur et ouvrez <code>/admin/</code> : la page de connexion est désormais en français.</p>
+</section>
 <section id="le-secret-et-le-mode-debug" class="level3">
 <h3 class="anchored" data-anchor-id="le-secret-et-le-mode-debug">Le secret et le mode debug</h3>
-<p><code>SECRET_KEY</code> est utilisé par plusieurs mécanismes cryptographiques de Django. Il ne doit pas être publié. <code>DEBUG = True</code> affiche des informations très détaillées en cas d’erreur ; c’est utile localement et dangereux sur Internet. Les réglages de production seront traités au <a href="08-production.html" class="quarto-xref"><span>Préparer la production et continuer l’apprentissage</span></a>.</p>
+<p><code>SECRET_KEY</code> est utilisé par plusieurs mécanismes cryptographiques de Django (signature des sessions, des jetons CSRF…). Il ne doit pas être publié. <code>DEBUG = True</code> affiche des informations très détaillées en cas d’erreur ; c’est utile localement et dangereux sur Internet. <code>ALLOWED_HOSTS</code> liste les noms de domaine que Django accepte de servir ; vide, il n’accepte que <code>localhost</code> et <code>127.0.0.1</code> tant que <code>DEBUG</code> est actif. Nous apprendrons à protéger ces trois réglages au <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>, et à les configurer pour la production au <a href="08-production.html" class="quarto-xref"><span>Préparer la production et continuer l’apprentissage</span></a>.</p>
 </section>
 </section>
 <section id="déclarer-les-premières-routes" class="level2">
 <h2 class="anchored" data-anchor-id="déclarer-les-premières-routes">Déclarer les premières routes</h2>
 <p>Le routeur principal reçoit une liste de motifs. Modifiez <code>config/urls.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> admin</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> include, path</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"admin/"</span>, admin.site.urls),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"cours/"</span>, include(<span class="st">"cours.urls"</span>)),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> admin</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> include, path</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"admin/"</span>, admin.site.urls),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"cours/"</span>, include(<span class="st">"cours.urls"</span>)),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Créez ensuite <code>cours/urls.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> path</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> . <span class="im">import</span> views</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>app_name <span class="op">=</span> <span class="st">"cours"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">""</span>, views.liste_cours, name<span class="op">=</span><span class="st">"liste"</span>),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Trois détails sont essentiels :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> path</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> . <span class="im">import</span> views</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>app_name <span class="op">=</span> <span class="st">"cours"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">""</span>, views.accueil, name<span class="op">=</span><span class="st">"accueil"</span>),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La fonction <code>path(route, vue, name=...)</code> associe un motif à une vue. Trois détails sont essentiels :</p>
 <ol type="1">
-<li><code>include</code> délègue un préfixe à l’app ;</li>
-<li><code>app_name</code> crée un espace de noms ;</li>
+<li><code>include</code> délègue un préfixe à l’app : toute URL commençant par <code>cours/</code> est confiée à <code>cours/urls.py</code>, qui ne voit alors que <strong>la suite</strong> du chemin ;</li>
+<li><code>app_name</code> crée un <strong>espace de noms</strong> : la route s’appellera <code>cours:accueil</code>, pas simplement <code>accueil</code> ;</li>
 <li><code>name</code> donne un identifiant stable à la route.</li>
 </ol>
 <p>Un template doit utiliser le nom de la route, pas recopier son URL. Ainsi, si <code>cours/</code> devient <code>catalogue/</code>, les liens générés par <code>{% url %}</code> restent cohérents après la modification du routeur.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Pourquoi tous ces <code>/</code> finaux ?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Django a l’habitude de terminer les URLs par <code>/</code>. Si vous demandez <code>/cours</code> (sans le <code>/</code> final), <code>CommonMiddleware</code> répond par une redirection vers <code>/cours/</code>. Cela évite que deux adresses différentes présentent la même page, ce que les moteurs de recherche n’apprécient pas. Écrivez donc toujours vos routes avec un <code>/</code> final.</p>
+</div>
+</div>
 </section>
 <section id="écrire-une-vue-minimale" class="level2">
 <h2 class="anchored" data-anchor-id="écrire-une-vue-minimale">Écrire une vue minimale</h2>
 <p>Dans <code>cours/views.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.http <span class="im">import</span> HttpRequest, HttpResponse</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accueil(request: HttpRequest) <span class="op">-&gt;</span> HttpResponse:</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(<span class="st">"Bienvenue dans BiblioCours"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Ajoutez temporairement la route :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">""</span>, views.accueil, name<span class="op">=</span><span class="st">"accueil"</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Ouvrez <code>/cours/</code>. Une vue reçoit au minimum un objet <code>HttpRequest</code> et renvoie un objet de réponse. <code>HttpResponse</code> est idéal pour comprendre le mécanisme, mais une application HTML utilisera plutôt <code>render</code>, présenté au chapitre <a href="04-vues-urls-templates.html" class="quarto-xref"><span>Construire les pages : vues, URLs et templates</span></a>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.http <span class="im">import</span> HttpRequest, HttpResponse</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accueil(request: HttpRequest) <span class="op">-&gt;</span> HttpResponse:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(<span class="st">"Bienvenue dans BiblioCours"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Démarrez le serveur et ouvrez <code>http://127.0.0.1:8000/cours/</code>. Vous devriez voir le message. Une vue est une simple fonction qui reçoit au minimum un objet <code>HttpRequest</code> et renvoie un objet de réponse. <code>HttpResponse</code> est idéal pour comprendre le mécanisme, mais une application HTML utilisera plutôt <code>render</code>, présenté au <a href="04-vues-urls-templates.html" class="quarto-xref"><span>Construire les pages : vues, URLs et templates</span></a>.</p>
+<p>Observez le journal du terminal : une ligne <code>"GET /cours/ HTTP/1.1" 200 …</code> confirme que la requête est arrivée, a été routée et a produit un <code>200</code>.</p>
 <section id="paramètres-capturés-dans-lurl" class="level3">
 <h3 class="anchored" data-anchor-id="paramètres-capturés-dans-lurl">Paramètres capturés dans l’URL</h3>
-<p>Django sait convertir une partie de l’URL avant d’appeler la vue :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;int:pk&gt;/"</span>, views.detail_cours, name<span class="op">=</span><span class="st">"detail"</span>),</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Pour <code>/cours/12/</code>, Django appelle :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> detail_cours(request: HttpRequest, pk: <span class="bu">int</span>) <span class="op">-&gt;</span> HttpResponse:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(<span class="ss">f"Le cours demandé est </span><span class="sc">{</span>pk<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Le convertisseur <code>int</code> refuse les valeurs qui ne sont pas des entiers. D’autres convertisseurs courants sont <code>str</code>, <code>slug</code>, <code>uuid</code> et <code>path</code>. Une URL porte donc une information structurée, et non une chaîne que la vue doit parser elle-même.</p>
+<p>Django sait convertir une partie de l’URL avant d’appeler la vue. Ajoutez une route de détail à <code>cours/urls.py</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">""</span>, views.accueil, name<span class="op">=</span><span class="st">"accueil"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;slug:slug&gt;/"</span>, views.detail_cours, name<span class="op">=</span><span class="st">"detail"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La syntaxe <code>&lt;convertisseur:nom&gt;</code> capture un segment de l’URL et le transmet à la vue comme argument nommé. Pour <code>/cours/python-pour-debutants/</code>, Django appelle <code>detail_cours(request, slug="python-pour-debutants")</code>. Ajoutez la vue :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> detail_cours(request: HttpRequest, slug: <span class="bu">str</span>) <span class="op">-&gt;</span> HttpResponse:</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(<span class="ss">f"Le cours demandé est : </span><span class="sc">{</span>slug<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Le nom entre chevrons doit correspondre exactement au nom du paramètre de la vue. Les convertisseurs disponibles sont :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Convertisseur</th>
+<th>Accepte</th>
+<th>Exemple de segment valide</th>
+<th>Valeur Python</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>str</code></td>
+<td>tout texte sans <code>/</code> (défaut)</td>
+<td><code>bonjour</code></td>
+<td><code>str</code></td>
+</tr>
+<tr class="even">
+<td><code>int</code></td>
+<td>entiers positifs ou nuls</td>
+<td><code>12</code></td>
+<td><code>int</code></td>
+</tr>
+<tr class="odd">
+<td><code>slug</code></td>
+<td>lettres, chiffres, <code>-</code> et <code>_</code></td>
+<td><code>python-pour-debutants</code></td>
+<td><code>str</code></td>
+</tr>
+<tr class="even">
+<td><code>uuid</code></td>
+<td>un UUID formaté</td>
+<td><code>075194d3-6885-417e-a8a8-6c931e272f00</code></td>
+<td><code>UUID</code></td>
+</tr>
+<tr class="odd">
+<td><code>path</code></td>
+<td>texte <strong>avec</strong> des <code>/</code></td>
+<td><code>docs/guide/intro</code></td>
+<td><code>str</code></td>
+</tr>
+</tbody>
+</table>
+<p>Un segment qui ne correspond pas au convertisseur n’est pas une erreur de la vue : la route ne correspond simplement pas, et Django essaie la suivante, puis renvoie une 404 s’il n’en reste aucune. Une URL porte donc une information structurée, et non une chaîne que la vue doit parser elle-même.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Question de conception
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Le projet utilisera un <code>slug</code> (<code>/cours/python-pour-debutants/</code>) plutôt qu’un identifiant entier (<code>/cours/12/</code>). L’URL est plus lisible, plus parlante pour un moteur de recherche et ne révèle pas le nombre de cours. L’identifiant entier, lui, est plus compact et immuable. Le choix de l’URL est à la fois une décision technique, une décision d’ergonomie et une décision de référencement.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="comprendre-la-résolution-des-urls" class="level2">
 <h2 class="anchored" data-anchor-id="comprendre-la-résolution-des-urls">Comprendre la résolution des URLs</h2>
-<p>Django parcourt <code>urlpatterns</code> de haut en bas et s’arrête au premier motif correspondant. L’ordre compte :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"nouveau/"</span>, views.nouveau_cours, name<span class="op">=</span><span class="st">"nouveau"</span>),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;int:pk&gt;/"</span>, views.detail_cours, name<span class="op">=</span><span class="st">"detail"</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>La route statique doit précéder la route dynamique. Sinon, selon les motifs, un chemin prévu pour <code>nouveau/</code> peut être interprété comme un identifiant.</p>
-<p>Pour fabriquer une URL dans Python :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> reverse</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> reverse(<span class="st">"cours:detail"</span>, kwargs<span class="op">=</span>{<span class="st">"pk"</span>: <span class="dv">12</span>})</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># "/cours/12/"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Cette technique est préférable à <code>"/cours/12/"</code> en dur. Elle sert notamment dans les redirections et les tests.</p>
+<p>Django parcourt <code>urlpatterns</code> de haut en bas et s’arrête au <strong>premier</strong> motif correspondant. L’ordre compte. Ajoutons une page statique « À propos » :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">""</span>, views.accueil, name<span class="op">=</span><span class="st">"accueil"</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"a-propos/"</span>, views.a_propos, name<span class="op">=</span><span class="st">"a_propos"</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;slug:slug&gt;/"</span>, views.detail_cours, name<span class="op">=</span><span class="st">"detail"</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>et sa vue :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> a_propos(request: HttpRequest) <span class="op">-&gt;</span> HttpResponse:</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(<span class="st">"BiblioCours est un projet d'apprentissage de Django."</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La route statique <code>a-propos/</code> précède la route dynamique <code>&lt;slug:slug&gt;/</code>. Si vous inversiez l’ordre, le mot <code>a-propos</code> serait un slug valide : la route dynamique le capturerait et la page « À propos » deviendrait inaccessible.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Avertissement</span>Expérience à faire
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Échangez temporairement l’ordre de <code>a-propos/</code> et de <code>&lt;slug:slug&gt;/</code> dans <code>cours/urls.py</code>, puis ouvrez <code>/cours/a-propos/</code>. Que voyez-vous ? Remettez ensuite l’ordre correct. Retenez la règle : <strong>les routes les plus spécifiques d’abord, les routes génériques ensuite.</strong></p>
+</div>
+</div>
+<p>Corollaire : un cours dont le slug vaudrait <code>a-propos</code> serait inaccessible. Nous reviendrons sur ce piège quand nous validerons les slugs (<a href="05-formulaires-admin.html" class="quarto-xref"><span>Saisir et administrer les données : formulaires et admin</span></a>).</p>
+</section>
+<section id="fabriquer-une-url-reverse-et-les-noms-de-routes" class="level2">
+<h2 class="anchored" data-anchor-id="fabriquer-une-url-reverse-et-les-noms-de-routes">Fabriquer une URL : <code>reverse</code> et les noms de routes</h2>
+<p>Pour obtenir une URL depuis son nom, ouvrez le shell Django :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py shell</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> reverse</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>reverse(<span class="st">"cours:a_propos"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># "/cours/a-propos/"</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>reverse(<span class="st">"cours:detail"</span>, kwargs<span class="op">=</span>{<span class="st">"slug"</span>: <span class="st">"python-pour-debutants"</span>})</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># "/cours/python-pour-debutants/"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Cette technique est préférable à <code>"/cours/a-propos/"</code> écrit en dur : si le préfixe <code>cours/</code> change dans <code>config/urls.py</code>, tous les liens suivent automatiquement. Elle sert notamment dans les redirections, les modèles (<code>get_absolute_url</code>) et les tests. Dans un template, l’équivalent est la balise <code>{% url 'cours:a_propos' %}</code>.</p>
+<p>Le préfixe <code>cours:</code> (l’espace de noms défini par <code>app_name</code>) évite les collisions : si une autre app définissait aussi une route <code>accueil</code>, on distinguerait <code>cours:accueil</code> et <code>autre:accueil</code>.</p>
+<p>Si vous donnez de mauvais arguments, Django lève <code>NoReverseMatch</code>. Essayez <code>reverse("cours:detail", kwargs={"pk": 1})</code> : le message d’erreur indique le nom des paramètres attendus. Apprenez à lire ces messages, ils sont précis.</p>
+</section>
+<section id="un-premier-test-automatique" class="level2">
+<h2 class="anchored" data-anchor-id="un-premier-test-automatique">Un premier test automatique</h2>
+<p>Nous allons vérifier nos routes par un test. <code>startapp</code> a créé un fichier <code>cours/tests.py</code>. Comme nous aurons plusieurs fichiers de tests, remplacez-le par un <strong>paquet</strong> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> cours/tests.py</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> cours/tests</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> cours/tests/__init__.py</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>(Un fichier <code>tests.py</code> et un dossier <code>tests/</code> ne peuvent pas coexister : Python ne saurait pas lequel importer.) Créez <code>cours/tests/test_urls.py</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.test <span class="im">import</span> SimpleTestCase</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> resolve, reverse</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cours <span class="im">import</span> views</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RoutesTests(SimpleTestCase):</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_reverse_a_propos(<span class="va">self</span>):</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.assertEqual(reverse(<span class="st">"cours:a_propos"</span>), <span class="st">"/cours/a-propos/"</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_a_propos_repond_200(<span class="va">self</span>):</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> <span class="va">self</span>.client.get(reverse(<span class="st">"cours:a_propos"</span>))</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.assertEqual(response.status_code, <span class="dv">200</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_a_propos_n_est_pas_capturee_par_le_detail(<span class="va">self</span>):</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        correspondance <span class="op">=</span> resolve(<span class="st">"/cours/a-propos/"</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.assertEqual(correspondance.func, views.a_propos)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Lancez-les :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py test</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Trois éléments sont nouveaux : <code>self.client</code> simule un navigateur sans lancer de serveur ; <code>resolve</code> fait l’opération inverse de <code>reverse</code> (de l’URL vers la vue) ; <code>SimpleTestCase</code> est la classe de test la plus légère, qui <strong>interdit</strong> tout accès à la base de données. Le <a href="07-tests-debug-qualite.html" class="quarto-xref"><span>Tester, diagnostiquer et faire évoluer le code</span></a> détaillera les autres classes de test. Le troisième test est précieux : il échouerait si quelqu’un inversait l’ordre des routes.</p>
 </section>
 <section id="requêtes-et-réponses-les-distinctions-importantes" class="level2">
 <h2 class="anchored" data-anchor-id="requêtes-et-réponses-les-distinctions-importantes">Requêtes et réponses : les distinctions importantes</h2>
 <p>Une requête contient plusieurs catégories d’information :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rechercher(request):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    terme <span class="op">=</span> request.GET.get(<span class="st">"q"</span>, <span class="st">""</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    langue <span class="op">=</span> request.headers.get(<span class="st">"Accept-Language"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    utilisateur <span class="op">=</span> request.user</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(<span class="ss">f"Recherche: </span><span class="sc">{</span>terme<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li><code>request.GET</code> contient les paramètres de l’URL, donc des données de lecture ;</li>
-<li><code>request.POST</code> contient les données envoyées dans un formulaire ;</li>
-<li><code>request.user</code> représente l’utilisateur courant, éventuellement anonyme ;</li>
-<li>les en-têtes décrivent le contexte HTTP, mais ne doivent pas être traités comme des données fiables ;</li>
-<li><code>request.method</code> indique <code>GET</code>, <code>POST</code>, etc.</li>
-</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rechercher(request):</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    terme <span class="op">=</span> request.GET.get(<span class="st">"q"</span>, <span class="st">""</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    langue <span class="op">=</span> request.headers.get(<span class="st">"Accept-Language"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    utilisateur <span class="op">=</span> request.user</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> HttpResponse(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Recherche : </span><span class="sc">{</span>terme<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        content_type<span class="op">=</span><span class="st">"text/plain; charset=utf-8"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attribut</th>
+<th>Contenu</th>
+<th>Remarque</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>request.method</code></td>
+<td><code>"GET"</code>, <code>"POST"</code>…</td>
+<td>décide de l’action à mener</td>
+</tr>
+<tr class="even">
+<td><code>request.GET</code></td>
+<td>paramètres de l’URL (<code>?q=django</code>)</td>
+<td>données de lecture, saisies par l’utilisateur</td>
+</tr>
+<tr class="odd">
+<td><code>request.POST</code></td>
+<td>données d’un formulaire envoyé</td>
+<td>saisies par l’utilisateur</td>
+</tr>
+<tr class="even">
+<td><code>request.user</code></td>
+<td>utilisateur courant, éventuellement anonyme</td>
+<td>fourni par un middleware</td>
+</tr>
+<tr class="odd">
+<td><code>request.headers</code></td>
+<td>en-têtes HTTP</td>
+<td>décrivent le contexte, <strong>non fiables</strong></td>
+</tr>
+<tr class="even">
+<td><code>request.path</code></td>
+<td>chemin demandé</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <p>Une vue ne doit pas faire confiance aux données reçues. Même un champ qui semble numérique ou une valeur provenant d’un navigateur doit être validé côté serveur. Les formulaires Django aideront à centraliser cette validation.</p>
+<p>Remarquez le <code>content_type="text/plain"</code> dans l’exemple ci-dessus. Par défaut, une <code>HttpResponse</code> est du HTML : si l’on y recopiait <code>terme</code> tel quel et que l’utilisateur tapait <code>&lt;script&gt;…&lt;/script&gt;</code>, le navigateur l’exécuterait (c’est une faille XSS, étudiée au <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>). En déclarant la réponse comme du texte brut, le navigateur n’interprète rien. Les templates, eux, échappent automatiquement les variables.</p>
+<p>Pour construire une réponse, <code>HttpResponse(contenu, status=200, content_type=...)</code> accepte aussi un statut explicite. Pour signaler une page inexistante, on lèvera plutôt <code>Http404</code> (<code>from django.http import Http404</code>), que Django transforme en réponse 404.</p>
 </section>
 <section id="premier-modèle-mental-à-retenir" class="level2">
 <h2 class="anchored" data-anchor-id="premier-modèle-mental-à-retenir">Premier modèle mental à retenir</h2>
@@ -511,31 +891,99 @@ notifications/  courriels et alertes</code></pre>
 <li>le template affiche-t-il ce nom et cette valeur ?</li>
 <li>le navigateur reçoit-il le HTML attendu ?</li>
 </ol>
-<p>Cette méthode est plus rapide que de modifier simultanément le modèle, la vue, le template et le CSS.</p>
+<p>Cette méthode est plus rapide que de modifier simultanément le modèle, la vue, le template et le CSS. Deux outils aident déjà aux étapes 1 et 2 : le <strong>journal du terminal</strong> (la requête est-elle arrivée ? quel statut ?) et la <strong>page 404 de débogage</strong> de Django, qui, en mode <code>DEBUG</code>, liste toutes les routes qu’elle a essayées dans l’ordre.</p>
 </section>
-<section id="exercice-guidé" class="level2">
-<h2 class="anchored" data-anchor-id="exercice-guidé">Exercice guidé</h2>
-<p>Ajoutez une page <code>/cours/a-propos/</code> :</p>
+<section id="checkpoint" class="level2">
+<h2 class="anchored" data-anchor-id="checkpoint">Checkpoint</h2>
+<p>À ce stade, <code>cours/urls.py</code> contient trois routes et <code>cours/views.py</code> trois vues. Vérifiez :</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><code>/cours/</code> affiche « Bienvenue dans BiblioCours » ;</label></li>
+<li><label><input type="checkbox"><code>/cours/a-propos/</code> affiche la page « À propos » ;</label></li>
+<li><label><input type="checkbox"><code>/cours/python-pour-debutants/</code> affiche « Le cours demandé est : python-pour-debutants » ;</label></li>
+<li><label><input type="checkbox"><code>uv run python manage.py test</code> rapporte 3 tests réussis ;</label></li>
+<li><label><input type="checkbox"><code>uv run python manage.py check</code> ne signale aucun problème ;</label></li>
+<li><label><input type="checkbox">vous avez fait un commit (<code>feat: premières routes et vues</code>).</label></li>
+</ul>
+</section>
+<section id="erreurs-fréquentes" class="level2">
+<h2 class="anchored" data-anchor-id="erreurs-fréquentes">Erreurs fréquentes</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symptôme</th>
+<th>Cause probable</th>
+<th>Remède</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>404 sur <code>/cours/</code></td>
+<td><code>include("cours.urls")</code> absent ou faute dans le préfixe</td>
+<td>relire <code>config/urls.py</code></td>
+</tr>
+<tr class="even">
+<td><code>ModuleNotFoundError: cours.urls</code></td>
+<td>fichier <code>cours/urls.py</code> non créé</td>
+<td>le créer</td>
+</tr>
+<tr class="odd">
+<td><code>NoReverseMatch</code></td>
+<td>nom de route, espace de noms ou argument incorrect</td>
+<td>lire le message : il liste ce qui est attendu</td>
+</tr>
+<tr class="even">
+<td><code>/cours/a-propos/</code> affiche « Le cours demandé est… »</td>
+<td>route dynamique placée avant la route statique</td>
+<td>inverser l’ordre</td>
+</tr>
+<tr class="odd">
+<td><code>TypeError: … got an unexpected keyword argument</code></td>
+<td>nom du convertisseur différent du paramètre de la vue</td>
+<td>aligner les deux noms</td>
+</tr>
+<tr class="even">
+<td><code>Ran 0 tests</code></td>
+<td><code>__init__.py</code> manquant ou fichier ne commençant pas par <code>test</code></td>
+<td>vérifier le paquet <code>cours/tests/</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="à-retenir" class="level2">
+<h2 class="anchored" data-anchor-id="à-retenir">À retenir</h2>
+<ul>
+<li>Le chemin est : navigateur → routeur → vue → (modèle) → template → navigateur.</li>
+<li>Le routeur lit les motifs <strong>dans l’ordre</strong> et s’arrête au premier qui correspond : le spécifique avant le générique.</li>
+<li><code>include</code> délègue, <code>app_name</code> isole, <code>name</code> identifie.</li>
+<li>On fabrique les URLs avec <code>reverse</code> (Python) ou <code>{% url %}</code> (template), jamais à la main.</li>
+<li>Les données d’une requête (<code>GET</code>, <code>POST</code>, en-têtes) viennent de l’extérieur : on les valide toujours.</li>
+<li>Un code de statut en <code>4xx</code> oriente vers le client, en <code>5xx</code> vers le serveur.</li>
+</ul>
+</section>
+<section id="exercices" class="level2">
+<h2 class="anchored" data-anchor-id="exercices">Exercices</h2>
 <ol type="1">
-<li>écrivez une vue qui renvoie une <code>HttpResponse</code> ;</li>
-<li>donnez-lui le nom <code>a_propos</code> ;</li>
-<li>appelez-la depuis <code>cours/urls.py</code> ;</li>
-<li>générez son adresse avec <code>reverse</code> dans le shell Django ;</li>
-<li>ajoutez un test qui vérifie que la réponse a le statut HTTP <code>200</code>.</li>
+<li><p>Décrivez, dans l’ordre, tous les éléments traversés par la requête <code>GET /cours/python-pour-debutants/</code> dans BiblioCours, depuis le navigateur jusqu’à la réponse.</p></li>
+<li><p>Pour chacun des éléments suivants, dites s’il relève du modèle, de la vue, du template ou du routeur : (a) l’en-tête HTML de la page ; (b) « un cours brouillon est invisible au public » ; (c) « <code>/cours/matiere/&lt;slug&gt;/</code> » ;</p>
+<ol start="4" type="a">
+<li>le format de date affiché.</li>
+</ol></li>
+<li><p>Donnez deux scénarios concrets où écrire <code>"/cours/12/"</code> en dur dans un template causerait des problèmes.</p></li>
+<li><p>Avec les routes dans l’ordre <code>["&lt;slug:slug&gt;/", "a-propos/"]</code>, que renvoie <code>/cours/a-propos/</code> ? Justifiez, puis vérifiez expérimentalement.</p></li>
+<li><p>Parmi <code>12/</code>, <code>-3/</code>, <code>abc/</code>, <code>012/</code>, lesquels correspondent au motif <code>&lt;int:pk&gt;/</code> ? Faites d’abord une prédiction, puis vérifiez-la après l’exercice 6, en appelant <code>resolve("/cours/exemple/12/")</code> (et les autres valeurs) dans le shell.</p></li>
+<li><p>Ajoutez temporairement la route <code>exemple/&lt;int:numero&gt;/</code> qui renvoie le double de <code>numero</code>. Que se passe-t-il pour <code>/cours/exemple/abc/</code> ? Pourquoi la vue n’est-elle jamais appelée ? Supprimez ensuite la route.</p></li>
+<li><p>Ajoutez la route <code>recherche/</code> (avant la route dynamique) et la vue <code>rechercher</code> de ce chapitre. Testez <code>/cours/recherche/?q=django</code> puis <code>/cours/recherche/</code> sans paramètre. Quel est le comportement dans le second cas, et pourquoi ?</p></li>
+<li><p>Dans le shell, provoquez volontairement un <code>NoReverseMatch</code> avec <code>reverse("cours:detail", kwargs={"pk": 1})</code>. Lisez le message et corrigez l’appel.</p></li>
+<li><p>Écrivez un test qui vérifie que <code>reverse("cours:detail", kwargs={"slug": "python"})</code> vaut <code>/cours/python/</code> et que <code>resolve("/cours/python/")</code> transmet bien <code>slug="python"</code> (indice : consultez l’attribut <code>kwargs</code> de la correspondance).</p></li>
+<li><p>Avec <code>DEBUG = True</code>, ouvrez <code>/cours/a/b/c/</code> et lisez la page 404 de débogage. Quelles routes ont été essayées, et dans quel ordre ?</p></li>
+<li><p>Créez une seconde app temporaire <code>demo</code> avec une route nommée <code>accueil</code>, incluse sous <code>demo/</code>. Vérifiez que <code>reverse("cours:accueil")</code> et <code>reverse("demo:accueil")</code> donnent des URLs différentes. Que se passerait-il sans espace de noms ? Supprimez ensuite l’app (ne la commitez pas).</p></li>
+<li><p>Rédigez un tableau de toutes les routes de BiblioCours à ce stade (URL, nom, vue, méthode attendue). Gardez-le à jour au fil des chapitres : c’est une documentation précieuse.</p></li>
 </ol>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Astuce</span>Question de conception
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>La route <code>/cours/12/</code> utilise un entier parce que la vue cherche un objet par clé primaire. Si l’URL devait être lisible, <code>/cours/python-pour-debutants/</code> pourrait utiliser un <code>slug</code>. Le choix de l’URL est à la fois une décision technique, une décision d’ergonomie et une décision de référencement.</p>
-</div>
-</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">

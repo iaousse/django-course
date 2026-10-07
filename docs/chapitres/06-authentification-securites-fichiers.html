@@ -212,12 +212,14 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">index.html</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">index.html</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Préface</span></a>
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -276,20 +278,34 @@ div.csl-indent {
     <h2 id="toc-title">Dans ce chapitre</h2>
    
   <ul>
-  <li><a href="#authentifier-nest-pas-autoriser" id="toc-authentifier-nest-pas-autoriser" class="nav-link active" data-scroll-target="#authentifier-nest-pas-autoriser">Authentifier n’est pas autoriser</a></li>
+  <li><a href="#où-en-sommes-nous" id="toc-où-en-sommes-nous" class="nav-link active" data-scroll-target="#où-en-sommes-nous">Où en sommes-nous ?</a></li>
+  <li><a href="#authentifier-nest-pas-autoriser" id="toc-authentifier-nest-pas-autoriser" class="nav-link" data-scroll-target="#authentifier-nest-pas-autoriser">Authentifier n’est pas autoriser</a>
+  <ul class="collapse">
+  <li><a href="#comment-fonctionne-une-session" id="toc-comment-fonctionne-une-session" class="nav-link" data-scroll-target="#comment-fonctionne-une-session">Comment fonctionne une session</a></li>
+  </ul></li>
   <li><a href="#ajouter-les-routes-dauthentification" id="toc-ajouter-les-routes-dauthentification" class="nav-link" data-scroll-target="#ajouter-les-routes-dauthentification">Ajouter les routes d’authentification</a></li>
-  <li><a href="#protéger-une-vue-et-une-action" id="toc-protéger-une-vue-et-une-action" class="nav-link" data-scroll-target="#protéger-une-vue-et-une-action">Protéger une vue et une action</a></li>
+  <li><a href="#protéger-une-vue-et-une-action" id="toc-protéger-une-vue-et-une-action" class="nav-link" data-scroll-target="#protéger-une-vue-et-une-action">Protéger une vue et une action</a>
+  <ul class="collapse">
+  <li><a href="#un-groupe-éditeurs" id="toc-un-groupe-éditeurs" class="nav-link" data-scroll-target="#un-groupe-éditeurs">Un groupe « Éditeurs »</a></li>
+  </ul></li>
   <li><a href="#csrf-protéger-les-requêtes-qui-changent-létat" id="toc-csrf-protéger-les-requêtes-qui-changent-létat" class="nav-link" data-scroll-target="#csrf-protéger-les-requêtes-qui-changent-létat">CSRF : protéger les requêtes qui changent l’état</a></li>
   <li><a href="#échappement-injection-et-entrées-utilisateur" id="toc-échappement-injection-et-entrées-utilisateur" class="nav-link" data-scroll-target="#échappement-injection-et-entrées-utilisateur">Échappement, injection et entrées utilisateur</a>
   <ul class="collapse">
   <li><a href="#xss-et-templates" id="toc-xss-et-templates" class="nav-link" data-scroll-target="#xss-et-templates">XSS et templates</a></li>
   <li><a href="#injection-sql" id="toc-injection-sql" class="nav-link" data-scroll-target="#injection-sql">Injection SQL</a></li>
   <li><a href="#redirections" id="toc-redirections" class="nav-link" data-scroll-target="#redirections">Redirections</a></li>
+  <li><a href="#ce-que-django-fait-pour-vous-et-ce-qui-reste-à-votre-charge" id="toc-ce-que-django-fait-pour-vous-et-ce-qui-reste-à-votre-charge" class="nav-link" data-scroll-target="#ce-que-django-fait-pour-vous-et-ce-qui-reste-à-votre-charge">Ce que Django fait pour vous, et ce qui reste à votre charge</a></li>
   </ul></li>
-  <li><a href="#secrets-et-configuration" id="toc-secrets-et-configuration" class="nav-link" data-scroll-target="#secrets-et-configuration">Secrets et configuration</a></li>
+  <li><a href="#secrets-et-configuration" id="toc-secrets-et-configuration" class="nav-link" data-scroll-target="#secrets-et-configuration">Secrets et configuration</a>
+  <ul class="collapse">
+  <li><a href="#fournir-les-valeurs-en-local" id="toc-fournir-les-valeurs-en-local" class="nav-link" data-scroll-target="#fournir-les-valeurs-en-local">Fournir les valeurs en local</a></li>
+  </ul></li>
   <li><a href="#fichiers-statiques" id="toc-fichiers-statiques" class="nav-link" data-scroll-target="#fichiers-statiques">Fichiers statiques</a></li>
   <li><a href="#téléversements-et-fichiers-média" id="toc-téléversements-et-fichiers-média" class="nav-link" data-scroll-target="#téléversements-et-fichiers-média">Téléversements et fichiers média</a></li>
   <li><a href="#checklist-de-sécurité-locale" id="toc-checklist-de-sécurité-locale" class="nav-link" data-scroll-target="#checklist-de-sécurité-locale">Checklist de sécurité locale</a></li>
+  <li><a href="#checkpoint" id="toc-checkpoint" class="nav-link" data-scroll-target="#checkpoint">Checkpoint</a></li>
+  <li><a href="#erreurs-fréquentes" id="toc-erreurs-fréquentes" class="nav-link" data-scroll-target="#erreurs-fréquentes">Erreurs fréquentes</a></li>
+  <li><a href="#à-retenir" id="toc-à-retenir" class="nav-link" data-scroll-target="#à-retenir">À retenir</a></li>
   <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices">Exercices</a></li>
   </ul>
 </nav>
@@ -301,6 +317,32 @@ div.csl-indent {
 
 
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Objectifs d’apprentissage
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>À la fin de ce chapitre, vous saurez :</p>
+<ul>
+<li>distinguer authentification et autorisation, et expliquer le rôle d’une session ;</li>
+<li>ajouter la connexion et la déconnexion, et protéger des vues avec <code>login_required</code> et <code>permission_required</code> ;</li>
+<li>créer un groupe de permissions (« Éditeurs ») et adapter les templates aux droits de l’utilisateur ;</li>
+<li>expliquer et neutraliser les risques CSRF, XSS, injection SQL et redirection ouverte ;</li>
+<li>sortir les secrets du code grâce aux variables d’environnement ;</li>
+<li>configurer correctement fichiers statiques et fichiers téléversés ;</li>
+<li>appliquer une checklist de sécurité avant publication.</li>
+</ul>
+</div>
+</div>
+<section id="où-en-sommes-nous" class="level2">
+<h2 class="anchored" data-anchor-id="où-en-sommes-nous">Où en sommes-nous ?</h2>
+<p>Les vues de création, de modification et de suppression existent (chapitre 5), mais elles sont protégées uniquement par <code>login_required</code>, et le site n’a pas de page de connexion : il faut passer par l’administration. Surtout, <strong>tout utilisateur connecté peut tout faire</strong>. Ce chapitre installe un vrai contrôle d’accès, puis range la configuration sensible là où elle doit être.</p>
+</section>
 <section id="authentifier-nest-pas-autoriser" class="level2">
 <h2 class="anchored" data-anchor-id="authentifier-nest-pas-autoriser">Authentifier n’est pas autoriser</h2>
 <p>Deux questions différentes sont souvent confondues :</p>
@@ -310,152 +352,415 @@ div.csl-indent {
 </ul>
 <p>Un utilisateur connecté peut avoir le droit de lire un cours mais pas de le supprimer. La présence de <code>request.user</code> ne suffit donc jamais à autoriser une opération.</p>
 <p>Django fournit un système d’utilisateurs, de sessions, de groupes et de permissions. Il faut le configurer et l’utiliser de manière explicite plutôt que d’inventer un mécanisme de mot de passe. Les recommandations de sécurité du framework et les contrôles OWASP complètent cette compréhension <span class="citation" data-cites="django-security owasp-top-ten">(<a href="../references.html#ref-django-security" role="doc-biblioref">Django Software Foundation 2025b</a>; <a href="../references.html#ref-owasp-top-ten" role="doc-biblioref">OWASP Foundation 2021</a>)</span>.</p>
+<section id="comment-fonctionne-une-session" class="level3">
+<h3 class="anchored" data-anchor-id="comment-fonctionne-une-session">Comment fonctionne une session</h3>
+<p>HTTP est « sans mémoire » : chaque requête est indépendante, et le serveur ne sait pas, de lui-même, que deux requêtes viennent de la même personne. Django résout cela avec une <strong>session</strong> :</p>
+<pre class="text"><code>1. POST /connexion/  (identifiant + mot de passe)
+2. Django vérifie le mot de passe, crée une session (une ligne dans la table
+   django_session) et répond :  Set-Cookie: sessionid=abc123…
+3. GET /cours/nouveau/   +  Cookie: sessionid=abc123…   (automatique, à chaque requête)
+4. SessionMiddleware retrouve la session ; AuthenticationMiddleware place
+   l'utilisateur dans request.user</code></pre>
+<p>Le navigateur ne conserve donc qu’un <strong>identifiant de session</strong> dans un cookie ; les données restent côté serveur. Les mots de passe ne sont jamais stockés en clair : Django ne conserve qu’une empreinte (un <em>hash</em> salé), d’où l’importance de créer les comptes avec <code>create_user</code> ou l’administration, et non en écrivant dans la base à la main.</p>
+</section>
 </section>
 <section id="ajouter-les-routes-dauthentification" class="level2">
 <h2 class="anchored" data-anchor-id="ajouter-les-routes-dauthentification">Ajouter les routes d’authentification</h2>
 <p>Dans <code>config/urls.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> admin</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth <span class="im">import</span> views <span class="im">as</span> auth_views</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> include, path</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"admin/"</span>, admin.site.urls),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"cours/"</span>, include(<span class="st">"cours.urls"</span>)),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    path(</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"connexion/"</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        auth_views.LoginView.as_view(template_name<span class="op">=</span><span class="st">"registration/login.html"</span>),</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">"login"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"deconnexion/"</span>, auth_views.LogoutView.as_view(), name<span class="op">=</span><span class="st">"logout"</span>),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Ajoutez dans <code>config/settings.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>LOGIN_URL <span class="op">=</span> <span class="st">"login"</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>LOGIN_REDIRECT_URL <span class="op">=</span> <span class="st">"cours:liste"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>LOGOUT_REDIRECT_URL <span class="op">=</span> <span class="st">"cours:liste"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> admin</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth <span class="im">import</span> views <span class="im">as</span> auth_views</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.urls <span class="im">import</span> include, path</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"admin/"</span>, admin.site.urls),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"cours/"</span>, include(<span class="st">"cours.urls"</span>)),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    path(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"connexion/"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        auth_views.LoginView.as_view(template_name<span class="op">=</span><span class="st">"registration/login.html"</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">"login"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"deconnexion/"</span>, auth_views.LogoutView.as_view(), name<span class="op">=</span><span class="st">"logout"</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>LoginView</code> et <code>LogoutView</code> sont des vues <strong>fournies par Django</strong> : elles traitent le formulaire, vérifient le mot de passe et gèrent la session. Nous n’avons qu’à fournir le template. Ajoutez dans <code>config/settings.py</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>LOGIN_URL <span class="op">=</span> <span class="st">"login"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>LOGIN_REDIRECT_URL <span class="op">=</span> <span class="st">"cours:liste"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>LOGOUT_REDIRECT_URL <span class="op">=</span> <span class="st">"cours:liste"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>LOGIN_URL</code> est la page vers laquelle <code>login_required</code> redirige les anonymes ; <code>LOGIN_REDIRECT_URL</code> la destination après une connexion réussie (sauf si un paramètre <code>next</code> existe) ; <code>LOGOUT_REDIRECT_URL</code> la destination après la déconnexion. Ces trois valeurs peuvent être des noms de routes.</p>
 <p>Le template de connexion doit se trouver à l’emplacement attendu :</p>
 <pre class="text"><code>templates/
 └── registration/
     └── login.html</code></pre>
-<p>Pour que ce dossier global soit trouvé, ajoutez-le à <code>TEMPLATES[0]["DIRS"]</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>TEMPLATES[<span class="dv">0</span>][<span class="st">"DIRS"</span>] <span class="op">=</span> [BASE_DIR <span class="op">/</span> <span class="st">"templates"</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>templates/registration/login.html</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>{% extends "cours/base.html" %}</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>{% block title %}Connexion — BiblioCours{% endblock %}</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>{% block content %}</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Se connecter<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="dt">&gt;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    {% csrf_token %}</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    {{ form.as_p }}</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Se connecter<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>{% endblock %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Dans <code>base.html</code>, adaptez la navigation :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{% if user.is_authenticated %}</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">span</span><span class="dt">&gt;</span>Bonjour {{ user.get_username }}<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="ot"> action</span><span class="op">=</span><span class="st">"{% url 'logout' %}"</span><span class="dt">&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    {% csrf_token %}</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Se déconnecter<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>{% else %}</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'login' %}?next={{ request.path }}"</span><span class="dt">&gt;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    Se connecter</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>{% endif %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Sur les versions récentes de Django, la déconnexion est traitée par POST. Utiliser un formulaire respecte le fait que la déconnexion modifie l’état de la session.</p>
+<p>Ce dossier <code>templates/</code> est à la <strong>racine du projet</strong> et non dans l’app : c’est un template qui concerne le site entier. Pour qu’il soit trouvé, déclarez-le dans le réglage <code>TEMPLATES</code> existant :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>TEMPLATES <span class="op">=</span> [</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"BACKEND"</span>: <span class="st">"django.template.backends.django.DjangoTemplates"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DIRS"</span>: [BASE_DIR <span class="op">/</span> <span class="st">"templates"</span>],</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"APP_DIRS"</span>: <span class="va">True</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ... le reste inchangé</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>DIRS</code> liste les dossiers « globaux » où chercher des templates ; <code>APP_DIRS</code> les dossiers <code>templates/</code> de chaque app. <code>templates/registration/login.html</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{% extends "cours/base.html" %}</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>{% block title %}Connexion — BiblioCours{% endblock %}</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>{% block content %}</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Se connecter<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="dt">&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    {% csrf_token %}</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    {{ form.as_p }}</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Se connecter<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>{% endblock %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ce formulaire n’a pas d’attribut <code>action</code> : il est donc envoyé à l’URL courante, <strong>paramètres compris</strong>. Quand un anonyme est redirigé vers <code>/connexion/?next=/cours/nouveau/</code>, ce paramètre <code>next</code> accompagne le POST et <code>LoginView</code> renvoie l’utilisateur vers la page qu’il voulait atteindre. Django vérifie que <code>next</code> pointe vers un hôte autorisé (voir « Redirections » plus bas).</p>
+<p>Dans <code>base.html</code>, adaptez la navigation (remplacez le bloc <code>&lt;nav&gt;</code>) :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">nav</span><span class="ot"> aria-label</span><span class="op">=</span><span class="st">"Navigation principale"</span><span class="dt">&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:liste' %}"</span><span class="dt">&gt;</span>BiblioCours<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:a_propos' %}"</span><span class="dt">&gt;</span>À propos<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  {% if perms.cours.add_cours %}</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:creer' %}"</span><span class="dt">&gt;</span>Nouveau cours<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  {% endif %}</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  {% if user.is_authenticated %}</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">span</span><span class="dt">&gt;</span>Bonjour {{ user.get_username }}<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="ot"> action</span><span class="op">=</span><span class="st">"{% url 'logout' %}"</span><span class="ot"> class</span><span class="op">=</span><span class="st">"inline-form"</span><span class="dt">&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      {% csrf_token %}</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Se déconnecter<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  {% else %}</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'login' %}?next={{ request.path|urlencode }}"</span><span class="dt">&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      Se connecter</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  {% endif %}</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">nav</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Les variables <code>user</code> et <code>perms</code> viennent du <em>context processor</em> <code>django.contrib.auth.context_processors.auth</code> : elles sont disponibles dans tous les templates. Sur les versions récentes de Django, la déconnexion est traitée par POST. Utiliser un formulaire respecte le fait que la déconnexion modifie l’état de la session ; un simple lien déclencherait une erreur <code>405 Method Not Allowed</code>.</p>
 </section>
 <section id="protéger-une-vue-et-une-action" class="level2">
 <h2 class="anchored" data-anchor-id="protéger-une-vue-et-une-action">Protéger une vue et une action</h2>
 <p>Le décorateur protège la présence d’une session :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth.decorators <span class="im">import</span> login_required</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> creer_cours(request):</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Pour une permission :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth.decorators <span class="im">import</span> permission_required</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth.decorators <span class="im">import</span> login_required</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">@permission_required</span>(<span class="st">"cours.add_cours"</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> creer_cours(request):</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>raise_exception=True</code> renvoie une réponse interdite (<code>403</code>) au lieu de rediriger silencieusement. Choisissez le comportement en fonction du contexte. Une app publique peut vouloir masquer l’existence d’une ressource ; une interface interne doit souvent expliquer le manque de permission.</p>
-<p>Dans l’admin, les permissions <code>add</code>, <code>change</code>, <code>delete</code> et <code>view</code> sont associées aux modèles. On peut affecter ces permissions à un groupe « Éditeurs » sans donner un accès complet de superutilisateur.</p>
+<p>Pour une permission :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth.decorators <span class="im">import</span> login_required, permission_required</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">@permission_required</span>(<span class="st">"cours.add_cours"</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> creer_cours(request):</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Chaque modèle reçoit automatiquement quatre permissions : <code>add</code>, <code>change</code>, <code>delete</code> et <code>view</code>. Leur nom suit le modèle <code>app.action_modele</code>, par exemple <code>cours.add_cours</code>.</p>
+<p>Remarquez l’<strong>empilement</strong> des décorateurs, dans cet ordre. Il fournit trois comportements distincts :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Qui appelle la vue ?</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>un visiteur anonyme</td>
+<td>redirection vers la connexion (<code>login_required</code>)</td>
+</tr>
+<tr class="even">
+<td>un utilisateur connecté <strong>sans</strong> la permission</td>
+<td><code>403 Forbidden</code> (<code>raise_exception=True</code>)</td>
+</tr>
+<tr class="odd">
+<td>un utilisateur connecté <strong>avec</strong> la permission</td>
+<td>la vue s’exécute</td>
+</tr>
+</tbody>
+</table>
+<p><code>raise_exception=True</code> renvoie une réponse interdite (<code>403</code>) au lieu de rediriger silencieusement. Sans <code>login_required</code> au-dessus, un anonyme recevrait aussi un 403 plutôt qu’une invitation à se connecter. Choisissez le comportement en fonction du contexte : une app publique peut vouloir masquer l’existence d’une ressource ; une interface interne doit souvent expliquer le manque de permission.</p>
+<p>Voici la protection finale des trois vues du chapitre 5 (seul l’en-tête change, le corps reste identique) :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">@permission_required</span>(<span class="st">"cours.add_cours"</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> creer_cours(request): ...</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">@permission_required</span>(<span class="st">"cours.change_cours"</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modifier_cours(request, slug): ...</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="at">@permission_required</span>(<span class="st">"cours.delete_cours"</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> supprimer_cours(request, slug): ...</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="un-groupe-éditeurs" class="level3">
+<h3 class="anchored" data-anchor-id="un-groupe-éditeurs">Un groupe « Éditeurs »</h3>
+<p>Plutôt que d’attribuer des permissions utilisateur par utilisateur, on les regroupe. Dans l’administration :</p>
+<ol type="1">
+<li><strong>Groupes → Ajouter</strong> : nommez le groupe <code>Éditeurs</code> ;</li>
+<li>choisissez les permissions <code>cours | cours | Can add cours</code>, <code>Can change cours</code> et <code>Can view cours</code> (pas <code>Can delete cours</code>) ;</li>
+<li><strong>Utilisateurs → Ajouter</strong> : créez un compte « edith » avec un mot de passe, puis, dans sa fiche, ajoutez-la au groupe <code>Éditeurs</code>.</li>
+</ol>
+<p>Ce compte n’a pas besoin de la case « Statut équipe » (<code>is_staff</code>) pour utiliser le site : cette case ne sert qu’à accéder à l’administration. Les permissions <code>add</code> et <code>change</code> suffisent pour créer et modifier des cours via le site ; seule la suppression leur est refusée. Seuls les comptes <code>is_staff</code> ayant la permission <code>change_cours</code> peuvent publier dans l’admin.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Masquer n’est pas protéger
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Le lien « Nouveau cours » n’apparaît que pour qui possède la permission (<code>{% if perms.cours.add_cours %}</code>) : c’est de l’<strong>ergonomie</strong>. La <strong>sécurité</strong>, elle, est dans le décorateur de la vue : un utilisateur qui connaît l’URL <code>/cours/nouveau/</code> mais n’a pas la permission reçoit un 403. Faites toujours les deux, et ne comptez jamais sur le masquage seul.</p>
+</div>
+</div>
+<p>Dans <code>detail.html</code>, vous pouvez de la même façon n’afficher un lien « Modifier » qu’aux personnes autorisées :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>{% if perms.cours.change_cours %}</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:modifier' cours.slug %}"</span><span class="dt">&gt;</span>Modifier ce cours<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>{% endif %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Limite : permissions globales et par objet
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Les permissions de Django portent sur un <strong>modèle entier</strong> : qui possède <code>change_cours</code> peut modifier <strong>tous</strong> les cours. Autoriser seulement l’auteur d’un cours à le modifier demande une règle supplémentaire par objet (par exemple comparer <code>cours.auteur</code> à <code>request.user</code>), ce que l’exercice 12 explore.</p>
+</div>
+</div>
+</section>
 </section>
 <section id="csrf-protéger-les-requêtes-qui-changent-létat" class="level2">
 <h2 class="anchored" data-anchor-id="csrf-protéger-les-requêtes-qui-changent-létat">CSRF : protéger les requêtes qui changent l’état</h2>
-<p>Une attaque CSRF amène le navigateur d’une victime déjà connectée à envoyer une requête vers un site où elle est authentifiée. Le navigateur peut joindre les cookies automatiquement ; le serveur doit donc exiger un jeton que le site attaquant ne peut pas lire.</p>
+<p>Une attaque CSRF (<em>Cross-Site Request Forgery</em>) amène le navigateur d’une victime déjà connectée à envoyer une requête vers un site où elle est authentifiée. Exemple : une page piégée contient un formulaire invisible qui envoie un POST vers <code>/cours/mon-cours/supprimer/</code>. Le navigateur peut joindre les cookies automatiquement, donc la requête arrive avec la session de la victime ; le serveur doit donc exiger un jeton que le site attaquant ne peut pas lire.</p>
 <p>Dans un formulaire interne :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="dt">&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  {% csrf_token %}</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  …</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Pour un appel JavaScript, le jeton doit être envoyé selon la configuration Django. Ne désactivez pas <code>CsrfViewMiddleware</code> pour contourner une erreur : cherchez plutôt pourquoi le cookie ou le jeton ne correspond pas <span class="citation" data-cites="django-csrf">(<a href="../references.html#ref-django-csrf" role="doc-biblioref">Django Software Foundation 2025a</a>)</span>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="dt">&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  {% csrf_token %}</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  …</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>CsrfViewMiddleware</code> compare le jeton du formulaire à celui du cookie et refuse le POST (403) en cas de différence. Pour un appel JavaScript, le jeton doit être envoyé dans l’en-tête <code>X-CSRFToken</code>, selon la configuration Django. Ne désactivez pas <code>CsrfViewMiddleware</code> (ni <code>@csrf_exempt</code>) pour contourner une erreur : cherchez plutôt pourquoi le cookie ou le jeton ne correspond pas <span class="citation" data-cites="django-csrf">(<a href="../references.html#ref-django-csrf" role="doc-biblioref">Django Software Foundation 2025a</a>)</span>.</p>
 </section>
 <section id="échappement-injection-et-entrées-utilisateur" class="level2">
 <h2 class="anchored" data-anchor-id="échappement-injection-et-entrées-utilisateur">Échappement, injection et entrées utilisateur</h2>
+<p>Une règle domine ce chapitre : <strong>toute donnée venant de l’extérieur est hostile jusqu’à preuve du contraire</strong> — paramètres d’URL, formulaires, en-têtes, fichiers, et même contenu saisi en administration.</p>
 <section id="xss-et-templates" class="level3">
 <h3 class="anchored" data-anchor-id="xss-et-templates">XSS et templates</h3>
-<p>Django échappe les variables dans les templates par défaut :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>{{ commentaire.texte }}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Si un utilisateur enregistre <code>&lt;img src=x onerror=alert(1)&gt;</code>, cette valeur doit rester du texte. Le filtre <code>safe</code> supprime la protection :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>{{ contenu_html|safe }}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Une attaque XSS (<em>Cross-Site Scripting</em>) injecte du JavaScript dans une page vue par d’autres utilisateurs. Django échappe les variables dans les templates par défaut :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>{{ commentaire.texte }}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Si un utilisateur enregistre <code>&lt;img src=x onerror=alert(1)&gt;</code>, cette valeur doit rester du texte : Django envoie <code>&amp;lt;img src=x …&amp;gt;</code>, que le navigateur affiche tel quel au lieu de l’exécuter. Le filtre <code>safe</code> supprime la protection :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>{{ contenu_html|safe }}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Ne l’utilisez que si le contenu a été nettoyé par une bibliothèque adaptée à votre format et à votre modèle de menace. Le fait qu’une donnée vienne de l’admin ne garantit pas que tous les administrateurs soient dignes de confiance ni que le champ soit toujours contrôlé.</p>
 </section>
 <section id="injection-sql" class="level3">
 <h3 class="anchored" data-anchor-id="injection-sql">Injection SQL</h3>
-<p>L’ORM paramètre les valeurs :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Cours.objects.<span class="bu">filter</span>(titre__icontains<span class="op">=</span>terme)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Une injection SQL glisse du SQL dans une requête construite par concaténation : avec <code>f"… WHERE titre = '{terme}'"</code>, un terme comme <code>' OR 1=1 --</code> change le sens de la requête. L’ORM paramètre les valeurs, c’est-à-dire qu’il les transmet séparément de la requête :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Cours.objects.<span class="bu">filter</span>(titre__icontains<span class="op">=</span>terme)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Évitez de construire du SQL avec une f-string. Si une requête SQL brute est nécessaire, utilisez des paramètres et expliquez la raison dans le code :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Cours.objects.raw(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SELECT * FROM cours_cours WHERE titre LIKE </span><span class="sc">%s</span><span class="st">"</span>,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    [<span class="ss">f"%</span><span class="sc">{</span>terme<span class="sc">}</span><span class="ss">%"</span>],</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Le SQL brut n’est pas « plus professionnel ». Il augmente la responsabilité du développeur concernant les paramètres, les noms de tables, les performances et la portabilité.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Cours.objects.raw(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SELECT * FROM cours_cours WHERE titre LIKE </span><span class="sc">%s</span><span class="st">"</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    [<span class="ss">f"%</span><span class="sc">{</span>terme<span class="sc">}</span><span class="ss">%"</span>],</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Le nom de la table, <code>cours_cours</code>, suit la règle vue au chapitre 3. Le SQL brut n’est pas « plus professionnel ». Il augmente la responsabilité du développeur concernant les paramètres, les noms de tables, les performances et la portabilité.</p>
 </section>
 <section id="redirections" class="level3">
 <h3 class="anchored" data-anchor-id="redirections">Redirections</h3>
-<p>Ne redirigez pas aveuglément vers une URL fournie par l’utilisateur. Un paramètre <code>next</code> doit être validé comme une destination sûre. Les utilitaires de Django et la configuration des hôtes autorisés aident à limiter les redirections ouvertes.</p>
+<p>Une redirection ouverte permet à un attaquant de fabriquer un lien légitime (<code>votre-site.fr/…?next=https://site-pirate.example</code>) qui renvoie vers un site malveillant. Ne redirigez pas aveuglément vers une URL fournie par l’utilisateur. Un paramètre <code>next</code> doit être validé comme une destination sûre :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.shortcuts <span class="im">import</span> redirect</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.utils.http <span class="im">import</span> url_has_allowed_host_and_scheme</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apres_action(request):</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    suivant <span class="op">=</span> request.POST.get(<span class="st">"next"</span>, <span class="st">""</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> url_has_allowed_host_and_scheme(</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        suivant,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        allowed_hosts<span class="op">=</span>{request.get_host()},</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        require_https<span class="op">=</span>request.is_secure(),</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> redirect(suivant)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> redirect(<span class="st">"cours:liste"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>LoginView</code> applique déjà ce contrôle à son paramètre <code>next</code>.</p>
+</section>
+<section id="ce-que-django-fait-pour-vous-et-ce-qui-reste-à-votre-charge" class="level3">
+<h3 class="anchored" data-anchor-id="ce-que-django-fait-pour-vous-et-ce-qui-reste-à-votre-charge">Ce que Django fait pour vous, et ce qui reste à votre charge</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Risque</th>
+<th>Protection fournie</th>
+<th>Votre responsabilité</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>XSS</td>
+<td>échappement automatique des templates</td>
+<td>ne pas abuser de <code>\|safe</code></td>
+</tr>
+<tr class="even">
+<td>injection SQL</td>
+<td>paramétrage par l’ORM</td>
+<td>ne pas concaténer de SQL</td>
+</tr>
+<tr class="odd">
+<td>CSRF</td>
+<td><code>CsrfViewMiddleware</code> et <code>{% csrf_token %}</code></td>
+<td>mettre le jeton dans tout formulaire POST</td>
+</tr>
+<tr class="even">
+<td>mots de passe</td>
+<td>stockage haché, validateurs</td>
+<td>ne jamais les stocker ni les journaliser</td>
+</tr>
+<tr class="odd">
+<td>autorisation</td>
+<td>permissions, décorateurs</td>
+<td><strong>les appliquer</strong> sur chaque vue sensible</td>
+</tr>
+<tr class="even">
+<td>secrets</td>
+<td>—</td>
+<td>ne pas les mettre dans le dépôt</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 <section id="secrets-et-configuration" class="level2">
 <h2 class="anchored" data-anchor-id="secrets-et-configuration">Secrets et configuration</h2>
-<p>En développement, <code>SECRET_KEY</code> peut être remplacé par une valeur locale. En production, lisez-la depuis une variable d’environnement :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>SECRET_KEY <span class="op">=</span> os.environ[<span class="st">"DJANGO_SECRET_KEY"</span>]</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>DEBUG <span class="op">=</span> os.environ.get(<span class="st">"DJANGO_DEBUG"</span>, <span class="st">"false"</span>).lower() <span class="op">==</span> <span class="st">"true"</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>ALLOWED_HOSTS <span class="op">=</span> [</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    host.strip()</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> host <span class="kw">in</span> os.environ.get(<span class="st">"DJANGO_ALLOWED_HOSTS"</span>, <span class="st">""</span>).split(<span class="st">","</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> host.strip()</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Ne commitez ni clé secrète, ni mot de passe de base, ni token de service. Un fichier <code>.env</code> peut aider en local mais doit être ignoré par Git et ne doit pas être copié dans une archive de déploiement. En production, utilisez le système de secrets de l’hébergeur.</p>
+<p>Jusqu’ici, <code>SECRET_KEY</code>, <code>DEBUG</code> et <code>ALLOWED_HOSTS</code> sont écrits en dur dans <code>settings.py</code>, donc dans Git. C’est dangereux : toute personne qui lit le dépôt connaît la clé qui signe vos sessions. La règle est de <strong>séparer la configuration du code</strong> : le code est identique partout, et chaque environnement (poste de développement, serveur) fournit ses propres valeurs par des <strong>variables d’environnement</strong>.</p>
+<p>Modifiez le début de <code>config/settings.py</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.core.exceptions <span class="im">import</span> ImproperlyConfigured</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>BASE_DIR <span class="op">=</span> Path(<span class="va">__file__</span>).resolve().parent.parent</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> env_requis(nom):</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Lit une variable d'environnement obligatoire."""</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    valeur <span class="op">=</span> os.environ.get(nom)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> valeur:</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> ImproperlyConfigured(</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"La variable d'environnement </span><span class="sc">{</span>nom<span class="sc">}</span><span class="ss"> est requise "</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">"(voir le fichier .env.example)."</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> valeur</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> env_liste(nom):</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Lit une liste de valeurs séparées par des virgules."""</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    brut <span class="op">=</span> os.environ.get(nom, <span class="st">""</span>)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [valeur.strip() <span class="cf">for</span> valeur <span class="kw">in</span> brut.split(<span class="st">","</span>) <span class="cf">if</span> valeur.strip()]</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>SECRET_KEY <span class="op">=</span> env_requis(<span class="st">"DJANGO_SECRET_KEY"</span>)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>DEBUG <span class="op">=</span> os.environ.get(<span class="st">"DJANGO_DEBUG"</span>, <span class="st">"false"</span>).lower() <span class="op">==</span> <span class="st">"true"</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>ALLOWED_HOSTS <span class="op">=</span> env_liste(<span class="st">"DJANGO_ALLOWED_HOSTS"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Deux choix méritent d’être expliqués :</p>
+<ul>
+<li><code>DEBUG</code> vaut <code>False</code> <strong>par défaut</strong> : si la variable est oubliée en production, le site reste sûr (on dit qu’il « échoue en sécurité »). Le mode debug doit être demandé explicitement ;</li>
+<li>l’absence de <code>DJANGO_SECRET_KEY</code> provoque une erreur <strong>lisible</strong> (<code>ImproperlyConfigured</code>) plutôt qu’un <code>KeyError</code> obscur, et empêche de démarrer avec une clé par défaut.</li>
+</ul>
+<section id="fournir-les-valeurs-en-local" class="level3">
+<h3 class="anchored" data-anchor-id="fournir-les-valeurs-en-local">Fournir les valeurs en local</h3>
+<p>Créez à la racine un fichier <code>.env</code> (déjà ignoré par Git depuis le chapitre 1) :</p>
+<pre class="text"><code>DJANGO_SECRET_KEY=une-cle-locale-longue-et-aleatoire
+DJANGO_DEBUG=true
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost</code></pre>
+<p>Pour fabriquer une clé aléatoire :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python <span class="at">-c</span> <span class="st">"import secrets; print(secrets.token_urlsafe(50))"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Créez aussi un fichier <code>.env.example</code> <strong>sans secret</strong>, qui, lui, est versionné : il documente les variables attendues.</p>
+<pre class="text"><code>DJANGO_SECRET_KEY=remplacez-moi
+DJANGO_DEBUG=true
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost</code></pre>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Changement de routine : charger <code>.env</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>uv run</code> peut charger le fichier <code>.env</code> pour vous. La méthode la plus simple est de le préciser pour chaque commande :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--env-file</span> .env python manage.py runserver</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--env-file</span> .env python manage.py test</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Pour éviter de répéter l’option, vous pouvez définir <code>UV_ENV_FILE</code> pour la session du terminal. Sous macOS/Linux :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">UV_ENV_FILE</span><span class="op">=</span>.env</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Sous PowerShell :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">UV_ENV_FILE</span> <span class="op">=</span> <span class="st">".env"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dans ce terminal, les commandes <code>uv run python manage.py runserver</code>, <code>test</code> et <code>check</code> chargeront le même fichier. Si une nouvelle fenêtre de terminal est ouverte, il faut y redéfinir la variable, ou utiliser <code>--env-file .env</code>. Si Django signale que <code>DJANGO_SECRET_KEY</code> manque, vérifiez que <code>.env</code> se trouve à la racine du projet et que la commande charge bien ce fichier. Ne remplacez pas cette erreur par une clé secrète par défaut.</p>
+</div>
+</div>
+<p>Ne commitez ni clé secrète, ni mot de passe de base, ni token de service. Un fichier <code>.env</code> peut aider en local mais doit être ignoré par Git et ne doit pas être copié dans une archive de déploiement. En production, utilisez le système de secrets de l’hébergeur (voir <a href="08-production.html" class="quarto-xref"><span>Préparer la production et continuer l’apprentissage</span></a>).</p>
+</section>
 </section>
 <section id="fichiers-statiques" class="level2">
 <h2 class="anchored" data-anchor-id="fichiers-statiques">Fichiers statiques</h2>
-<p>Les fichiers statiques sont le CSS, le JavaScript et les images livrés avec le code. Configurez <code>config/settings.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>STATIC_URL <span class="op">=</span> <span class="st">"static/"</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>STATICFILES_DIRS <span class="op">=</span> [BASE_DIR <span class="op">/</span> <span class="st">"static"</span>]</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>STATIC_ROOT <span class="op">=</span> BASE_DIR <span class="op">/</span> <span class="st">"staticfiles"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Ajoutez :</p>
-<pre class="text"><code>static/
-└── cours/
-    └── site.css</code></pre>
-<p>Le template les charge avec <code>{% load static %}</code> et <code>{% static 'cours/site.css' %}</code>. En développement, <code>runserver</code> les sert si <code>DEBUG=True</code>. En production, la commande suivante rassemble les fichiers :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py collectstatic</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>STATIC_ROOT</code> est un dossier de sortie ; il ne doit pas être confondu avec <code>STATICFILES_DIRS</code>, qui contient les sources. Un serveur web ou un stockage objet servira ensuite le contenu rassemblé.</p>
+<p>Les fichiers statiques sont le CSS, le JavaScript et les images livrés avec le code : ils ne changent pas d’une requête à l’autre. Django les trouve grâce à des <strong>finders</strong> (chercheurs) qui explorent deux types d’emplacements :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Emplacement</th>
+<th>Réglage</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dossier <code>static/</code> <strong>d’une app</strong></td>
+<td>automatique (<code>AppDirectoriesFinder</code>)</td>
+<td><code>cours/static/cours/site.css</code></td>
+</tr>
+<tr class="even">
+<td>dossiers <strong>du projet</strong></td>
+<td><code>STATICFILES_DIRS</code></td>
+<td><code>static/</code> à la racine</td>
+</tr>
+</tbody>
+</table>
+<p>Notre feuille <code>cours/static/cours/site.css</code> (créée au chapitre 4) est donc déjà trouvée sans réglage. Configurez la partie nécessaire au déploiement dans <code>config/settings.py</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>STATIC_URL <span class="op">=</span> <span class="st">"static/"</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>STATIC_ROOT <span class="op">=</span> BASE_DIR <span class="op">/</span> <span class="st">"staticfiles"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Et, si vous voulez des fichiers statiques propres au projet (hors app), ajoutez :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>STATICFILES_DIRS <span class="op">=</span> [BASE_DIR <span class="op">/</span> <span class="st">"static"</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>(le dossier <code>static/</code> doit alors exister, sinon <code>check</code> émet un avertissement).</p>
+<p>Le template les charge avec <code>{% load static %}</code> et <code>{% static 'cours/site.css' %}</code>. En développement, <code>runserver</code> les sert si <code>DEBUG=True</code>. En production, la commande suivante rassemble les fichiers de <strong>tous</strong> les emplacements :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py collectstatic</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>STATIC_ROOT</code> est un dossier de sortie ; il ne doit pas être confondu avec <code>STATICFILES_DIRS</code>, qui contient les sources. Un serveur web ou un stockage objet servira ensuite le contenu rassemblé. Pour diagnostiquer, <code>findstatic</code> indique où Django trouve un fichier :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py findstatic cours/site.css</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="téléversements-et-fichiers-média" class="level2">
 <h2 class="anchored" data-anchor-id="téléversements-et-fichiers-média">Téléversements et fichiers média</h2>
-<p>Un fichier envoyé par un utilisateur n’est pas un fichier statique. Configurez :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>MEDIA_URL <span class="op">=</span> <span class="st">"media/"</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>MEDIA_ROOT <span class="op">=</span> BASE_DIR <span class="op">/</span> <span class="st">"media"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Dans un modèle :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>document <span class="op">=</span> models.FileField(upload_to<span class="op">=</span><span class="st">"cours/%Y/%m"</span>, blank<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Un upload doit être limité par taille et type, renommé par Django et stocké avec des permissions correctes. Ne servez pas aveuglément un fichier comme du HTML actif. Pour des données sensibles ou volumineuses, un stockage séparé avec des URLs temporaires est souvent plus adapté.</p>
+<p>Un fichier envoyé par un utilisateur n’est pas un fichier statique : il n’existe pas au moment du déploiement et n’est pas de confiance. Configurez :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>MEDIA_URL <span class="op">=</span> <span class="st">"media/"</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>MEDIA_ROOT <span class="op">=</span> BASE_DIR <span class="op">/</span> <span class="st">"media"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>MEDIA_ROOT</code> est le dossier où Django écrit les fichiers envoyés ; <code>MEDIA_URL</code> le préfixe sous lequel on les sert. Voici l’idée, <strong>à titre d’illustration</strong> (nous ne modifions pas le modèle <code>Cours</code> pour l’instant : voir l’exercice 11) :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>document <span class="op">=</span> models.FileField(upload_to<span class="op">=</span><span class="st">"cours/%Y/%m"</span>, blank<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>upload_to</code> indique le sous-dossier de destination, ici organisé par année et mois. Un formulaire qui accepte des fichiers doit déclarer <code>enctype="multipart/form-data"</code> et la vue lire <code>request.FILES</code> en plus de <code>request.POST</code>. En développement seulement, on peut servir les médias depuis <code>config/urls.py</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.conf <span class="im">import</span> settings</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.conf.urls.static <span class="im">import</span> static</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> settings.DEBUG:</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    urlpatterns <span class="op">+=</span> static(settings.MEDIA_URL, document_root<span class="op">=</span>settings.MEDIA_ROOT)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Un upload doit être limité par taille et type, renommé par Django et stocké avec des permissions correctes. Ne vous fiez ni au nom du fichier ni au type déclaré par le navigateur : ils sont fournis par l’utilisateur. Ne servez pas aveuglément un fichier comme du HTML actif. Pour des données sensibles ou volumineuses, un stockage séparé avec des URLs temporaires est souvent plus adapté.</p>
 </section>
 <section id="checklist-de-sécurité-locale" class="level2">
 <h2 class="anchored" data-anchor-id="checklist-de-sécurité-locale">Checklist de sécurité locale</h2>
@@ -473,13 +778,119 @@ div.csl-indent {
 </ul>
 <p>La sécurité n’est pas une étape à la fin. Chaque champ, route et action doit répondre à la question : <strong>qui peut faire quoi, avec quelles données, et que se passe-t-il si la requête est fabriquée à la main ?</strong></p>
 </section>
+<section id="checkpoint" class="level2">
+<h2 class="anchored" data-anchor-id="checkpoint">Checkpoint</h2>
+<ul class="task-list">
+<li><label><input type="checkbox"><code>/connexion/</code> affiche le formulaire ; connectez-vous avec « edith » ;</label></li>
+<li><label><input type="checkbox">« edith » voit « Nouveau cours » et peut créer un brouillon ;</label></li>
+<li><label><input type="checkbox">« edith » reçoit un <strong>403</strong> sur <code>/cours/&lt;slug&gt;/supprimer/</code> ;</label></li>
+<li><label><input type="checkbox">un visiteur anonyme visitant <code>/cours/nouveau/</code> est redirigé vers <code>/connexion/?next=/cours/nouveau/</code> ;</label></li>
+<li><label><input type="checkbox">un utilisateur connecté sans aucune permission reçoit un 403 sur <code>/cours/nouveau/</code> ;</label></li>
+<li><label><input type="checkbox">la déconnexion fonctionne (formulaire POST) ;</label></li>
+<li><label><input type="checkbox">sans <code>.env</code> chargé, le démarrage affiche l’erreur <code>ImproperlyConfigured</code> ; avec, le site démarre ;</label></li>
+<li><label><input type="checkbox"><code>git status</code> ne montre pas <code>.env</code> mais montre <code>.env.example</code>.</label></li>
+</ul>
+</section>
+<section id="erreurs-fréquentes" class="level2">
+<h2 class="anchored" data-anchor-id="erreurs-fréquentes">Erreurs fréquentes</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symptôme</th>
+<th>Cause probable</th>
+<th>Remède</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>403 CSRF verification failed</code></td>
+<td>jeton absent, ou cookie bloqué/périmé</td>
+<td><code>{% csrf_token %}</code> dans le formulaire ; ne pas désactiver le middleware</td>
+</tr>
+<tr class="even">
+<td>anonyme redirigé vers une 404 <code>/accounts/login/</code></td>
+<td><code>LOGIN_URL</code> non défini</td>
+<td>ajouter <code>LOGIN_URL = "login"</code></td>
+</tr>
+<tr class="odd">
+<td><code>TemplateDoesNotExist: registration/login.html</code></td>
+<td><code>DIRS</code> non configuré ou dossier mal placé</td>
+<td><code>DIRS = [BASE_DIR / "templates"]</code> et chemin <code>templates/registration/login.html</code></td>
+</tr>
+<tr class="even">
+<td><code>NoReverseMatch: 'login'</code></td>
+<td>route de connexion absente ou non nommée</td>
+<td>vérifier <code>name="login"</code> dans <code>config/urls.py</code></td>
+</tr>
+<tr class="odd">
+<td><code>405 Method Not Allowed</code> à la déconnexion</td>
+<td>déconnexion via un lien GET</td>
+<td>utiliser un formulaire POST</td>
+</tr>
+<tr class="even">
+<td><code>ImproperlyConfigured: … DJANGO_SECRET_KEY</code></td>
+<td><code>.env</code> non chargé</td>
+<td><code>UV_ENV_FILE=.env</code> ou <code>uv run --env-file .env</code></td>
+</tr>
+<tr class="odd">
+<td><code>DisallowedHost</code></td>
+<td>hôte absent de <code>ALLOWED_HOSTS</code></td>
+<td>l’ajouter à <code>DJANGO_ALLOWED_HOSTS</code></td>
+</tr>
+<tr class="even">
+<td>CSS introuvable (404 sur <code>/static/…</code>)</td>
+<td>mauvais emplacement, ou <code>DEBUG=False</code> en local</td>
+<td><code>findstatic</code> ; vérifier <code>DJANGO_DEBUG=true</code></td>
+</tr>
+<tr class="odd">
+<td>la page de connexion est affichée sans retour vers la page voulue</td>
+<td><code>next</code> perdu</td>
+<td>ne pas mettre d’<code>action</code> sur le formulaire de connexion</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="à-retenir" class="level2">
+<h2 class="anchored" data-anchor-id="à-retenir">À retenir</h2>
+<ul>
+<li><strong>Authentifier</strong> = qui ? <strong>Autoriser</strong> = a-t-il le droit ? Les deux sont nécessaires et distincts.</li>
+<li>Une session est un cookie contenant un identifiant ; les données sont côté serveur.</li>
+<li><code>login_required</code> + <code>permission_required(raise_exception=True)</code> donnent : redirection pour l’anonyme, 403 pour l’utilisateur sans droit.</li>
+<li>Masquer un lien est de l’ergonomie ; le contrôle dans la vue est la sécurité.</li>
+<li>Toute entrée est hostile : échappement des templates, ORM paramétré, redirections validées, jeton CSRF.</li>
+<li>Les secrets viennent de l’environnement, jamais du dépôt ; <code>DEBUG</code> est faux par défaut.</li>
+<li>Fichiers statiques (code, <code>collectstatic</code>) et média (utilisateurs, non fiables) sont deux choses différentes.</li>
+</ul>
+</section>
 <section id="exercices" class="level2">
 <h2 class="anchored" data-anchor-id="exercices">Exercices</h2>
 <ol type="1">
-<li>Créez un groupe <code>Éditeurs</code> et donnez-lui uniquement les permissions utiles pour créer et modifier des cours.</li>
-<li>Ajoutez une page qui n’est visible que par les utilisateurs connectés.</li>
-<li>Testez un POST sans CSRF et observez la réponse ; ne désactivez pas la protection.</li>
-<li>Configurez un fichier CSS et vérifiez qu’il est trouvé en développement puis rassemblé par <code>collectstatic</code>.</li>
+<li><p>Classez chacune de ces questions en « authentification » ou « autorisation » : (a) le mot de passe est-il correct ? (b) cette personne peut-elle supprimer un cours ? (c) le cookie de session est-il valide ?</p>
+<ol start="4" type="a">
+<li>cet utilisateur appartient-il au groupe « Éditeurs » ?</li>
+</ol></li>
+<li><p>Expliquez en trois phrases ce qu’est une attaque CSRF et comment le jeton l’empêche.</p></li>
+<li><p>Pourquoi empile-t-on <code>@login_required</code> <strong>au-dessus</strong> de <code>@permission_required(..., raise_exception=True)</code> ? Que se passerait-il sans <code>login_required</code> pour un anonyme ?</p></li>
+<li><p>Donnez un exemple concret où <code>|safe</code> est dangereux. Que se passe-t-il pour <code>{{ "&lt;b&gt;Salut&lt;/b&gt;" }}</code> et pour <code>{{ "&lt;b&gt;Salut&lt;/b&gt;"|safe }}</code> ?</p></li>
+<li><p>Que reproche-t-on à chacun de ces extraits ? (a) <code>Cours.objects.raw(f"SELECT * FROM cours_cours WHERE titre = '{terme}'")</code> ;</p>
+<ol start="2" type="a">
+<li><code>return redirect(request.GET["next"])</code> ; (c) <code>@csrf_exempt</code> sur la vue de création.</li>
+</ol></li>
+<li><p>Créez le groupe <code>Éditeurs</code> avec uniquement les permissions de création, de modification et de consultation. Connectez-vous avec un compte membre : que voyez-vous ? Que se passe-t-il à l’adresse de suppression ?</p></li>
+<li><p>Ajoutez une page <code>/cours/brouillons/</code> qui liste les brouillons, visible uniquement des utilisateurs ayant la permission <code>cours.change_cours</code>. Pensez à l’ordre des routes et au lien dans la navigation.</p></li>
+<li><p>Testez un POST sans jeton CSRF et observez la réponse ; ne désactivez pas la protection.</p>
+<p><strong>Indice :</strong> supprimez temporairement <code>{% csrf_token %}</code> d’un formulaire, soumettez-le, puis remettez-le. Une alternative en test automatique sera vue au <a href="07-tests-debug-qualite.html" class="quarto-xref"><span>Tester, diagnostiquer et faire évoluer le code</span></a> : le client de test ignore le CSRF par défaut, sauf si on le demande.</p></li>
+<li><p>Créez dans l’admin un cours dont le titre est <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> et affichez-le sur la liste. Que voyez-vous ? Quel mécanisme vous protège ?</p></li>
+<li><p>Utilisez <code>findstatic</code> pour localiser <code>cours/site.css</code>. Créez ensuite un dossier <code>static/</code> à la racine, déclarez-le dans <code>STATICFILES_DIRS</code>, ajoutez-y un petit fichier CSS supplémentaire, chargez-le dans <code>base.html</code>, puis lancez <code>collectstatic</code> et observez le contenu de <code>staticfiles/</code>.</p></li>
+<li><p><strong>Téléversement.</strong> Ajoutez un champ <code>document = FileField(blank=True)</code> à <code>Cours</code>, créez la migration, ajoutez-le au formulaire (n’oubliez pas <code>enctype="multipart/form-data"</code> et <code>request.FILES</code>). Ajoutez ensuite une validation de taille et d’extension.</p></li>
+<li><p><strong>Autorisation par objet.</strong> Ajoutez un champ <code>auteur</code> (clé étrangère vers l’utilisateur, <code>null=True</code>, <code>on_delete=SET_NULL</code>), renseignez-le à la création, puis n’autorisez la modification qu’à l’auteur ou à un superutilisateur. Quel statut HTTP renvoyez-vous aux autres ? Pourquoi une migration avec <code>null=True</code> plutôt qu’obligatoire ?</p></li>
+<li><p>Lancez <code>uv run python manage.py check --deploy</code> avec votre configuration locale. Notez chaque avertissement ; lesquels disparaissent avec <code>DEBUG=False</code> ? Gardez cette liste pour le <a href="08-production.html" class="quarto-xref"><span>Préparer la production et continuer l’apprentissage</span></a>.</p></li>
+<li><p>Personnalisez la page d’erreur 403 avec un template <code>403.html</code> clair pour les utilisateurs.</p></li>
 </ol>
 
 

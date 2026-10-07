@@ -22,11 +22,11 @@ number-sections: false
 \vspace{0.5cm}
 {\Large\textcolor[HTML]{17324D}{M'barek IAOUSSE}\par}
 \vspace{0.25cm}
-{\large\textcolor[HTML]{425466}{Formation continue ASERCS}\par}
+%{\large\textcolor[HTML]{425466}{Formation continue ASERCS}\par}
 {\large\textcolor[HTML]{425466}{École Supérieure de Technologie de Casablanca}\par}
 {\large\textcolor[HTML]{425466}{Université Hassan II de Casablanca}\par}
 \vspace{0.4cm}
-{\large\textcolor[HTML]{425466}{Première édition — 2026}\par}
+{\large\textcolor[HTML]{425466}{Édition 2026}\par}
 \newpage
 \thispagestyle{empty}
 \centering
@@ -48,8 +48,8 @@ number-sections: false
   <h2>Développement web avec Django</h2>
   <p class="django-cover-subtitle">Conception et développement d'applications web</p>
   <p class="django-cover-author">M'barek IAOUSSE</p>
-  <p class="django-cover-institution">Formation continue ASERCS<br />École Supérieure de Technologie de Casablanca<br />Université Hassan II de Casablanca</p>
-  <p class="django-cover-year">Première édition — 2026</p>
+  <p class="django-cover-institution"><br />École Supérieure de Technologie de Casablanca<br />Université Hassan II de Casablanca</p>
+  <p class="django-cover-year">Édition  2026</p>
 </section>
 ```
 
@@ -58,13 +58,13 @@ number-sections: false
 :::
 
 ::: {.content-visible when-format="epub"}
+# {.unnumbered .unlisted}
+
 <section class="django-cover-qr-page" aria-label="Accès à la version en ligne">
   <h1>Version en ligne</h1>
   <img src="images/qrcode.png" alt="Code QR pour accéder à la version en ligne" />
   <p>Scannez ce code pour accéder à la version en ligne.</p>
 </section>
-
-{{< include _deuxieme_page.qmd >}}
 :::
 
 ::: {.content-visible when-format="html"}

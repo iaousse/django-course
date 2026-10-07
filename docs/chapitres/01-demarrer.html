@@ -212,12 +212,14 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">index.html</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">index.html</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Préface</span></a>
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -276,24 +278,35 @@ div.csl-indent {
     <h2 id="toc-title">Dans ce chapitre</h2>
    
   <ul>
-  <li><a href="#ce-que-nous-allons-construire" id="toc-ce-que-nous-allons-construire" class="nav-link active" data-scroll-target="#ce-que-nous-allons-construire">Ce que nous allons construire</a></li>
+  <li><a href="#ce-que-nous-allons-construire" id="toc-ce-que-nous-allons-construire" class="nav-link active" data-scroll-target="#ce-que-nous-allons-construire">Ce que nous allons construire</a>
+  <ul class="collapse">
+  <li><a href="#la-carte-du-cours" id="toc-la-carte-du-cours" class="nav-link" data-scroll-target="#la-carte-du-cours">La carte du cours</a></li>
+  <li><a href="#comment-utiliser-ce-cours" id="toc-comment-utiliser-ce-cours" class="nav-link" data-scroll-target="#comment-utiliser-ce-cours">Comment utiliser ce cours</a></li>
+  </ul></li>
   <li><a href="#pourquoi-django" id="toc-pourquoi-django" class="nav-link" data-scroll-target="#pourquoi-django">Pourquoi Django ?</a>
   <ul class="collapse">
   <li><a href="#une-requête-concrètement" id="toc-une-requête-concrètement" class="nav-link" data-scroll-target="#une-requête-concrètement">Une requête, concrètement</a></li>
   </ul></li>
   <li><a href="#pourquoi-uv-remplace-venv-et-pip-dans-ce-cours" id="toc-pourquoi-uv-remplace-venv-et-pip-dans-ce-cours" class="nav-link" data-scroll-target="#pourquoi-uv-remplace-venv-et-pip-dans-ce-cours">Pourquoi <code>uv</code> remplace <code>venv</code> et <code>pip</code> dans ce cours</a>
   <ul class="collapse">
+  <li><a href="#le-problème-les-dépendances-en-conflit" id="toc-le-problème-les-dépendances-en-conflit" class="nav-link" data-scroll-target="#le-problème-les-dépendances-en-conflit">Le problème : les dépendances en conflit</a></li>
+  <li><a href="#la-solution-uv" id="toc-la-solution-uv" class="nav-link" data-scroll-target="#la-solution-uv">La solution : <code>uv</code></a></li>
   <li><a href="#installation-et-vérification" id="toc-installation-et-vérification" class="nav-link" data-scroll-target="#installation-et-vérification">Installation et vérification</a></li>
   <li><a href="#initialiser-le-projet" id="toc-initialiser-le-projet" class="nav-link" data-scroll-target="#initialiser-le-projet">Initialiser le projet</a></li>
   <li><a href="#ajouter-django" id="toc-ajouter-django" class="nav-link" data-scroll-target="#ajouter-django">Ajouter Django</a></li>
   </ul></li>
   <li><a href="#créer-le-projet-django" id="toc-créer-le-projet-django" class="nav-link" data-scroll-target="#créer-le-projet-django">Créer le projet Django</a>
   <ul class="collapse">
+  <li><a href="#projet-et-application-deux-notions-à-ne-pas-confondre" id="toc-projet-et-application-deux-notions-à-ne-pas-confondre" class="nav-link" data-scroll-target="#projet-et-application-deux-notions-à-ne-pas-confondre">Projet et application : deux notions à ne pas confondre</a></li>
+  <li><a href="#générer-la-configuration-globale" id="toc-générer-la-configuration-globale" class="nav-link" data-scroll-target="#générer-la-configuration-globale">Générer la configuration globale</a></li>
   <li><a href="#le-rôle-de-chaque-fichier" id="toc-le-rôle-de-chaque-fichier" class="nav-link" data-scroll-target="#le-rôle-de-chaque-fichier">Le rôle de chaque fichier</a></li>
+  <li><a href="#démarrer-le-serveur-de-développement" id="toc-démarrer-le-serveur-de-développement" class="nav-link" data-scroll-target="#démarrer-le-serveur-de-développement">Démarrer le serveur de développement</a></li>
   </ul></li>
   <li><a href="#créer-lapplication-cours" id="toc-créer-lapplication-cours" class="nav-link" data-scroll-target="#créer-lapplication-cours">Créer l’application <code>cours</code></a></li>
   <li><a href="#versionner-ce-qui-doit-lêtre" id="toc-versionner-ce-qui-doit-lêtre" class="nav-link" data-scroll-target="#versionner-ce-qui-doit-lêtre">Versionner ce qui doit l’être</a></li>
   <li><a href="#checkpoint" id="toc-checkpoint" class="nav-link" data-scroll-target="#checkpoint">Checkpoint</a></li>
+  <li><a href="#erreurs-fréquentes" id="toc-erreurs-fréquentes" class="nav-link" data-scroll-target="#erreurs-fréquentes">Erreurs fréquentes</a></li>
+  <li><a href="#à-retenir" id="toc-à-retenir" class="nav-link" data-scroll-target="#à-retenir">À retenir</a></li>
   <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices">Exercices</a></li>
   </ul>
 </nav>
@@ -305,6 +318,27 @@ div.csl-indent {
 
 
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Objectifs d’apprentissage
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>À la fin de ce chapitre, vous saurez :</p>
+<ul>
+<li>décrire ce qu’est une requête HTTP et ce que Django fait entre la requête et la réponse ;</li>
+<li>expliquer pourquoi un projet Python doit avoir un environnement isolé et reproductible ;</li>
+<li>créer un projet avec <code>uv</code>, installer Django et lire les fichiers <code>pyproject.toml</code> et <code>uv.lock</code> ;</li>
+<li>distinguer un <strong>projet</strong> Django d’une <strong>application</strong> Django ;</li>
+<li>démarrer le serveur de développement et vérifier la configuration avec <code>check</code> ;</li>
+<li>décider quels fichiers doivent (ou non) être versionnés avec Git.</li>
+</ul>
+</div>
+</div>
 <section id="ce-que-nous-allons-construire" class="level2">
 <h2 class="anchored" data-anchor-id="ce-que-nous-allons-construire">Ce que nous allons construire</h2>
 <p>Ce cours suit la construction progressive de <strong>BiblioCours</strong>, une petite bibliothèque de cours en ligne. L’application permettra finalement de :</p>
@@ -316,6 +350,65 @@ div.csl-indent {
 <li>tester les comportements importants avant de les faire évoluer.</li>
 </ul>
 <p>Le projet est volontairement assez petit pour rester lisible, mais assez réaliste pour faire apparaître les problèmes qui comptent dans une application web : organisation du code, données relationnelles, validation, sécurité, tests et déploiement.</p>
+<section id="la-carte-du-cours" class="level3">
+<h3 class="anchored" data-anchor-id="la-carte-du-cours">La carte du cours</h3>
+<p>Chaque chapitre ajoute une capacité à BiblioCours et s’appuie sur le précédent. Le tableau ci-dessous sert de repère : revenez-y quand vous vous demandez « pourquoi fait-on cela maintenant ? ».</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Chapitre</th>
+<th>Question posée</th>
+<th>Ce que BiblioCours gagne</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. Démarrer</td>
+<td>Comment partir sur une base saine et reproductible ?</td>
+<td>un projet, une app, un dépôt Git</td>
+</tr>
+<tr class="even">
+<td>2. Architecture et routage</td>
+<td>Comment une URL atteint-elle du code ?</td>
+<td>des routes nommées et des premières vues</td>
+</tr>
+<tr class="odd">
+<td>3. Modèles et migrations</td>
+<td>Comment décrire et stocker les données ?</td>
+<td>les modèles <code>Matiere</code> et <code>Cours</code></td>
+</tr>
+<tr class="even">
+<td>4. Vues et templates</td>
+<td>Comment afficher les données ?</td>
+<td>liste, détail, recherche, pagination</td>
+</tr>
+<tr class="odd">
+<td>5. Formulaires et admin</td>
+<td>Comment saisir et gérer les données ?</td>
+<td>création, modification, suppression, admin</td>
+</tr>
+<tr class="even">
+<td>6. Sécurité</td>
+<td>Qui a le droit de faire quoi ?</td>
+<td>connexion, permissions, secrets, fichiers</td>
+</tr>
+<tr class="odd">
+<td>7. Tests</td>
+<td>Comment s’assurer que ça marche encore ?</td>
+<td>une suite de tests et un contrôle qualité</td>
+</tr>
+<tr class="even">
+<td>8. Production</td>
+<td>Comment le mettre en ligne sans danger ?</td>
+<td>une configuration et une checklist de déploiement</td>
+</tr>
+</tbody>
+</table>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -330,6 +423,18 @@ div.csl-indent {
 </div>
 </div>
 </section>
+<section id="comment-utiliser-ce-cours" class="level3">
+<h3 class="anchored" data-anchor-id="comment-utiliser-ce-cours">Comment utiliser ce cours</h3>
+<p>Chaque chapitre suit la même structure : des <strong>objectifs</strong>, un rappel de l’<strong>état de départ</strong> du projet, des explications avec du code à reproduire, un <strong>checkpoint</strong> pour vérifier que tout fonctionne, un tableau d’<strong>erreurs fréquentes</strong>, un résumé « <strong>à retenir</strong> » et des <strong>exercices</strong>.</p>
+<p>Quelques conventions :</p>
+<ul>
+<li>les commandes fonctionnent dans un terminal macOS/Linux ou PowerShell, sauf indication contraire. Sous PowerShell, utilisez <code>Get-ChildItem -Force</code> à la place de <code>ls -a</code>, <code>Get-Content fichier -TotalCount 30</code> à la place de <code>head -30 fichier</code>, et <code>Remove-Item main.py</code> à la place de <code>rm main.py</code> ;</li>
+<li>toutes les commandes se lancent <strong>à la racine du projet</strong>, là où se trouve <code>manage.py</code> ;</li>
+<li>recopiez le code plutôt que de le copier-coller : vous remarquerez davantage de choses en le tapant.</li>
+</ul>
+<p>Pour travailler en autonomie, terminez le <strong>checkpoint</strong> de chaque chapitre avant de passer au suivant. Si un résultat diffère, relisez la première erreur complète dans le terminal, vérifiez que vous êtes à la racine du projet et relancez la dernière commande après correction. Ne poursuivez pas en empilant des changements sur une étape qui ne fonctionne pas encore.</p>
+</section>
+</section>
 <section id="pourquoi-django" class="level2">
 <h2 class="anchored" data-anchor-id="pourquoi-django">Pourquoi Django ?</h2>
 <p>Une application web reçoit des requêtes HTTP, décide quoi faire, lit ou modifie des données, puis renvoie une réponse HTTP. On pourrait programmer chacune de ces opérations à la main. Django fournit plutôt une structure cohérente :</p>
@@ -340,32 +445,78 @@ div.csl-indent {
 <li>un moteur de templates produit le HTML ;</li>
 <li>des composants prêts à l’emploi prennent en charge l’administration, l’authentification, les sessions et une partie des protections de sécurité.</li>
 </ol>
+<p>On dit souvent que Django est un framework « avec les piles incluses » : là où d’autres outils vous demandent de choisir et d’assembler une bibliothèque pour chaque besoin, Django propose une réponse intégrée et cohérente.</p>
 <p>Cette approche réduit le code répétitif, mais elle impose aussi des conventions. Apprendre Django revient donc moins à mémoriser des fonctions qu’à comprendre le rôle de chaque couche et le moment où elle doit intervenir. Le tutoriel officiel suit la même logique en construisant une application par étapes <span class="citation" data-cites="django-tutorial">(<a href="../references.html#ref-django-tutorial" role="doc-biblioref">Django Software Foundation 2025b</a>)</span>.</p>
 <section id="une-requête-concrètement" class="level3">
 <h3 class="anchored" data-anchor-id="une-requête-concrètement">Une requête, concrètement</h3>
-<p>Lorsque l’on ouvre <code>http://127.0.0.1:8000/cours/</code>, le navigateur envoie approximativement :</p>
+<p>HTTP est un dialogue en texte entre un client (le navigateur) et un serveur. Lorsque l’on ouvre <code>http://127.0.0.1:8000/cours/</code>, le navigateur envoie approximativement :</p>
 <pre class="http"><code>GET /cours/ HTTP/1.1
 Host: 127.0.0.1:8000
 Accept: text/html</code></pre>
+<p>Cette requête comporte trois parties : une <strong>ligne de requête</strong> (la méthode <code>GET</code>, le chemin <code>/cours/</code> et la version du protocole), des <strong>en-têtes</strong> (<code>Host</code>, <code>Accept</code>, …) qui décrivent le contexte, et parfois un <strong>corps</strong> (absent ici, mais présent quand on envoie un formulaire).</p>
 <p>Django reçoit cette requête, cherche une route correspondante, appelle la vue, éventuellement interroge la base de données, rend un template et renvoie par exemple :</p>
 <pre class="http"><code>HTTP/1.1 200 OK
 Content-Type: text/html; charset=utf-8
 
 &lt;!doctype html&gt;
 &lt;html lang="fr"&gt;…&lt;/html&gt;</code></pre>
+<p>La réponse comporte aussi trois parties : une <strong>ligne de statut</strong> (<code>200 OK</code> signifie « tout s’est bien passé »), des <strong>en-têtes</strong> et un <strong>corps</strong> (le HTML).</p>
 <p>Le code du cours rendra ce chemin observable. À chaque étape, nous chercherons à répondre à trois questions : <strong>quelle est l’entrée ? quelle décision est prise ? quelle sortie est produite ?</strong></p>
 </section>
 </section>
 <section id="pourquoi-uv-remplace-venv-et-pip-dans-ce-cours" class="level2">
 <h2 class="anchored" data-anchor-id="pourquoi-uv-remplace-venv-et-pip-dans-ce-cours">Pourquoi <code>uv</code> remplace <code>venv</code> et <code>pip</code> dans ce cours</h2>
-<p>Un environnement Python global est une mauvaise unité d’installation : deux projets peuvent exiger des versions incompatibles de Django ou d’une même dépendance. On veut isoler les dépendances du projet et pouvoir recréer exactement l’environnement sur une autre machine.</p>
-<p><code>uv</code> est un gestionnaire rapide de versions Python, d’environnements et de dépendances. Il utilise un fichier <code>pyproject.toml</code> pour déclarer le projet et un fichier <code>uv.lock</code> pour enregistrer la résolution exacte des dépendances <span class="citation" data-cites="astral-uv">(<a href="../references.html#ref-astral-uv" role="doc-biblioref">Astral 2025</a>)</span>. Nous n’avons donc pas besoin de créer manuellement un dossier <code>env/</code>, ni de penser à activer un environnement à chaque terminal.</p>
+<section id="le-problème-les-dépendances-en-conflit" class="level3">
+<h3 class="anchored" data-anchor-id="le-problème-les-dépendances-en-conflit">Le problème : les dépendances en conflit</h3>
+<p>Imaginez que vous travaillez sur deux projets. Le premier exige Django 4.2, le second Django 5.2. Si les deux utilisent le même Python « global » de votre machine, l’installation de l’un casse l’autre. Imaginez maintenant qu’un collègue clone votre projet : il installe Django aujourd’hui, avec une version légèrement différente de la vôtre, et un comportement change.</p>
+<p>Il faut donc :</p>
+<ol type="1">
+<li><strong>isoler</strong> les dépendances de chaque projet dans un environnement dédié (un « environnement virtuel ») ;</li>
+<li><strong>déclarer</strong> ce dont le projet a besoin ;</li>
+<li><strong>enregistrer</strong> les versions exactes installées pour pouvoir les retrouver.</li>
+</ol>
+</section>
+<section id="la-solution-uv" class="level3">
+<h3 class="anchored" data-anchor-id="la-solution-uv">La solution : <code>uv</code></h3>
+<p><code>uv</code> est un gestionnaire rapide de versions Python, d’environnements et de dépendances. Il utilise deux fichiers complémentaires <span class="citation" data-cites="astral-uv">(<a href="../references.html#ref-astral-uv" role="doc-biblioref">Astral 2025</a>)</span> :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fichier</th>
+<th>Rôle</th>
+<th>Analogie</th>
+<th>Qui l’écrit ?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pyproject.toml</code></td>
+<td>déclare ce que le projet <strong>demande</strong></td>
+<td>la liste de courses</td>
+<td>vous (via <code>uv add</code>)</td>
+</tr>
+<tr class="even">
+<td><code>uv.lock</code></td>
+<td>enregistre ce qui a été <strong>réellement installé</strong>, versions exactes comprises</td>
+<td>le ticket de caisse</td>
+<td><code>uv</code>, automatiquement</td>
+</tr>
+</tbody>
+</table>
+<p>Nous n’avons donc pas besoin de créer manuellement un dossier <code>env/</code>, ni de penser à activer un environnement à chaque terminal : <code>uv</code> crée un dossier <code>.venv/</code> et l’utilise pour vous.</p>
+</section>
 <section id="installation-et-vérification" class="level3">
 <h3 class="anchored" data-anchor-id="installation-et-vérification">Installation et vérification</h3>
 <p>Installez <code>uv</code> en suivant la méthode officielle correspondant à votre système. Puis vérifiez que la commande est disponible :</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> <span class="at">--version</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">--version</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Sur Windows, PowerShell et Windows Terminal conviennent. Sur macOS et Linux, un terminal courant suffit. Si la commande <code>uv</code> n’est pas trouvée après l’installation, redémarrez le terminal afin que le <code>PATH</code> soit rechargé.</p>
+<p>Sur Windows, PowerShell et Windows Terminal conviennent. Sur macOS et Linux, un terminal courant suffit. Si la commande <code>uv</code> n’est pas trouvée après l’installation, redémarrez le terminal afin que le <code>PATH</code> (la liste des dossiers où le système cherche les commandes) soit rechargé.</p>
 </section>
 <section id="initialiser-le-projet" class="level3">
 <h3 class="anchored" data-anchor-id="initialiser-le-projet">Initialiser le projet</h3>
@@ -374,20 +525,71 @@ Content-Type: text/html; charset=utf-8
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> bibliocours</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> init <span class="at">--python</span> 3.12</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Cette commande crée notamment <code>pyproject.toml</code>. Le choix de Python doit être explicite : il évite qu’un collègue utilise par hasard une version très différente. Vous pouvez demander à <code>uv</code> d’installer une version si elle n’existe pas encore sur la machine :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python install 3.12</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python pin 3.12</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>La commande <code>uv python pin</code> peut créer un fichier <code>.python-version</code>. Ce fichier documente la version attendue sans mettre Python lui-même dans Git.</p>
+<p>Sous macOS/Linux, affichez les fichiers, y compris les fichiers cachés, avec <code>ls -a</code>. Sous PowerShell, utilisez <code>Get-ChildItem -Force</code>. Selon votre version d’<code>uv</code>, l’initialisation crée <code>pyproject.toml</code>, <code>.python-version</code>, <code>README.md</code>, <code>main.py</code>, un <code>.gitignore</code> minimal et peut même initialiser un dépôt Git. Nous n’avons pas besoin de <code>main.py</code> (Django fournira <code>manage.py</code>) : supprimez-le avec la commande adaptée à votre terminal :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS / Linux</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> main.py</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows PowerShell</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Remove-Item</span> main<span class="op">.</span><span class="fu">py</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Le choix de la version de Python doit être explicite : il évite qu’un collègue utilise par hasard une version très différente. Le fichier <code>.python-version</code> documente la version attendue sans mettre Python lui-même dans Git. Si cette version n’existe pas encore sur votre machine, <code>uv</code> peut l’installer :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python install 3.12</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> python pin 3.12</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="ajouter-django" class="level3">
 <h3 class="anchored" data-anchor-id="ajouter-django">Ajouter Django</h3>
-<p>Ajoutez Django comme dépendance de production :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="st">"Django&gt;=5.2,&lt;6"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Examinez ensuite les fichiers produits :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> pyproject.toml</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-30</span> uv.lock</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Dans <code>pyproject.toml</code>, Django apparaît dans la liste des dépendances. Dans <code>uv.lock</code>, <code>uv</code> conserve les versions concrètement retenues, y compris les dépendances indirectes. Il faut versionner <code>pyproject.toml</code> <strong>et</strong> <code>uv.lock</code> ; il ne faut pas versionner <code>.venv/</code>.</p>
+<p>Ajoutez Django comme dépendance de production, c’est-à-dire une dépendance nécessaire pour que l’application fonctionne :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="st">"Django&gt;=5.2,&lt;6"</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La contrainte <code>&gt;=5.2,&lt;6</code> signifie « toute version 5.2 ou supérieure, mais pas la 6 ». Elle autorise les corrections de sécurité tout en évitant un changement majeur imprévu. Examinez ensuite les fichiers produits :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> pyproject.toml</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-30</span> uv.lock</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dans <code>pyproject.toml</code>, Django apparaît dans la liste des dépendances :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project]</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">"bibliocours"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="st">"0.1.0"</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="dt">requires-python</span> <span class="op">=</span> <span class="st">"&gt;=3.12"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="dt">dependencies</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django&gt;=5.2,&lt;6"</span><span class="op">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dans <code>uv.lock</code>, <code>uv</code> conserve les versions concrètement retenues, y compris les dépendances indirectes (celles dont Django lui-même a besoin, comme <code>asgiref</code> et <code>sqlparse</code>). Il faut versionner <code>pyproject.toml</code> <strong>et</strong> <code>uv.lock</code> ; il ne faut pas versionner <code>.venv/</code>, qui peut être recréé à tout moment.</p>
+<p>Les commandes <code>uv</code> à connaître dès maintenant :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Commande</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>uv add paquet</code></td>
+<td>ajoute une dépendance et met à jour <code>pyproject.toml</code> et <code>uv.lock</code></td>
+</tr>
+<tr class="even">
+<td><code>uv add --dev paquet</code></td>
+<td>ajoute une dépendance <strong>de développement</strong> (outils de test, de style…)</td>
+</tr>
+<tr class="odd">
+<td><code>uv remove paquet</code></td>
+<td>retire une dépendance</td>
+</tr>
+<tr class="even">
+<td><code>uv sync</code></td>
+<td>crée ou met à jour <code>.venv/</code> pour correspondre aux fichiers</td>
+</tr>
+<tr class="odd">
+<td><code>uv run commande</code></td>
+<td>exécute une commande dans l’environnement du projet</td>
+</tr>
+<tr class="even">
+<td><code>uv tree</code></td>
+<td>affiche l’arbre des dépendances, directes et indirectes</td>
+</tr>
+</tbody>
+</table>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -399,19 +601,26 @@ Content-Type: text/html; charset=utf-8
 </div>
 <div class="callout-body-container callout-body">
 <p>Lancez une commande Python du projet avec <code>uv run</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python <span class="at">-c</span> <span class="st">"import django; print(django.get_version())"</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run django-admin <span class="at">--version</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python <span class="at">-c</span> <span class="st">"import django; print(django.get_version())"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run django-admin <span class="at">--version</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>uv run</code> vérifie l’environnement et exécute la commande avec les dépendances du projet. Vous n’avez donc pas à taper <code>source .venv/bin/activate</code>. Une activation manuelle reste possible, mais elle n’est plus nécessaire pour suivre ce cours.</p>
+<p>Si vous tapez <code>python manage.py …</code> sans <code>uv run</code>, vous utilisez peut-être le Python global, où Django n’est pas installé : l’erreur <code>ModuleNotFoundError: No module named 'django'</code> est le signe typique de cet oubli.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="créer-le-projet-django" class="level2">
 <h2 class="anchored" data-anchor-id="créer-le-projet-django">Créer le projet Django</h2>
-<p>Dans Django, un <strong>projet</strong> représente la configuration globale d’un site. Une <strong>application</strong> est une unité fonctionnelle qui regroupe des modèles, vues, templates et tests. Un même projet peut réunir plusieurs applications : <code>cours</code>, <code>comptes</code>, <code>notifications</code>, etc. Cette distinction est importante : le projet assemble ; les applications portent les fonctionnalités.</p>
+<section id="projet-et-application-deux-notions-à-ne-pas-confondre" class="level3">
+<h3 class="anchored" data-anchor-id="projet-et-application-deux-notions-à-ne-pas-confondre">Projet et application : deux notions à ne pas confondre</h3>
+<p>Dans Django, un <strong>projet</strong> représente la configuration globale d’un site. Une <strong>application</strong> est une unité fonctionnelle qui regroupe des modèles, vues, templates et tests. Un même projet peut réunir plusieurs applications : <code>cours</code>, <code>comptes</code>, <code>notifications</code>, etc.</p>
+<p>Pour retenir la différence, pensez à une maison. Le projet est le bâtiment avec son électricité, sa plomberie et son adresse : il fournit l’infrastructure commune. Les applications sont les pièces : chacune a une fonction précise. Le projet assemble ; les applications portent les fonctionnalités.</p>
+</section>
+<section id="générer-la-configuration-globale" class="level3">
+<h3 class="anchored" data-anchor-id="générer-la-configuration-globale">Générer la configuration globale</h3>
 <p>Créons la configuration globale dans le dossier courant :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run django-admin startproject config .</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Le point final signifie « utiliser le dossier courant » plutôt que créer un dossier imbriqué <code>config/config</code>. La structure initiale est :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run django-admin startproject config .</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Le point final signifie « utiliser le dossier courant » plutôt que créer un dossier imbriqué <code>config/config</code>. Nous nommons le paquet de configuration <code>config</code> plutôt que <code>bibliocours</code> pour éviter la confusion entre le dossier racine et le paquet qui contient <code>settings.py</code>. La structure obtenue est :</p>
 <pre class="text"><code>bibliocours/
 ├── .python-version
 ├── pyproject.toml
@@ -423,26 +632,45 @@ Content-Type: text/html; charset=utf-8
     ├── settings.py
     ├── urls.py
     └── wsgi.py</code></pre>
+</section>
 <section id="le-rôle-de-chaque-fichier" class="level3">
 <h3 class="anchored" data-anchor-id="le-rôle-de-chaque-fichier">Le rôle de chaque fichier</h3>
 <ul>
-<li><code>manage.py</code> prépare l’accès aux réglages et expose les commandes Django ;</li>
+<li><code>manage.py</code> prépare l’accès aux réglages (il indique à Django que ceux-ci se trouvent dans <code>config.settings</code>) et expose les commandes Django ;</li>
 <li><code>config/settings.py</code> contient la configuration globale ;</li>
 <li><code>config/urls.py</code> est le routeur principal ;</li>
-<li><code>config/asgi.py</code> et <code>config/wsgi.py</code> sont les points d’entrée utilisés par les serveurs applicatifs ;</li>
+<li><code>config/asgi.py</code> et <code>config/wsgi.py</code> sont les points d’entrée utilisés par les serveurs applicatifs en production (voir <a href="08-production.html" class="quarto-xref"><span>Préparer la production et continuer l’apprentissage</span></a>) ;</li>
 <li><code>__init__.py</code> indique que <code>config</code> est un paquet Python.</li>
 </ul>
-<p>Lancez le serveur de développement :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py runserver</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Ouvrez <code>http://127.0.0.1:8000/</code>. Le serveur recharge souvent le code quand un fichier Python est modifié. Il est pratique pour apprendre, mais il ne doit pas être utilisé comme serveur public : il n’est ni dimensionné ni configuré pour la production.</p>
-<p>Arrêtez-le avec ++ctrl+c++. Une seconde commande dans un autre terminal peut inspecter le projet :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py check</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>check</code> analyse la configuration sans modifier la base de données. Prenez l’habitude de l’exécuter après une modification structurelle.</p>
+</section>
+<section id="démarrer-le-serveur-de-développement" class="level3">
+<h3 class="anchored" data-anchor-id="démarrer-le-serveur-de-développement">Démarrer le serveur de développement</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py runserver</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ouvrez <code>http://127.0.0.1:8000/</code>. Vous devez voir la page d’accueil de Django (une fusée). Dans le terminal, chaque requête reçue est journalisée :</p>
+<pre class="text"><code>[07/Oct/2026 10:15:02] "GET / HTTP/1.1" 200 10731</code></pre>
+<p>Lisez cette ligne : la méthode, le chemin, la version HTTP, le <strong>statut</strong> de la réponse et sa taille en octets. Ce journal sera votre meilleur ami pour diagnostiquer les problèmes.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>« You have 18 unapplied migration(s) »
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Au démarrage, Django affiche un avertissement rouge à propos de migrations non appliquées. C’est normal : les composants fournis par Django (administration, authentification, sessions) ont besoin de tables dans la base de données, qui n’existent pas encore. Nous créerons ces tables au <a href="03-modeles-orm-migrations.html" class="quarto-xref"><span>Modéliser les données avec l’ORM et les migrations</span></a>, quand nous étudierons les migrations. Ignorez l’avertissement pour l’instant.</p>
+</div>
+</div>
+<p>Le serveur recharge souvent le code quand un fichier Python est modifié. Il est pratique pour apprendre, mais il ne doit pas être utilisé comme serveur public : il n’est ni dimensionné ni configuré pour la production.</p>
+<p>Arrêtez-le avec <code>Ctrl+C</code>. Une seconde commande dans un autre terminal peut inspecter le projet :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py check</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>check</code> analyse la configuration sans modifier la base de données. Le message attendu est <code>System check identified no issues (0 silenced).</code> Prenez l’habitude de l’exécuter après une modification structurelle.</p>
 </section>
 </section>
 <section id="créer-lapplication-cours" class="level2">
 <h2 class="anchored" data-anchor-id="créer-lapplication-cours">Créer l’application <code>cours</code></h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py startapp cours</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py startapp cours</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>La nouvelle structure ressemble à ceci :</p>
 <pre class="text"><code>cours/
 ├── __init__.py
@@ -453,22 +681,25 @@ Content-Type: text/html; charset=utf-8
 ├── models.py
 ├── tests.py
 └── views.py</code></pre>
+<p>Chaque fichier a une place prévue : <code>models.py</code> accueillera les données, <code>views.py</code> le traitement des requêtes, <code>admin.py</code> la configuration de l’administration, <code>migrations/</code> l’historique du schéma de la base. Nous remplirons ces fichiers un à un dans les chapitres suivants.</p>
 <p>Une app n’est pas active simplement parce que son dossier existe. Ajoutez-la dans <code>config/settings.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>INSTALLED_APPS <span class="op">=</span> [</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.admin"</span>,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.auth"</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.contenttypes"</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.sessions"</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.messages"</span>,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.staticfiles"</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cours"</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Dans un projet plus grand, on préfère souvent <code>"cours.apps.CoursConfig"</code> : cette forme rend explicite la classe de configuration. La forme courte fonctionne ici car Django sait retrouver <code>CoursConfig</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>INSTALLED_APPS <span class="op">=</span> [</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.admin"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.auth"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.contenttypes"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.sessions"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.messages"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"django.contrib.staticfiles"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cours"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>INSTALLED_APPS</code> est la liste des composants que Django doit charger. Tant que <code>cours</code> n’y figure pas, Django ignorera ses modèles, ses templates et ses migrations. Dans un projet plus grand, on préfère souvent <code>"cours.apps.CoursConfig"</code> : cette forme rend explicite la classe de configuration définie dans <code>apps.py</code>. La forme courte fonctionne ici car Django sait retrouver <code>CoursConfig</code>.</p>
+<p>Relancez <code>uv run python manage.py check</code> : si vous aviez fait une faute de frappe dans le nom de l’app, Django la signalerait immédiatement.</p>
 </section>
 <section id="versionner-ce-qui-doit-lêtre" class="level2">
 <h2 class="anchored" data-anchor-id="versionner-ce-qui-doit-lêtre">Versionner ce qui doit l’être</h2>
-<p>Initialisez Git et créez <code>.gitignore</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Si <code>uv init</code> n’a pas déjà créé de dépôt Git (cherchez un dossier <code>.git</code> avec <code>ls -a</code>), initialisez-le :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Complétez ensuite le fichier <code>.gitignore</code> pour qu’il contienne au moins :</p>
 <pre class="gitignore"><code>.venv/
 __pycache__/
 *.py[cod]
@@ -477,27 +708,161 @@ __pycache__/
 .DS_Store
 media/
 staticfiles/</code></pre>
-<p>La base SQLite locale et les fichiers téléversés peuvent contenir des données de travail ; ils ne doivent pas être envoyés par défaut. Les secrets ne doivent jamais se trouver dans Git. <code>uv.lock</code>, en revanche, <strong>doit</strong> être conservé : il sert à reproduire l’installation.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"chore: initialiser le projet Django"</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Un commit est une étape vérifiable, pas une sauvegarde automatique de chaque frappe. Faites un commit lorsque l’application atteint un état cohérent : le projet démarre, le contrôle Django passe et les fichiers nécessaires sont présents.</p>
+<p>Voici ce qui doit entrer dans Git, et pourquoi :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fichier ou dossier</th>
+<th>Versionner ?</th>
+<th>Raison</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>code Python, templates, migrations</td>
+<td>oui</td>
+<td>c’est le projet</td>
+</tr>
+<tr class="even">
+<td><code>pyproject.toml</code>, <code>uv.lock</code></td>
+<td>oui</td>
+<td>permettent de recréer l’environnement</td>
+</tr>
+<tr class="odd">
+<td><code>.python-version</code></td>
+<td>oui</td>
+<td>documente la version de Python attendue</td>
+</tr>
+<tr class="even">
+<td><code>.venv/</code></td>
+<td>non</td>
+<td>se recrée avec <code>uv sync</code></td>
+</tr>
+<tr class="odd">
+<td><code>*.sqlite3</code></td>
+<td>non</td>
+<td>données de travail locales</td>
+</tr>
+<tr class="even">
+<td><code>media/</code></td>
+<td>non</td>
+<td>fichiers téléversés par des utilisateurs</td>
+</tr>
+<tr class="odd">
+<td><code>staticfiles/</code></td>
+<td>non</td>
+<td>produit par <code>collectstatic</code>, donc régénérable</td>
+</tr>
+<tr class="even">
+<td><code>.env</code></td>
+<td><strong>jamais</strong></td>
+<td>contient des secrets</td>
+</tr>
+</tbody>
+</table>
+<p>La base SQLite locale et les fichiers téléversés peuvent contenir des données de travail ; ils ne doivent pas être envoyés par défaut. Les secrets ne doivent jamais se trouver dans Git, car l’historique conserve tout : supprimer un secret dans un commit ultérieur ne l’efface pas du passé. <code>uv.lock</code>, en revanche, <strong>doit</strong> être conservé : il sert à reproduire l’installation.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"chore: initialiser le projet Django"</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Un commit est une étape vérifiable, pas une sauvegarde automatique de chaque frappe. Faites un commit lorsque l’application atteint un état cohérent : le projet démarre, le contrôle Django passe et les fichiers nécessaires sont présents. Le préfixe <code>chore:</code> suit la convention « Conventional Commits » : <code>feat:</code> pour une fonctionnalité, <code>fix:</code> pour une correction, <code>test:</code> pour des tests, <code>docs:</code> pour de la documentation.</p>
 </section>
 <section id="checkpoint" class="level2">
 <h2 class="anchored" data-anchor-id="checkpoint">Checkpoint</h2>
 <p>À la fin de ce chapitre, les commandes suivantes doivent fonctionner :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py check</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py runserver</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run django-admin <span class="at">--version</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py check</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py runserver</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run django-admin <span class="at">--version</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Vérifiez :</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><code>check</code> affiche « no issues » ;</label></li>
+<li><label><input type="checkbox">la page de la fusée s’affiche sur <code>http://127.0.0.1:8000/</code> ;</label></li>
+<li><label><input type="checkbox"><code>django-admin --version</code> affiche une version <code>5.2.x</code> ;</label></li>
+<li><label><input type="checkbox"><code>git status</code> indique « nothing to commit, working tree clean » ;</label></li>
+<li><label><input type="checkbox"><code>.venv/</code> et <code>db.sqlite3</code> n’apparaissent pas dans <code>git status</code>.</label></li>
+</ul>
+</section>
+<section id="erreurs-fréquentes" class="level2">
+<h2 class="anchored" data-anchor-id="erreurs-fréquentes">Erreurs fréquentes</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symptôme</th>
+<th>Cause probable</th>
+<th>Remède</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>uv: command not found</code></td>
+<td>terminal ouvert avant l’installation</td>
+<td>fermer et rouvrir le terminal</td>
+</tr>
+<tr class="even">
+<td><code>ModuleNotFoundError: No module named 'django'</code></td>
+<td>commande lancée sans <code>uv run</code></td>
+<td>préfixer par <code>uv run</code></td>
+</tr>
+<tr class="odd">
+<td><code>can't open file 'manage.py'</code></td>
+<td>mauvais dossier courant</td>
+<td><code>cd</code> vers la racine du projet</td>
+</tr>
+<tr class="even">
+<td><code>Error: That port is already in use</code></td>
+<td>un autre serveur tourne déjà</td>
+<td>l’arrêter, ou <code>runserver 8001</code></td>
+</tr>
+<tr class="odd">
+<td><code>ModuleNotFoundError: No module named 'cours'</code></td>
+<td>app mal nommée ou absente du dossier</td>
+<td>vérifier le nom dans <code>INSTALLED_APPS</code></td>
+</tr>
+<tr class="even">
+<td>dossier <code>config/config/</code></td>
+<td>oubli du point final de <code>startproject</code></td>
+<td>recommencer dans un dossier propre</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="à-retenir" class="level2">
+<h2 class="anchored" data-anchor-id="à-retenir">À retenir</h2>
+<ul>
+<li>Une requête HTTP a une ligne de requête, des en-têtes et parfois un corps ; la réponse a un statut, des en-têtes et un corps.</li>
+<li><code>pyproject.toml</code> déclare, <code>uv.lock</code> enregistre : les deux sont versionnés.</li>
+<li><code>uv run</code> exécute toute commande dans l’environnement du projet.</li>
+<li>Le <strong>projet</strong> assemble et configure ; les <strong>applications</strong> portent les fonctionnalités.</li>
+<li>Une app doit être déclarée dans <code>INSTALLED_APPS</code> pour exister.</li>
+<li><code>runserver</code> sert à apprendre, jamais à publier.</li>
+<li>Un secret ne doit jamais entrer dans Git.</li>
+</ul>
 </section>
 <section id="exercices" class="level2">
 <h2 class="anchored" data-anchor-id="exercices">Exercices</h2>
 <ol type="1">
-<li>Décrivez avec vos mots la différence entre un projet Django et une app Django.</li>
-<li>Supprimez <code>.venv/</code> si elle existe, puis relancez une commande avec <code>uv run</code>. Que constatez-vous ?</li>
-<li>Ajoutez une dépendance de développement avec <code>uv add --dev ruff</code>, puis observez la différence entre les dépendances normales et celles de développement dans <code>pyproject.toml</code>.</li>
-<li>Faites un commit avant et après la création de l’app <code>cours</code>, puis utilisez <code>git diff</code> pour identifier ce que Django a généré.</li>
+<li><p>Décrivez avec vos mots la différence entre un projet Django et une app Django. Donnez ensuite trois apps possibles pour un site de e-commerce.</p></li>
+<li><p>Expliquez pourquoi <code>uv.lock</code> est versionné alors que <code>.venv/</code> ne l’est pas. Que se passerait-il pour un collègue si <code>uv.lock</code> était absent ?</p></li>
+<li><p>Pourquoi la commande <code>startproject config .</code> se termine-t-elle par un point ? Qu’obtiendrait-on sans lui ?</p></li>
+<li><p>Citez trois raisons pour lesquelles <code>runserver</code> ne convient pas à un site public.</p></li>
+<li><p>Dans la ligne de journal <code>"GET /cours/ HTTP/1.1" 404 2345</code>, que signifient les différents éléments ? Que vous dit le <code>404</code> ?</p></li>
+<li><p>Supprimez <code>.venv/</code> si elle existe, puis relancez une commande avec <code>uv run</code>. Que constatez-vous ? Quelle commande aurait-elle pu recréer l’environnement explicitement ?</p></li>
+<li><p>Ajoutez une dépendance de développement avec <code>uv add --dev ruff</code>, puis observez la différence entre les dépendances normales et celles de développement dans <code>pyproject.toml</code>. Lancez <code>uv run ruff --version</code>. Cet outil sera réutilisé au <a href="07-tests-debug-qualite.html" class="quarto-xref"><span>Tester, diagnostiquer et faire évoluer le code</span></a>.</p></li>
+<li><p>Faites un commit avant et après la création de l’app <code>cours</code>, puis utilisez <code>git show --stat</code> pour identifier ce que Django a généré.</p></li>
+<li><p>Lancez <code>uv tree</code>. Quelles sont les dépendances <strong>indirectes</strong> de Django ? Retrouvez-les dans <code>uv.lock</code>.</p></li>
+<li><p>Lancez le serveur sur le port 8001 (<code>runserver 8001</code>), puis, dans un second terminal, observez la réponse brute avec <code>curl -i http://127.0.0.1:8001/</code> (sous PowerShell, tapez <code>curl.exe</code>). Repérez la ligne de statut et les en-têtes.</p></li>
+<li><p>Ouvrez <code>config/settings.py</code> et listez cinq réglages dont vous ne comprenez pas encore le rôle. Gardez cette liste : au chapitre suivant, vous pourrez la compléter avec les réponses.</p></li>
+<li><p>Rédigez un fichier <code>README.md</code> qui décrit, en cinq commandes maximum, comment un nouveau venu installe et lance BiblioCours. Demandez à une personne de suivre vos instructions sur une machine « propre » et notez où elle bute.</p></li>
 </ol>
 
 
@@ -918,7 +1283,7 @@ Django Software Foundation. 2025b. <span>«&nbsp;Writing Your First Django App&n
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../preface.html" class="pagination-link" aria-label="Préface">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Préface</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Préface</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

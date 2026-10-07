@@ -212,12 +212,14 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">index.html</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">index.html</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Préface</span></a>
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -276,10 +278,14 @@ div.csl-indent {
     <h2 id="toc-title">Dans ce chapitre</h2>
    
   <ul>
-  <li><a href="#pourquoi-un-formulaire-html-ne-suffit-pas" id="toc-pourquoi-un-formulaire-html-ne-suffit-pas" class="nav-link active" data-scroll-target="#pourquoi-un-formulaire-html-ne-suffit-pas">Pourquoi un formulaire HTML ne suffit pas</a></li>
+  <li><a href="#où-en-sommes-nous" id="toc-où-en-sommes-nous" class="nav-link active" data-scroll-target="#où-en-sommes-nous">Où en sommes-nous ?</a></li>
+  <li><a href="#pourquoi-un-formulaire-html-ne-suffit-pas" id="toc-pourquoi-un-formulaire-html-ne-suffit-pas" class="nav-link" data-scroll-target="#pourquoi-un-formulaire-html-ne-suffit-pas">Pourquoi un formulaire HTML ne suffit pas</a>
+  <ul class="collapse">
+  <li><a href="#les-deux-états-dun-formulaire" id="toc-les-deux-états-dun-formulaire" class="nav-link" data-scroll-target="#les-deux-états-dun-formulaire">Les deux états d’un formulaire</a></li>
+  </ul></li>
   <li><a href="#créer-un-modelform" id="toc-créer-un-modelform" class="nav-link" data-scroll-target="#créer-un-modelform">Créer un <code>ModelForm</code></a>
   <ul class="collapse">
-  <li><a href="#les-trois-niveaux-de-validation" id="toc-les-trois-niveaux-de-validation" class="nav-link" data-scroll-target="#les-trois-niveaux-de-validation">Les trois niveaux de validation</a></li>
+  <li><a href="#les-niveaux-de-validation" id="toc-les-niveaux-de-validation" class="nav-link" data-scroll-target="#les-niveaux-de-validation">Les niveaux de validation</a></li>
   </ul></li>
   <li><a href="#la-vue-de-création" id="toc-la-vue-de-création" class="nav-link" data-scroll-target="#la-vue-de-création">La vue de création</a></li>
   <li><a href="#le-template-du-formulaire" id="toc-le-template-du-formulaire" class="nav-link" data-scroll-target="#le-template-du-formulaire">Le template du formulaire</a></li>
@@ -287,9 +293,13 @@ div.csl-indent {
   <li><a href="#supprimer-préférer-une-confirmation-explicite" id="toc-supprimer-préférer-une-confirmation-explicite" class="nav-link" data-scroll-target="#supprimer-préférer-une-confirmation-explicite">Supprimer : préférer une confirmation explicite</a></li>
   <li><a href="#ladministration-django" id="toc-ladministration-django" class="nav-link" data-scroll-target="#ladministration-django">L’administration Django</a>
   <ul class="collapse">
+  <li><a href="#une-action-personnalisée" id="toc-une-action-personnalisée" class="nav-link" data-scroll-target="#une-action-personnalisée">Une action personnalisée</a></li>
   <li><a href="#ladmin-et-les-performances" id="toc-ladmin-et-les-performances" class="nav-link" data-scroll-target="#ladmin-et-les-performances">L’admin et les performances</a></li>
   </ul></li>
   <li><a href="#messages-utilisateur" id="toc-messages-utilisateur" class="nav-link" data-scroll-target="#messages-utilisateur">Messages utilisateur</a></li>
+  <li><a href="#checkpoint" id="toc-checkpoint" class="nav-link" data-scroll-target="#checkpoint">Checkpoint</a></li>
+  <li><a href="#erreurs-fréquentes" id="toc-erreurs-fréquentes" class="nav-link" data-scroll-target="#erreurs-fréquentes">Erreurs fréquentes</a></li>
+  <li><a href="#à-retenir" id="toc-à-retenir" class="nav-link" data-scroll-target="#à-retenir">À retenir</a></li>
   <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices">Exercices</a></li>
   </ul>
 </nav>
@@ -301,243 +311,538 @@ div.csl-indent {
 
 
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Objectifs d’apprentissage
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>À la fin de ce chapitre, vous saurez :</p>
+<ul>
+<li>expliquer pourquoi la validation doit se faire côté serveur et décrire le cycle liaison → validation → action ;</li>
+<li>écrire un <code>ModelForm</code> avec validation par champ et validation croisée ;</li>
+<li>implémenter les vues de création, de modification et de suppression selon le schéma POST/Redirect/GET ;</li>
+<li>rendre un formulaire dans un template, avec ses erreurs et son jeton CSRF ;</li>
+<li>configurer l’administration Django (liste, filtres, recherche, actions) ;</li>
+<li>afficher des messages utilisateur après une action.</li>
+</ul>
+</div>
+</div>
+<section id="où-en-sommes-nous" class="level2">
+<h2 class="anchored" data-anchor-id="où-en-sommes-nous">Où en sommes-nous ?</h2>
+<p>BiblioCours affiche son catalogue (chapitre 4), mais pour ajouter un cours il faut passer par le shell. Dans ce chapitre, nous construisons deux outils de saisie complémentaires :</p>
+<ul>
+<li>des <strong>formulaires publics</strong>, par lesquels un éditeur crée et modifie des <strong>brouillons</strong> ;</li>
+<li>l’<strong>administration Django</strong>, par laquelle une personne habilitée relit et <strong>publie</strong> les cours.</li>
+</ul>
+<p>Ce partage des rôles est une décision de conception : un éditeur qui rédige ne publie pas lui-même, et le formulaire ne propose donc pas le champ <code>statut</code>.</p>
+</section>
 <section id="pourquoi-un-formulaire-html-ne-suffit-pas" class="level2">
 <h2 class="anchored" data-anchor-id="pourquoi-un-formulaire-html-ne-suffit-pas">Pourquoi un formulaire HTML ne suffit pas</h2>
-<p>Un formulaire est une frontière entre le navigateur et l’application. Le navigateur peut aider avec <code>required</code>, <code>type="email"</code> ou <code>maxlength</code>, mais ces attributs ne sont pas des protections : n’importe quel client HTTP peut les contourner. La validation importante doit être exécutée côté serveur.</p>
+<p>Un formulaire est une frontière entre le navigateur et l’application. Le navigateur peut aider avec <code>required</code>, <code>type="email"</code> ou <code>maxlength</code>, mais ces attributs ne sont pas des protections : n’importe quel client HTTP (un script, l’outil <code>curl</code>, un navigateur modifié) peut les contourner. La validation importante doit être exécutée côté serveur.</p>
 <p>Django distingue trois étapes :</p>
 <ol type="1">
 <li><strong>liaison</strong> : associer les données reçues à un formulaire ;</li>
 <li><strong>validation</strong> : vérifier les champs et les règles métier ;</li>
 <li><strong>action</strong> : sauvegarder ou effectuer une opération seulement si le formulaire est valide.</li>
 </ol>
-<p>Un formulaire non valide doit être réaffiché avec les valeurs acceptables et les erreurs lisibles. Un formulaire valide doit éviter de créer deux fois la même ressource lorsque l’utilisateur actualise la page. Ce dernier problème est résolu par le schéma <strong>POST/Redirect/GET</strong>.</p>
+<p>Un formulaire non valide doit être réaffiché avec les valeurs acceptables et les erreurs lisibles. Un formulaire valide doit éviter de créer deux fois la même ressource lorsque l’utilisateur actualise la page. Ce dernier problème est résolu par le schéma <strong>POST/Redirect/GET</strong> (PRG) :</p>
+<pre class="text"><code>1. GET  /cours/nouveau/     → le serveur renvoie le formulaire vide        (200)
+2. POST /cours/nouveau/     → données invalides : formulaire réaffiché     (200)
+3. POST /cours/nouveau/     → données valides : sauvegarde, puis redirection (302)
+4. GET  /cours/&lt;slug&gt;/modifier/ → le navigateur suit la redirection       (200)</code></pre>
+<p>Sans l’étape 3, l’utilisateur qui actualise la page après un succès renverrait le POST et créerait un doublon. Avec la redirection, l’actualisation répète seulement le GET de l’étape 4, qui est inoffensif.</p>
+<section id="les-deux-états-dun-formulaire" class="level3">
+<h3 class="anchored" data-anchor-id="les-deux-états-dun-formulaire">Les deux états d’un formulaire</h3>
+<p>Un formulaire Django existe sous deux formes :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>État</th>
+<th>Création</th>
+<th><code>is_valid()</code></th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>non lié</strong> (<em>unbound</em>)</td>
+<td><code>CoursForm()</code></td>
+<td>toujours <code>False</code></td>
+<td>afficher un formulaire vide ou pré-rempli</td>
+</tr>
+<tr class="even">
+<td><strong>lié</strong> (<em>bound</em>)</td>
+<td><code>CoursForm(request.POST)</code></td>
+<td>valide les données</td>
+<td>traiter une soumission</td>
+</tr>
+</tbody>
+</table>
+<p>Une fois <code>is_valid()</code> appelé, deux attributs deviennent disponibles : <code>form.cleaned_data</code> (les valeurs validées et converties en types Python) et <code>form.errors</code> (les messages d’erreur par champ).</p>
+</section>
 </section>
 <section id="créer-un-modelform" class="level2">
 <h2 class="anchored" data-anchor-id="créer-un-modelform">Créer un <code>ModelForm</code></h2>
 <p>Créez <code>cours/forms.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django <span class="im">import</span> forms</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .models <span class="im">import</span> Cours</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CoursForm(forms.ModelForm):</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Meta:</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> Cours</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        fields <span class="op">=</span> [<span class="st">"titre"</span>, <span class="st">"slug"</span>, <span class="st">"resume"</span>, <span class="st">"contenu"</span>, <span class="st">"matiere"</span>]</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        widgets <span class="op">=</span> {</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"resume"</span>: forms.Textarea(attrs<span class="op">=</span>{<span class="st">"rows"</span>: <span class="dv">3</span>}),</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"contenu"</span>: forms.Textarea(attrs<span class="op">=</span>{<span class="st">"rows"</span>: <span class="dv">12</span>}),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> clean_titre(<span class="va">self</span>):</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        titre <span class="op">=</span> <span class="va">self</span>.cleaned_data[<span class="st">"titre"</span>].strip()</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(titre) <span class="op">&lt;</span> <span class="dv">5</span>:</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> forms.ValidationError(</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Le titre doit comporter au moins cinq caractères."</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> titre</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> clean(<span class="va">self</span>):</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        cleaned_data <span class="op">=</span> <span class="bu">super</span>().clean()</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        titre <span class="op">=</span> cleaned_data.get(<span class="st">"titre"</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        resume <span class="op">=</span> cleaned_data.get(<span class="st">"resume"</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> titre <span class="kw">and</span> resume <span class="kw">and</span> titre.lower() <span class="kw">in</span> resume.lower():</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.add_error(</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">"resume"</span>,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Le résumé ne doit pas répéter le titre mot pour mot."</span>,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> cleaned_data</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>ModelForm</code> déduit les champs à partir du modèle et réutilise ses contraintes de base. La liste <code>fields</code> doit être explicite : <code>fields = "__all__"</code> risque d’exposer un champ ajouté plus tard sans que l’on s’en rende compte <span class="citation" data-cites="django-forms">(<a href="../references.html#ref-django-forms" role="doc-biblioref">Django Software Foundation 2025</a>)</span>.</p>
-<section id="les-trois-niveaux-de-validation" class="level3">
-<h3 class="anchored" data-anchor-id="les-trois-niveaux-de-validation">Les trois niveaux de validation</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django <span class="im">import</span> forms</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .models <span class="im">import</span> Cours</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CoursForm(forms.ModelForm):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Meta:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> Cours</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        fields <span class="op">=</span> [<span class="st">"titre"</span>, <span class="st">"slug"</span>, <span class="st">"resume"</span>, <span class="st">"contenu"</span>, <span class="st">"matiere"</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        widgets <span class="op">=</span> {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"resume"</span>: forms.Textarea(attrs<span class="op">=</span>{<span class="st">"rows"</span>: <span class="dv">3</span>}),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"contenu"</span>: forms.Textarea(attrs<span class="op">=</span>{<span class="st">"rows"</span>: <span class="dv">12</span>}),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> clean_titre(<span class="va">self</span>):</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        titre <span class="op">=</span> <span class="va">self</span>.cleaned_data[<span class="st">"titre"</span>].strip()</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(titre) <span class="op">&lt;</span> <span class="dv">5</span>:</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> forms.ValidationError(</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Le titre doit comporter au moins cinq caractères."</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> titre</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> clean(<span class="va">self</span>):</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        cleaned_data <span class="op">=</span> <span class="bu">super</span>().clean()</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        titre <span class="op">=</span> cleaned_data.get(<span class="st">"titre"</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        resume <span class="op">=</span> cleaned_data.get(<span class="st">"resume"</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> titre <span class="kw">and</span> resume <span class="kw">and</span> titre.lower() <span class="kw">in</span> resume.lower():</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.add_error(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">"resume"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Le résumé ne doit pas répéter le titre mot pour mot."</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> cleaned_data</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>ModelForm</code> déduit les champs à partir du modèle et réutilise ses contraintes de base (longueur maximale, unicité, champ obligatoire). La liste <code>fields</code> doit être explicite : <code>fields = "__all__"</code> risque d’exposer un champ ajouté plus tard sans que l’on s’en rende compte <span class="citation" data-cites="django-forms">(<a href="../references.html#ref-django-forms" role="doc-biblioref">Django Software Foundation 2025</a>)</span>.</p>
+<p>Notre liste omet volontairement <code>statut</code> et <code>date_publication</code>. Même si un utilisateur malveillant ajoutait <code>statut=publie</code> à la requête POST, Django <strong>ignorerait</strong> ce champ inconnu : un éditeur ne peut pas se publier lui-même. C’est une protection très concrète contre les modifications non autorisées de champs sensibles.</p>
+<section id="les-niveaux-de-validation" class="level3">
+<h3 class="anchored" data-anchor-id="les-niveaux-de-validation">Les niveaux de validation</h3>
+<p>Quand on appelle <code>is_valid()</code>, Django enchaîne les validations dans cet ordre :</p>
+<ol type="1">
+<li><strong>par champ</strong> : conversion et contraintes de base (obligatoire, longueur, format) ;</li>
+<li><strong><code>clean_&lt;champ&gt;()</code></strong> : règle propre à un champ (<code>clean_titre</code>) ;</li>
+<li><strong><code>clean()</code> du formulaire</strong> : règle qui compare plusieurs champs ;</li>
+<li><strong>validation du modèle</strong> : <code>Model.clean()</code> (notre règle sur la date de publication) et contraintes d’unicité (<code>slug</code> unique).</li>
+</ol>
+<p>Chaque méthode a un rôle précis :</p>
 <ul>
-<li><code>clean_titre</code> valide un champ et se concentre sur sa valeur ;</li>
-<li><code>clean</code> valide une relation entre plusieurs champs ;</li>
-<li><code>Model.clean</code> peut porter une règle de modèle indépendante de ce formulaire.</li>
+<li><code>clean_titre</code> valide un champ et se concentre sur sa valeur ; elle <strong>doit renvoyer</strong> la valeur nettoyée ;</li>
+<li><code>clean</code> valide une relation entre plusieurs champs ; on y accède aux champs déjà validés via <code>cleaned_data.get(...)</code> (un champ invalide peut manquer) ;</li>
+<li><code>Model.clean</code> porte une règle de modèle indépendante de ce formulaire.</li>
 </ul>
-<p>Une validation ne doit pas seulement servir à afficher un message. Elle doit protéger l’invariant métier. Par exemple, si un cours publié doit toujours avoir un résumé, cette règle devrait être appliquée dans tous les chemins de création, pas uniquement sur la page HTML.</p>
+<p>Une validation ne doit pas seulement servir à afficher un message. Elle doit protéger l’invariant métier. Par exemple, si un cours publié doit toujours avoir un résumé, cette règle devrait être appliquée dans tous les chemins de création, pas uniquement sur la page HTML : on la place dans le modèle (voir l’exercice 7 du <a href="03-modeles-orm-migrations.html" class="quarto-xref"><span>Modéliser les données avec l’ORM et les migrations</span></a>).</p>
 </section>
 </section>
 <section id="la-vue-de-création" class="level2">
 <h2 class="anchored" data-anchor-id="la-vue-de-création">La vue de création</h2>
-<p>Ajoutez une route protégée plus tard par authentification :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>path(<span class="st">"nouveau/"</span>, views.creer_cours, name<span class="op">=</span><span class="st">"creer"</span>),</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Puis la vue :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> messages</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth.decorators <span class="im">import</span> login_required</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.shortcuts <span class="im">import</span> get_object_or_404, redirect, render</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .forms <span class="im">import</span> CoursForm</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> creer_cours(request):</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> request.method <span class="op">==</span> <span class="st">"POST"</span>:</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm(request.POST)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> form.is_valid():</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            cours <span class="op">=</span> form.save()</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            messages.success(request, <span class="ss">f"Le cours « </span><span class="sc">{</span>cours<span class="sc">.</span>titre<span class="sc">}</span><span class="ss"> » a été créé."</span>)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> redirect(cours.get_absolute_url())</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm()</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> render(request, <span class="st">"cours/formulaire.html"</span>, {<span class="st">"form"</span>: form})</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ajoutez la route à <code>cours/urls.py</code>. Elle doit précéder la route générique <code>&lt;slug:slug&gt;/</code>, sans quoi <code>nouveau</code> serait traité comme le slug d’un cours. Voici la liste complète des routes à ce stade, qui inclut aussi celles de modification et de suppression :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>urlpatterns <span class="op">=</span> [</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">""</span>, views.liste_cours, name<span class="op">=</span><span class="st">"liste"</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"a-propos/"</span>, views.a_propos, name<span class="op">=</span><span class="st">"a_propos"</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"nouveau/"</span>, views.creer_cours, name<span class="op">=</span><span class="st">"creer"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"matiere/&lt;slug:slug&gt;/"</span>, views.cours_par_matiere, name<span class="op">=</span><span class="st">"par_matiere"</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;slug:slug&gt;/"</span>, views.detail_cours, name<span class="op">=</span><span class="st">"detail"</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;slug:slug&gt;/modifier/"</span>, views.modifier_cours, name<span class="op">=</span><span class="st">"modifier"</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    path(<span class="st">"&lt;slug:slug&gt;/supprimer/"</span>, views.supprimer_cours, name<span class="op">=</span><span class="st">"supprimer"</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Puis, dans <code>cours/views.py</code>, ajoutez les imports et la vue :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> messages</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib.auth.decorators <span class="im">import</span> login_required</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.shortcuts <span class="im">import</span> get_object_or_404, redirect, render</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .forms <span class="im">import</span> CoursForm</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> creer_cours(request):</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> request.method <span class="op">==</span> <span class="st">"POST"</span>:</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm(request.POST)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> form.is_valid():</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            cours <span class="op">=</span> form.save()</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            messages.success(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                request, <span class="ss">f"Le brouillon « </span><span class="sc">{</span>cours<span class="sc">.</span>titre<span class="sc">}</span><span class="ss"> » a été créé."</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> redirect(<span class="st">"cours:modifier"</span>, slug<span class="op">=</span>cours.slug)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    contexte <span class="op">=</span> {<span class="st">"form"</span>: form, <span class="st">"titre_page"</span>: <span class="st">"Créer un cours"</span>}</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> render(request, <span class="st">"cours/formulaire.html"</span>, contexte)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>La méthode HTTP est une décision de sécurité et de sémantique :</p>
 <ul>
 <li><code>GET</code> affiche le formulaire et ne doit pas modifier l’état ;</li>
 <li><code>POST</code> transmet une intention de modification ;</li>
 <li>une redirection après succès empêche un rafraîchissement de répéter le POST.</li>
 </ul>
-<p>Le décorateur <code>login_required</code> redirige les utilisateurs anonymes vers la page de connexion. Nous verrons la configuration de cette redirection au chapitre <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>.</p>
+<p>Remarquez la structure <code>if POST … else GET</code> : si le formulaire est <strong>invalide</strong>, on ne redirige pas, on laisse la vue atteindre le <code>render</code> final avec le formulaire lié, qui contient les valeurs saisies et les erreurs.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Pourquoi rediriger vers la page de modification et non vers le détail ?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un cours fraîchement créé est un <strong>brouillon</strong>, et <code>detail_cours</code> ne montre que les cours publiés : rediriger vers <code>cours.get_absolute_url()</code> mènerait à une 404. On redirige donc vers <code>cours:modifier</code>, qui existe quel que soit le statut. La destination d’une redirection doit toujours être une page que l’utilisateur peut effectivement voir.</p>
+</div>
+</div>
+<p>Le décorateur <code>login_required</code> redirige les utilisateurs anonymes vers la page de connexion. Nous verrons la configuration de cette redirection, et son remplacement par un contrôle de permission, au <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Tester sans page de connexion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La page de connexion n’existe pas encore (elle arrive au chapitre 6), donc un visiteur anonyme est redirigé vers <code>/accounts/login/</code>, qui renvoie une 404 : c’est attendu. Pour tester vos vues dès maintenant, connectez-vous par l’administration (<code>/admin/</code>, après <code>createsuperuser</code>, voir plus bas). La session ouverte est partagée par tout le site.</p>
+</div>
+</div>
 </section>
 <section id="le-template-du-formulaire" class="level2">
 <h2 class="anchored" data-anchor-id="le-template-du-formulaire">Le template du formulaire</h2>
 <p><code>cours/templates/cours/formulaire.html</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>{% extends "cours/base.html" %}</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>{% block title %}Nouveau cours — BiblioCours{% endblock %}</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>{% block content %}</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Créer un cours<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="ot"> novalidate</span><span class="dt">&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    {% csrf_token %}</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    {% if form.non_field_errors %}</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"errors"</span><span class="ot"> role</span><span class="op">=</span><span class="st">"alert"</span><span class="dt">&gt;</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        {{ form.non_field_errors }}</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    {% endif %}</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    {% for field in form %}</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"form-field"</span><span class="dt">&gt;</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        {{ field.label_tag }}</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        {{ field }}</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        {% if field.help_text %}</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"help"</span><span class="dt">&gt;</span>{{ field.help_text }}<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        {% endif %}</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        {% for error in field.errors %}</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"error"</span><span class="ot"> role</span><span class="op">=</span><span class="st">"alert"</span><span class="dt">&gt;</span>{{ error }}<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        {% endfor %}</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    {% endfor %}</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Enregistrer<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:liste' %}"</span><span class="dt">&gt;</span>Annuler<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>{% endblock %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>{% csrf_token %}</code> est obligatoire pour un POST provenant d’un formulaire Django. Le jeton associe la requête à la session et protège contre une partie des attaques CSRF. Il ne remplace pas l’authentification ni l’autorisation.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>{% extends "cours/base.html" %}</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>{% block title %}{{ titre_page }} — BiblioCours{% endblock %}</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>{% block content %}</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>{{ titre_page }}<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="ot"> novalidate</span><span class="dt">&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    {% csrf_token %}</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    {% if form.non_field_errors %}</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"errors"</span><span class="ot"> role</span><span class="op">=</span><span class="st">"alert"</span><span class="dt">&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        {{ form.non_field_errors }}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    {% endif %}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    {% for field in form %}</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"form-field"</span><span class="dt">&gt;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        {{ field.label_tag }}</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        {{ field }}</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        {% if field.help_text %}</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"help"</span><span class="dt">&gt;</span>{{ field.help_text }}<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        {% endif %}</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        {% for error in field.errors %}</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"error"</span><span class="ot"> role</span><span class="op">=</span><span class="st">"alert"</span><span class="dt">&gt;</span>{{ error }}<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        {% endfor %}</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    {% endfor %}</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Enregistrer<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:liste' %}"</span><span class="dt">&gt;</span>Annuler<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    {% if cours %}</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:supprimer' cours.slug %}"</span><span class="dt">&gt;</span>Supprimer<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    {% endif %}</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>{% endblock %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ce template sert à la création <strong>et</strong> à la modification : seul le titre de la page (<code>titre_page</code>) et la présence de <code>cours</code> dans le contexte changent. Le parcours <code>{% for field in form %}</code> donne un contrôle fin sur le rendu, mais on peut aussi écrire simplement <code>{ form.as_p }</code> pour un rendu rapide.</p>
+<p><code>{% csrf_token %}</code> est obligatoire pour un POST provenant d’un formulaire Django. Le jeton associe la requête à la session et protège contre une partie des attaques CSRF (<a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>). Il ne remplace ni l’authentification ni l’autorisation. Sans lui, le POST est refusé avec une erreur 403.</p>
 <p><code>novalidate</code> désactive la validation native du navigateur afin de rendre visibles les messages Django pendant l’apprentissage. Dans un projet réel, vous pouvez conserver la validation native en complément ; elle améliore l’expérience mais ne remplace jamais la validation serveur.</p>
 </section>
 <section id="modifier-un-objet-existant" class="level2">
 <h2 class="anchored" data-anchor-id="modifier-un-objet-existant">Modifier un objet existant</h2>
 <p>Le même <code>ModelForm</code> peut être lié à une instance :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modifier_cours(request, slug):</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    cours <span class="op">=</span> get_object_or_404(Cours, slug<span class="op">=</span>slug)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> request.method <span class="op">==</span> <span class="st">"POST"</span>:</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm(request.POST, instance<span class="op">=</span>cours)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> form.is_valid():</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            form.save()</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            messages.success(request, <span class="st">"Le cours a été mis à jour."</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> redirect(cours.get_absolute_url())</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm(instance<span class="op">=</span>cours)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> render(</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        request,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cours/formulaire.html"</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"form"</span>: form, <span class="st">"cours"</span>: cours},</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>La présence d’<code>instance</code> change le comportement : sans elle, <code>save()</code> crée un objet ; avec elle, <code>save()</code> met à jour l’objet. La route de modification doit être distincte de la route de création et doit vérifier que l’utilisateur a le droit de modifier ce cours.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modifier_cours(request, slug):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    cours <span class="op">=</span> get_object_or_404(Cours, slug<span class="op">=</span>slug)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> request.method <span class="op">==</span> <span class="st">"POST"</span>:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm(request.POST, instance<span class="op">=</span>cours)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> form.is_valid():</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            cours <span class="op">=</span> form.save()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            messages.success(request, <span class="st">"Le cours a été mis à jour."</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> cours.est_publie:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> redirect(cours)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> redirect(<span class="st">"cours:modifier"</span>, slug<span class="op">=</span>cours.slug)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        form <span class="op">=</span> CoursForm(instance<span class="op">=</span>cours)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    contexte <span class="op">=</span> {<span class="st">"form"</span>: form, <span class="st">"cours"</span>: cours, <span class="st">"titre_page"</span>: <span class="st">"Modifier le cours"</span>}</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> render(request, <span class="st">"cours/formulaire.html"</span>, contexte)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La présence d’<code>instance</code> change le comportement : sans elle, <code>save()</code> crée un objet ; avec elle, <code>save()</code> met à jour l’objet. La vue utilise ici <code>get_object_or_404(Cours, slug=slug)</code> : à la différence de la page publique, elle accepte aussi les brouillons, puisqu’on veut pouvoir les éditer.</p>
+<p>Après un succès, deux cas se présentent : un cours publié renvoie vers sa page publique (<code>redirect(cours)</code> utilise automatiquement <code>get_absolute_url</code>), un brouillon revient sur le formulaire. La route de modification doit être distincte de la route de création et doit vérifier que l’utilisateur a le droit de modifier ce cours : ce contrôle d’autorisation sera ajouté au <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a>.</p>
 </section>
 <section id="supprimer-préférer-une-confirmation-explicite" class="level2">
 <h2 class="anchored" data-anchor-id="supprimer-préférer-une-confirmation-explicite">Supprimer : préférer une confirmation explicite</h2>
 <p>La suppression ne devrait pas être déclenchée par un lien GET :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- À éviter : un robot ou un clic involontaire pourrait supprimer --&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:supprimer' cours.slug %}"</span><span class="dt">&gt;</span>Supprimer<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Utilisez un formulaire POST avec CSRF et demandez une confirmation dans une page dédiée :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> supprimer_cours(request, slug):</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    cours <span class="op">=</span> get_object_or_404(Cours, slug<span class="op">=</span>slug)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> request.method <span class="op">==</span> <span class="st">"POST"</span>:</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        titre <span class="op">=</span> cours.titre</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        cours.delete()</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        messages.success(request, <span class="ss">f"Le cours « </span><span class="sc">{</span>titre<span class="sc">}</span><span class="ss"> » a été supprimé."</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> redirect(<span class="st">"cours:liste"</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> render(request, <span class="st">"cours/confirmer_suppression.html"</span>, {<span class="st">"cours"</span>: cours})</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- À éviter : un robot ou un clic involontaire pourrait supprimer --&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:supprimer' cours.slug %}"</span><span class="dt">&gt;</span>Supprimer<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Un lien GET est suivi par les robots d’indexation, préchargé par certains navigateurs et déclenché par un simple clic distrait. On affiche donc d’abord une <strong>page de confirmation</strong> (en GET, inoffensive), et c’est le <strong>formulaire POST</strong> de cette page, protégé par le jeton CSRF, qui supprime vraiment :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@login_required</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> supprimer_cours(request, slug):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    cours <span class="op">=</span> get_object_or_404(Cours, slug<span class="op">=</span>slug)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> request.method <span class="op">==</span> <span class="st">"POST"</span>:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        titre <span class="op">=</span> cours.titre</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        cours.delete()</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        messages.success(request, <span class="ss">f"Le cours « </span><span class="sc">{</span>titre<span class="sc">}</span><span class="ss"> » a été supprimé."</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> redirect(<span class="st">"cours:liste"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> render(request, <span class="st">"cours/confirmer_suppression.html"</span>, {<span class="st">"cours"</span>: cours})</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>cours/templates/cours/confirmer_suppression.html</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>{% extends "cours/base.html" %}</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>{% block title %}Supprimer — BiblioCours{% endblock %}</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>{% block content %}</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Supprimer « {{ cours.titre }} » ?<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Cette action est définitive.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="dt">&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    {% csrf_token %}</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="dt">&gt;</span>Oui, supprimer<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{% url 'cours:modifier' cours.slug %}"</span><span class="dt">&gt;</span>Annuler<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>{% endblock %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>L’approbation visuelle n’est pas une mesure de sécurité ; l’autorisation et le POST protégé le sont. Une opération irréversible doit aussi être reflétée dans les tests et, selon le domaine, dans une stratégie d’archivage plutôt que de suppression physique.</p>
 </section>
 <section id="ladministration-django" class="level2">
 <h2 class="anchored" data-anchor-id="ladministration-django">L’administration Django</h2>
-<p>L’admin est une interface interne puissante pour les personnes qui gèrent le contenu. Elle ne remplace pas une interface publique : ses écrans, ses permissions et son modèle mental sont ceux d’un back-office. Elle permet néanmoins de peupler BiblioCours rapidement.</p>
+<p>L’admin est une interface interne puissante pour les personnes qui gèrent le contenu. Elle ne remplace pas une interface publique : ses écrans, ses permissions et son modèle mental sont ceux d’un back-office. Elle permet néanmoins de peupler BiblioCours rapidement et de <strong>publier</strong> les brouillons.</p>
 <p>Dans <code>cours/admin.py</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> admin</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .models <span class="im">import</span> Cours, Matiere</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">@admin.register</span>(Matiere)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MatiereAdmin(admin.ModelAdmin):</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    list_display <span class="op">=</span> [<span class="st">"nom"</span>, <span class="st">"slug"</span>]</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    search_fields <span class="op">=</span> [<span class="st">"nom"</span>, <span class="st">"description"</span>]</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    prepopulated_fields <span class="op">=</span> {<span class="st">"slug"</span>: (<span class="st">"nom"</span>,)}</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="at">@admin.register</span>(Cours)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CoursAdmin(admin.ModelAdmin):</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    list_display <span class="op">=</span> [</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"titre"</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"matiere"</span>,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"statut"</span>,</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date_creation"</span>,</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date_publication"</span>,</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    list_filter <span class="op">=</span> [<span class="st">"statut"</span>, <span class="st">"matiere"</span>, <span class="st">"date_creation"</span>]</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    search_fields <span class="op">=</span> [<span class="st">"titre"</span>, <span class="st">"resume"</span>, <span class="st">"contenu"</span>]</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    autocomplete_fields <span class="op">=</span> [<span class="st">"matiere"</span>]</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    prepopulated_fields <span class="op">=</span> {<span class="st">"slug"</span>: (<span class="st">"titre"</span>,)}</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    readonly_fields <span class="op">=</span> [<span class="st">"date_creation"</span>, <span class="st">"date_modification"</span>]</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> admin, messages</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.utils <span class="im">import</span> timezone</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> .models <span class="im">import</span> Cours, Matiere</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">@admin.register</span>(Matiere)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MatiereAdmin(admin.ModelAdmin):</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    list_display <span class="op">=</span> [<span class="st">"nom"</span>, <span class="st">"slug"</span>]</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    search_fields <span class="op">=</span> [<span class="st">"nom"</span>, <span class="st">"description"</span>]</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    prepopulated_fields <span class="op">=</span> {<span class="st">"slug"</span>: (<span class="st">"nom"</span>,)}</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="at">@admin.register</span>(Cours)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CoursAdmin(admin.ModelAdmin):</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    list_display <span class="op">=</span> [</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"titre"</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"matiere"</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"statut"</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date_creation"</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date_publication"</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    list_filter <span class="op">=</span> [<span class="st">"statut"</span>, <span class="st">"matiere"</span>, <span class="st">"date_creation"</span>]</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    search_fields <span class="op">=</span> [<span class="st">"titre"</span>, <span class="st">"resume"</span>, <span class="st">"contenu"</span>]</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    autocomplete_fields <span class="op">=</span> [<span class="st">"matiere"</span>]</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    prepopulated_fields <span class="op">=</span> {<span class="st">"slug"</span>: (<span class="st">"titre"</span>,)}</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    readonly_fields <span class="op">=</span> [<span class="st">"date_creation"</span>, <span class="st">"date_modification"</span>]</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    list_select_related <span class="op">=</span> [<span class="st">"matiere"</span>]</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    actions <span class="op">=</span> [<span class="st">"publier"</span>]</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">@admin.action</span>(description<span class="op">=</span><span class="st">"Publier les cours sélectionnés"</span>)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> publier(<span class="va">self</span>, request, queryset):</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>        maintenant <span class="op">=</span> timezone.now()</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>        nombre <span class="op">=</span> queryset.exclude(statut<span class="op">=</span>Cours.Statut.PUBLIE).update(</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>            statut<span class="op">=</span>Cours.Statut.PUBLIE,</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>            date_publication<span class="op">=</span>maintenant,</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>            date_modification<span class="op">=</span>maintenant,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.message_user(request, <span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">}</span><span class="ss"> cours publié(s)."</span>, messages.SUCCESS)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Créez un compte administrateur :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py createsuperuser</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py runserver</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Visitez <code>http://127.0.0.1:8000/admin/</code>. <code>list_display</code> rend la liste utile, <code>list_filter</code> ajoute des filtres latéraux et <code>search_fields</code> construit une recherche. <code>readonly_fields</code> évite qu’une date technique soit modifiée à la main.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py createsuperuser</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python manage.py runserver</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Visitez <code>http://127.0.0.1:8000/admin/</code>. Chaque option a un rôle précis :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>list_display</code></td>
+<td>colonnes affichées dans la liste</td>
+</tr>
+<tr class="even">
+<td><code>list_filter</code></td>
+<td>filtres latéraux</td>
+</tr>
+<tr class="odd">
+<td><code>search_fields</code></td>
+<td>champs interrogés par la barre de recherche</td>
+</tr>
+<tr class="even">
+<td><code>autocomplete_fields</code></td>
+<td>champ de sélection avec recherche (exige <code>search_fields</code> sur l’admin de la cible : d’où <code>MatiereAdmin</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>prepopulated_fields</code></td>
+<td>pré-remplit le slug depuis le titre pendant la saisie</td>
+</tr>
+<tr class="even">
+<td><code>readonly_fields</code></td>
+<td>affiche un champ sans permettre de le modifier ; indispensable pour afficher les champs <code>auto_now</code></td>
+</tr>
+<tr class="odd">
+<td><code>list_select_related</code></td>
+<td>précharge une relation pour éviter le N+1 dans la liste</td>
+</tr>
+<tr class="even">
+<td><code>actions</code></td>
+<td>opérations en masse sur les lignes cochées</td>
+</tr>
+</tbody>
+</table>
+<p>Essayez de créer un cours en choisissant le statut « Publié » <strong>sans</strong> date de publication : l’admin appelle <code>full_clean()</code>, donc la règle de <code>Cours.clean()</code> (chapitre 3) s’applique et affiche l’erreur à côté du champ. Les règles du modèle valent partout.</p>
+<section id="une-action-personnalisée" class="level3">
+<h3 class="anchored" data-anchor-id="une-action-personnalisée">Une action personnalisée</h3>
+<p>L’action <code>publier</code> illustre deux conséquences du chapitre 3. D’abord, <code>update()</code> ne met <strong>pas</strong> à jour <code>auto_now</code> : nous renseignons donc <code>date_modification</code> nous-mêmes. Ensuite, <code>update()</code> ne lance pas <code>clean()</code> : l’action doit donc elle-même respecter la règle « publié ⇒ date de publication », ce qu’elle fait en écrivant les deux champs ensemble. <code>exclude(statut=PUBLIE)</code> évite d’écraser la date d’un cours déjà publié.</p>
+</section>
 <section id="ladmin-et-les-performances" class="level3">
 <h3 class="anchored" data-anchor-id="ladmin-et-les-performances">L’admin et les performances</h3>
-<p>Si une liste affiche une relation, Django peut charger chaque matière séparément. Ajoutez une optimisation à l’admin :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CoursAdmin(admin.ModelAdmin):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># autres options…</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_queryset(<span class="va">self</span>, request):</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">super</span>().get_queryset(request).select_related(<span class="st">"matiere"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Si une liste affiche une relation, Django peut charger chaque matière séparément. <code>list_select_related = ["matiere"]</code> résout cela pour les colonnes de liste. Pour un contrôle total, on peut aussi redéfinir <code>get_queryset</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_queryset(<span class="va">self</span>, request):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">super</span>().get_queryset(request).select_related(<span class="st">"matiere"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Mesurez avant d’optimiser, mais ne rendez pas l’admin inutilisable avec une requête N+1 lorsque le catalogue grandit.</p>
 </section>
 </section>
 <section id="messages-utilisateur" class="level2">
 <h2 class="anchored" data-anchor-id="messages-utilisateur">Messages utilisateur</h2>
-<p>Les messages sont temporaires et associés à la prochaine réponse :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> messages</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>messages.success(request, <span class="st">"Le cours a été enregistré."</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>messages.error(request, <span class="st">"Impossible de supprimer ce cours."</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Dans <code>base.html</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>{% if messages %}</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"messages"</span><span class="ot"> aria-live</span><span class="op">=</span><span class="st">"polite"</span><span class="dt">&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    {% for message in messages %}</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"message message-{{ message.tags }}"</span><span class="dt">&gt;</span>{{ message }}<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    {% endfor %}</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>{% endif %}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Le contexte est disponible grâce à <code>django.contrib.messages.context_processors.messages</code>, présent dans la configuration initiale. Un message ne doit pas être la seule façon de communiquer une erreur : le formulaire doit aussi porter les erreurs au niveau du champ.</p>
+<p>Les messages sont temporaires et associés à la prochaine réponse : on les « poste » dans une vue, puis ils s’affichent <strong>une seule fois</strong> sur la page suivante (typiquement après une redirection).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> django.contrib <span class="im">import</span> messages</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>messages.success(request, <span class="st">"Le cours a été enregistré."</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>messages.error(request, <span class="st">"Impossible de supprimer ce cours."</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Les niveaux disponibles sont <code>debug</code>, <code>info</code>, <code>success</code>, <code>warning</code> et <code>error</code>. Dans <code>base.html</code>, ajoutez le bloc d’affichage juste avant <code>{% block content %}</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">main</span><span class="ot"> class</span><span class="op">=</span><span class="st">"container"</span><span class="dt">&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    {% if messages %}</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"messages"</span><span class="ot"> aria-live</span><span class="op">=</span><span class="st">"polite"</span><span class="dt">&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        {% for message in messages %}</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"message message-{{ message.tags }}"</span><span class="dt">&gt;</span>{{ message }}<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        {% endfor %}</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    {% endif %}</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    {% block content %}{% endblock %}</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">main</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Le contexte est disponible grâce à <code>django.contrib.messages.context_processors.messages</code>, présent dans la configuration initiale. La classe <code>message-{{ message.tags }}</code> (par exemple <code>message-success</code>) permet au CSS de colorer chaque niveau. Un message ne doit pas être la seule façon de communiquer une erreur : le formulaire doit aussi porter les erreurs au niveau du champ.</p>
+</section>
+<section id="checkpoint" class="level2">
+<h2 class="anchored" data-anchor-id="checkpoint">Checkpoint</h2>
+<p>Après <code>createsuperuser</code> et connexion via <code>/admin/</code> :</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><code>/cours/nouveau/</code> affiche un formulaire vide ;</label></li>
+<li><label><input type="checkbox">un titre de moins de cinq caractères réaffiche le formulaire avec l’erreur, <strong>sans perdre</strong> les autres valeurs ;</label></li>
+<li><label><input type="checkbox">une soumission valide crée un <strong>brouillon</strong> et vous redirige vers sa page de modification, avec un message vert ;</label></li>
+<li><label><input type="checkbox">actualiser la page (F5) après ce succès ne crée <strong>pas</strong> de doublon ;</label></li>
+<li><label><input type="checkbox"><code>/cours/&lt;slug&gt;/</code> du brouillon renvoie 404, même pour un utilisateur connecté ;</label></li>
+<li><label><input type="checkbox">l’action « Publier les cours sélectionnés » rend le cours visible sur <code>/cours/</code> ;</label></li>
+<li><label><input type="checkbox"><code>/cours/&lt;slug&gt;/supprimer/</code> affiche la confirmation ; seul le bouton POST supprime ;</label></li>
+<li><label><input type="checkbox"><code>uv run python manage.py check</code> ne signale aucun problème.</label></li>
+</ul>
+</section>
+<section id="erreurs-fréquentes" class="level2">
+<h2 class="anchored" data-anchor-id="erreurs-fréquentes">Erreurs fréquentes</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symptôme</th>
+<th>Cause probable</th>
+<th>Remède</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Forbidden (403) CSRF verification failed</code></td>
+<td><code>{% csrf_token %}</code> absent du formulaire</td>
+<td>l’ajouter dans la balise <code>&lt;form method="post"&gt;</code></td>
+</tr>
+<tr class="even">
+<td>formulaire invalide, mais aucune erreur affichée</td>
+<td>le template ne parcourt pas <code>field.errors</code></td>
+<td>afficher les erreurs, ou utiliser <code>{ form.as_p }</code></td>
+</tr>
+<tr class="odd">
+<td>404 juste après la création d’un cours</td>
+<td>redirection vers la page publique d’un brouillon</td>
+<td>rediriger vers <code>cours:modifier</code></td>
+</tr>
+<tr class="even">
+<td><code>ImproperlyConfigured: Creating a ModelForm without either the 'fields' attribute…</code></td>
+<td><code>Meta.fields</code> absent</td>
+<td>lister explicitement les champs</td>
+</tr>
+<tr class="odd">
+<td><code>admin.E039</code> ou erreur sur <code>autocomplete_fields</code></td>
+<td><code>search_fields</code> absent de l’admin de la cible</td>
+<td>ajouter <code>search_fields</code> à <code>MatiereAdmin</code></td>
+</tr>
+<tr class="even">
+<td><code>NoReverseMatch</code> sur <code>cours:modifier</code></td>
+<td>route absente ou mal nommée</td>
+<td>vérifier <code>cours/urls.py</code></td>
+</tr>
+<tr class="odd">
+<td>« Ce champ est obligatoire » sur un champ absent du formulaire</td>
+<td>champ du modèle ni obligatoire ni dans <code>fields</code></td>
+<td>donner un <code>default</code> au modèle ou l’ajouter à <code>fields</code></td>
+</tr>
+<tr class="even">
+<td>anonyme redirigé vers une 404 <code>/accounts/login/</code></td>
+<td>page de connexion pas encore créée</td>
+<td>normal : voir le <a href="06-authentification-securites-fichiers.html" class="quarto-xref"><span>Authentification, sécurité et fichiers statiques</span></a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="à-retenir" class="level2">
+<h2 class="anchored" data-anchor-id="à-retenir">À retenir</h2>
+<ul>
+<li>La validation importante se fait <strong>côté serveur</strong> ; les attributs HTML ne protègent rien.</li>
+<li>Le cycle est liaison → validation → action, suivi d’une redirection (PRG).</li>
+<li><code>fields</code> est une liste explicite : un champ absent ne peut pas être modifié par une requête forgée.</li>
+<li><code>GET</code> ne modifie jamais l’état ; suppression et modification passent par <code>POST</code> avec jeton CSRF.</li>
+<li><code>instance=</code> fait passer un <code>ModelForm</code> de la création à la modification.</li>
+<li>Une règle métier se place dans le modèle pour valoir partout (formulaire, admin, scripts).</li>
+<li><code>update()</code> contourne <code>clean()</code> et <code>auto_now</code> : on les gère soi-même.</li>
+<li>Les messages sont affichés une fois, après une redirection.</li>
+</ul>
 </section>
 <section id="exercices" class="level2">
 <h2 class="anchored" data-anchor-id="exercices">Exercices</h2>
 <ol type="1">
-<li>Ajoutez un <code>ModelForm</code> pour <code>Matiere</code> avec une validation de nom unique insensible à la casse.</li>
-<li>Ajoutez une action d’administration qui publie les cours sélectionnés.</li>
-<li>Faites en sorte que seuls les utilisateurs ayant une permission puissent créer un cours.</li>
-<li>Testez les trois scénarios de <code>creer_cours</code> : GET, POST valide et POST invalide.</li>
+<li><p>Dans quel ordre Django exécute-t-il <code>clean_titre</code>, <code>clean</code> du formulaire et <code>Model.clean</code> ? Donnez un exemple de règle adaptée à chaque niveau.</p></li>
+<li><p>Que se passe-t-il, pas à pas, si un utilisateur actualise la page juste après une création réussie, selon que la vue redirige ou non ?</p></li>
+<li><p>Pourquoi la suppression passe-t-elle par une page de confirmation et un POST plutôt que par un lien direct ?</p></li>
+<li><p>Pourquoi <code>statut</code> n’est-il pas dans <code>CoursForm.Meta.fields</code> ? Que se passerait-il si <code>fields = "__all__"</code> était utilisé ?</p></li>
+<li><p>Quelle est la différence entre <code>null=True</code> et <code>blank=True</code> du point de vue d’un formulaire ? Que se passe-t-il pour <code>date_publication</code> ?</p></li>
+<li><p>Ajoutez un <code>ModelForm</code> pour <code>Matiere</code> avec une validation de nom unique insensible à la casse (« Python » et « python » sont des doublons). Où placez-vous la règle ?</p></li>
+<li><p>Ajoutez à l’administration une action <strong>Repasser en brouillon</strong>. Que devient <code>date_publication</code> ? Justifiez votre choix.</p></li>
+<li><p>Ajoutez des libellés (<code>labels</code>) et des textes d’aide (<code>help_texts</code>) en français dans <code>CoursForm.Meta</code>. Vérifiez qu’ils s’affichent.</p></li>
+<li><p>Effectuez manuellement les trois scénarios de <code>creer_cours</code> (GET, POST valide, POST invalide) avec l’onglet <em>Réseau</em> des outils de développement du navigateur. Notez les méthodes, statuts et redirections. Nous les automatiserons au <a href="07-tests-debug-qualite.html" class="quarto-xref"><span>Tester, diagnostiquer et faire évoluer le code</span></a>.</p></li>
+<li><p>Dans l’admin, essayez d’enregistrer un cours « Publié » sans date de publication, puis avec une date. Quel message obtenez-vous ? D’où vient-il ?</p></li>
+<li><p>Rendez le champ <code>slug</code> facultatif dans le formulaire et générez-le automatiquement à partir du titre avec <code>django.utils.text.slugify</code> s’il est vide. Attention aux doublons : que faites-vous si le slug existe déjà ?</p></li>
+<li><p>Ajoutez dans <code>clean_slug</code> une liste de slugs <strong>réservés</strong> (<code>nouveau</code>, <code>a-propos</code>, <code>matiere</code>) qui sont refusés. Expliquez le lien avec l’ordre des routes du <a href="02-archetecture-routage.html" class="quarto-xref"><span>Comprendre l’architecture Django et le routage</span></a>.</p></li>
+<li><p>Empêchez la modification du slug d’un cours existant (changer le slug casse les liens). Indice : <code>self.fields["slug"].disabled = True</code> dans <code>__init__</code> quand <code>self.instance.pk</code> existe.</p></li>
 </ol>
 
 

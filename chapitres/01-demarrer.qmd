@@ -1,5 +1,18 @@
 # Démarrer proprement avec Django et `uv` {#sec-demarrage}
 
+::: {.callout-note}
+## Objectifs d'apprentissage
+
+À la fin de ce chapitre, vous saurez :
+
+- décrire ce qu'est une requête HTTP et ce que Django fait entre la requête et la réponse ;
+- expliquer pourquoi un projet Python doit avoir un environnement isolé et reproductible ;
+- créer un projet avec `uv`, installer Django et lire les fichiers `pyproject.toml` et `uv.lock` ;
+- distinguer un **projet** Django d'une **application** Django ;
+- démarrer le serveur de développement et vérifier la configuration avec `check` ;
+- décider quels fichiers doivent (ou non) être versionnés avec Git.
+:::
+
 ## Ce que nous allons construire
 
 Ce cours suit la construction progressive de **BiblioCours**, une petite
@@ -16,6 +29,23 @@ réaliste pour faire apparaître les problèmes qui comptent dans une applicatio
 web : organisation du code, données relationnelles, validation, sécurité,
 tests et déploiement.
 
+### La carte du cours
+
+Chaque chapitre ajoute une capacité à BiblioCours et s'appuie sur le précédent.
+Le tableau ci-dessous sert de repère : revenez-y quand vous vous demandez
+« pourquoi fait-on cela maintenant ? ».
+
+| Chapitre | Question posée | Ce que BiblioCours gagne |
+|---|---|---|
+| 1. Démarrer | Comment partir sur une base saine et reproductible ? | un projet, une app, un dépôt Git |
+| 2. Architecture et routage | Comment une URL atteint-elle du code ? | des routes nommées et des premières vues |
+| 3. Modèles et migrations | Comment décrire et stocker les données ? | les modèles `Matiere` et `Cours` |
+| 4. Vues et templates | Comment afficher les données ? | liste, détail, recherche, pagination |
+| 5. Formulaires et admin | Comment saisir et gérer les données ? | création, modification, suppression, admin |
+| 6. Sécurité | Qui a le droit de faire quoi ? | connexion, permissions, secrets, fichiers |
+| 7. Tests | Comment s'assurer que ça marche encore ? | une suite de tests et un contrôle qualité |
+| 8. Production | Comment le mettre en ligne sans danger ? | une configuration et une checklist de déploiement |
+
 ::: {.callout-note}
 ## Prérequis et version du cours
 
@@ -26,6 +56,30 @@ restent valables pour les versions voisines, mais les détails de configuration
 doivent toujours être vérifiés dans la documentation de la version installée
 [@django-docs].
 :::
+
+### Comment utiliser ce cours
+
+Chaque chapitre suit la même structure : des **objectifs**, un rappel de
+l'**état de départ** du projet, des explications avec du code à reproduire, un
+**checkpoint** pour vérifier que tout fonctionne, un tableau d'**erreurs
+fréquentes**, un résumé « **à retenir** » et des **exercices**.
+
+Quelques conventions :
+
+- les commandes fonctionnent dans un terminal macOS/Linux ou PowerShell, sauf
+  indication contraire. Sous PowerShell, utilisez `Get-ChildItem -Force`
+  à la place de `ls -a`, `Get-Content fichier -TotalCount 30` à la place de
+  `head -30 fichier`, et `Remove-Item main.py` à la place de `rm main.py` ;
+- toutes les commandes se lancent **à la racine du projet**, là où se trouve
+  `manage.py` ;
+- recopiez le code plutôt que de le copier-coller : vous remarquerez davantage
+  de choses en le tapant.
+
+Pour travailler en autonomie, terminez le **checkpoint** de chaque chapitre
+avant de passer au suivant. Si un résultat diffère, relisez la première erreur
+complète dans le terminal, vérifiez que vous êtes à la racine du projet et
+relancez la dernière commande après correction. Ne poursuivez pas en empilant
+des changements sur une étape qui ne fonctionne pas encore.
 
 ## Pourquoi Django ?
 
@@ -40,6 +94,10 @@ ces opérations à la main. Django fournit plutôt une structure cohérente :
 5. des composants prêts à l'emploi prennent en charge l'administration,
    l'authentification, les sessions et une partie des protections de sécurité.
 
+On dit souvent que Django est un framework « avec les piles incluses » : là où
+d'autres outils vous demandent de choisir et d'assembler une bibliothèque pour
+chaque besoin, Django propose une réponse intégrée et cohérente.
+
 Cette approche réduit le code répétitif, mais elle impose aussi des conventions.
 Apprendre Django revient donc moins à mémoriser des fonctions qu'à comprendre
 le rôle de chaque couche et le moment où elle doit intervenir. Le tutoriel
@@ -48,6 +106,7 @@ officiel suit la même logique en construisant une application par étapes
 
 ### Une requête, concrètement
 
+HTTP est un dialogue en texte entre un client (le navigateur) et un serveur.
 Lorsque l'on ouvre `http://127.0.0.1:8000/cours/`, le navigateur envoie
 approximativement :
 
@@ -56,6 +115,11 @@ GET /cours/ HTTP/1.1
 Host: 127.0.0.1:8000
 Accept: text/html
 ```
+
+Cette requête comporte trois parties : une **ligne de requête** (la méthode
+`GET`, le chemin `/cours/` et la version du protocole), des **en-têtes**
+(`Host`, `Accept`, …) qui décrivent le contexte, et parfois un **corps** (absent
+ici, mais présent quand on envoie un formulaire).
 
 Django reçoit cette requête, cherche une route correspondante, appelle la vue,
 éventuellement interroge la base de données, rend un template et renvoie par
@@ -69,22 +133,43 @@ Content-Type: text/html; charset=utf-8
 <html lang="fr">…</html>
 ```
 
+La réponse comporte aussi trois parties : une **ligne de statut** (`200 OK`
+signifie « tout s'est bien passé »), des **en-têtes** et un **corps** (le HTML).
+
 Le code du cours rendra ce chemin observable. À chaque étape, nous chercherons
 à répondre à trois questions : **quelle est l'entrée ? quelle décision est
 prise ? quelle sortie est produite ?**
 
 ## Pourquoi `uv` remplace `venv` et `pip` dans ce cours
 
-Un environnement Python global est une mauvaise unité d'installation : deux
-projets peuvent exiger des versions incompatibles de Django ou d'une même
-dépendance. On veut isoler les dépendances du projet et pouvoir recréer
-exactement l'environnement sur une autre machine.
+### Le problème : les dépendances en conflit
+
+Imaginez que vous travaillez sur deux projets. Le premier exige Django 4.2, le
+second Django 5.2. Si les deux utilisent le même Python « global » de votre
+machine, l'installation de l'un casse l'autre. Imaginez maintenant qu'un
+collègue clone votre projet : il installe Django aujourd'hui, avec une version
+légèrement différente de la vôtre, et un comportement change.
+
+Il faut donc :
+
+1. **isoler** les dépendances de chaque projet dans un environnement dédié
+   (un « environnement virtuel ») ;
+2. **déclarer** ce dont le projet a besoin ;
+3. **enregistrer** les versions exactes installées pour pouvoir les retrouver.
+
+### La solution : `uv`
 
 `uv` est un gestionnaire rapide de versions Python, d'environnements et de
-dépendances. Il utilise un fichier `pyproject.toml` pour déclarer le projet et
-un fichier `uv.lock` pour enregistrer la résolution exacte des dépendances
-[@astral-uv]. Nous n'avons donc pas besoin de créer manuellement un dossier
-`env/`, ni de penser à activer un environnement à chaque terminal.
+dépendances. Il utilise deux fichiers complémentaires [@astral-uv] :
+
+| Fichier | Rôle | Analogie | Qui l'écrit ? |
+|---|---|---|---|
+| `pyproject.toml` | déclare ce que le projet **demande** | la liste de courses | vous (via `uv add`) |
+| `uv.lock` | enregistre ce qui a été **réellement installé**, versions exactes comprises | le ticket de caisse | `uv`, automatiquement |
+
+Nous n'avons donc pas besoin de créer manuellement un dossier `env/`, ni de
+penser à activer un environnement à chaque terminal : `uv` crée un dossier
+`.venv/` et l'utilise pour vous.
 
 ### Installation et vérification
 
@@ -98,7 +183,8 @@ python --version
 
 Sur Windows, PowerShell et Windows Terminal conviennent. Sur macOS et Linux,
 un terminal courant suffit. Si la commande `uv` n'est pas trouvée après
-l'installation, redémarrez le terminal afin que le `PATH` soit rechargé.
+l'installation, redémarrez le terminal afin que le `PATH` (la liste des
+dossiers où le système cherche les commandes) soit rechargé.
 
 ### Initialiser le projet
 
@@ -111,28 +197,45 @@ cd bibliocours
 uv init --python 3.12
 ```
 
-Cette commande crée notamment `pyproject.toml`. Le choix de Python doit être
-explicite : il évite qu'un collègue utilise par hasard une version très
-différente. Vous pouvez demander à `uv` d'installer une version si elle
-n'existe pas encore sur la machine :
+Sous macOS/Linux, affichez les fichiers, y compris les fichiers cachés, avec
+`ls -a`. Sous PowerShell, utilisez `Get-ChildItem -Force`. Selon votre version
+d'`uv`, l'initialisation crée `pyproject.toml`, `.python-version`, `README.md`,
+`main.py`, un `.gitignore` minimal et peut même initialiser un dépôt Git.
+Nous n'avons pas besoin de `main.py` (Django fournira `manage.py`) : supprimez-le
+avec la commande adaptée à votre terminal :
+
+```bash
+# macOS / Linux
+rm main.py
+```
+
+```powershell
+# Windows PowerShell
+Remove-Item main.py
+```
+
+Le choix de la version de Python doit être explicite : il évite qu'un collègue
+utilise par hasard une version très différente. Le fichier `.python-version`
+documente la version attendue sans mettre Python lui-même dans Git. Si cette
+version n'existe pas encore sur votre machine, `uv` peut l'installer :
 
 ```bash
 uv python install 3.12
 uv python pin 3.12
 ```
 
-La commande `uv python pin` peut créer un fichier `.python-version`. Ce fichier
-documente la version attendue sans mettre Python lui-même dans Git.
-
 ### Ajouter Django
 
-Ajoutez Django comme dépendance de production :
+Ajoutez Django comme dépendance de production, c'est-à-dire une dépendance
+nécessaire pour que l'application fonctionne :
 
 ```bash
 uv add "Django>=5.2,<6"
 ```
 
-Examinez ensuite les fichiers produits :
+La contrainte `>=5.2,<6` signifie « toute version 5.2 ou supérieure, mais pas
+la 6 ». Elle autorise les corrections de sécurité tout en évitant un changement
+majeur imprévu. Examinez ensuite les fichiers produits :
 
 ```bash
 ls
@@ -140,10 +243,33 @@ cat pyproject.toml
 head -30 uv.lock
 ```
 
-Dans `pyproject.toml`, Django apparaît dans la liste des dépendances. Dans
-`uv.lock`, `uv` conserve les versions concrètement retenues, y compris les
-dépendances indirectes. Il faut versionner `pyproject.toml` **et** `uv.lock` ;
-il ne faut pas versionner `.venv/`.
+Dans `pyproject.toml`, Django apparaît dans la liste des dépendances :
+
+```toml
+[project]
+name = "bibliocours"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2,<6",
+]
+```
+
+Dans `uv.lock`, `uv` conserve les versions concrètement retenues, y compris les
+dépendances indirectes (celles dont Django lui-même a besoin, comme `asgiref`
+et `sqlparse`). Il faut versionner `pyproject.toml` **et** `uv.lock` ; il ne
+faut pas versionner `.venv/`, qui peut être recréé à tout moment.
+
+Les commandes `uv` à connaître dès maintenant :
+
+| Commande | Effet |
+|---|---|
+| `uv add paquet` | ajoute une dépendance et met à jour `pyproject.toml` et `uv.lock` |
+| `uv add --dev paquet` | ajoute une dépendance **de développement** (outils de test, de style…) |
+| `uv remove paquet` | retire une dépendance |
+| `uv sync` | crée ou met à jour `.venv/` pour correspondre aux fichiers |
+| `uv run commande` | exécute une commande dans l'environnement du projet |
+| `uv tree` | affiche l'arbre des dépendances, directes et indirectes |
 
 ::: {.callout-important}
 ## `uv run` est le nouveau réflexe
@@ -158,15 +284,28 @@ uv run django-admin --version
 `uv run` vérifie l'environnement et exécute la commande avec les dépendances du
 projet. Vous n'avez donc pas à taper `source .venv/bin/activate`. Une activation
 manuelle reste possible, mais elle n'est plus nécessaire pour suivre ce cours.
+
+Si vous tapez `python manage.py …` sans `uv run`, vous utilisez peut-être le
+Python global, où Django n'est pas installé : l'erreur
+`ModuleNotFoundError: No module named 'django'` est le signe typique de cet
+oubli.
 :::
 
 ## Créer le projet Django
 
+### Projet et application : deux notions à ne pas confondre
+
 Dans Django, un **projet** représente la configuration globale d'un site. Une
 **application** est une unité fonctionnelle qui regroupe des modèles, vues,
 templates et tests. Un même projet peut réunir plusieurs applications :
-`cours`, `comptes`, `notifications`, etc. Cette distinction est importante :
-le projet assemble ; les applications portent les fonctionnalités.
+`cours`, `comptes`, `notifications`, etc.
+
+Pour retenir la différence, pensez à une maison. Le projet est le bâtiment avec
+son électricité, sa plomberie et son adresse : il fournit l'infrastructure
+commune. Les applications sont les pièces : chacune a une fonction précise. Le
+projet assemble ; les applications portent les fonctionnalités.
+
+### Générer la configuration globale
 
 Créons la configuration globale dans le dossier courant :
 
@@ -175,7 +314,9 @@ uv run django-admin startproject config .
 ```
 
 Le point final signifie « utiliser le dossier courant » plutôt que créer un
-dossier imbriqué `config/config`. La structure initiale est :
+dossier imbriqué `config/config`. Nous nommons le paquet de configuration
+`config` plutôt que `bibliocours` pour éviter la confusion entre le dossier
+racine et le paquet qui contient `settings.py`. La structure obtenue est :
 
 ```text
 bibliocours/
@@ -193,33 +334,55 @@ bibliocours/
 
 ### Le rôle de chaque fichier
 
-- `manage.py` prépare l'accès aux réglages et expose les commandes Django ;
+- `manage.py` prépare l'accès aux réglages (il indique à Django que ceux-ci se
+  trouvent dans `config.settings`) et expose les commandes Django ;
 - `config/settings.py` contient la configuration globale ;
 - `config/urls.py` est le routeur principal ;
 - `config/asgi.py` et `config/wsgi.py` sont les points d'entrée utilisés par
-  les serveurs applicatifs ;
+  les serveurs applicatifs en production (voir @sec-production) ;
 - `__init__.py` indique que `config` est un paquet Python.
 
-Lancez le serveur de développement :
+### Démarrer le serveur de développement
 
 ```bash
 uv run python manage.py runserver
 ```
 
-Ouvrez `http://127.0.0.1:8000/`. Le serveur recharge souvent le code quand un
-fichier Python est modifié. Il est pratique pour apprendre, mais il ne doit pas
-être utilisé comme serveur public : il n'est ni dimensionné ni configuré pour
-la production.
+Ouvrez `http://127.0.0.1:8000/`. Vous devez voir la page d'accueil de Django
+(une fusée). Dans le terminal, chaque requête reçue est journalisée :
 
-Arrêtez-le avec ++ctrl+c++. Une seconde commande dans un autre terminal peut
+```text
+[07/Oct/2026 10:15:02] "GET / HTTP/1.1" 200 10731
+```
+
+Lisez cette ligne : la méthode, le chemin, la version HTTP, le **statut** de la
+réponse et sa taille en octets. Ce journal sera votre meilleur ami pour
+diagnostiquer les problèmes.
+
+::: {.callout-note}
+## « You have 18 unapplied migration(s) »
+
+Au démarrage, Django affiche un avertissement rouge à propos de migrations non
+appliquées. C'est normal : les composants fournis par Django (administration,
+authentification, sessions) ont besoin de tables dans la base de données, qui
+n'existent pas encore. Nous créerons ces tables au @sec-modeles, quand nous
+étudierons les migrations. Ignorez l'avertissement pour l'instant.
+:::
+
+Le serveur recharge souvent le code quand un fichier Python est modifié. Il est
+pratique pour apprendre, mais il ne doit pas être utilisé comme serveur public :
+il n'est ni dimensionné ni configuré pour la production.
+
+Arrêtez-le avec `Ctrl+C`. Une seconde commande dans un autre terminal peut
 inspecter le projet :
 
 ```bash
 uv run python manage.py check
 ```
 
-`check` analyse la configuration sans modifier la base de données. Prenez
-l'habitude de l'exécuter après une modification structurelle.
+`check` analyse la configuration sans modifier la base de données. Le message
+attendu est `System check identified no issues (0 silenced).` Prenez l'habitude
+de l'exécuter après une modification structurelle.
 
 ## Créer l'application `cours`
 
@@ -241,6 +404,11 @@ cours/
 └── views.py
 ```
 
+Chaque fichier a une place prévue : `models.py` accueillera les données,
+`views.py` le traitement des requêtes, `admin.py` la configuration de
+l'administration, `migrations/` l'historique du schéma de la base. Nous
+remplirons ces fichiers un à un dans les chapitres suivants.
+
 Une app n'est pas active simplement parce que son dossier existe. Ajoutez-la
 dans `config/settings.py` :
 
@@ -256,17 +424,26 @@ INSTALLED_APPS = [
 ]
 ```
 
-Dans un projet plus grand, on préfère souvent `"cours.apps.CoursConfig"` :
-cette forme rend explicite la classe de configuration. La forme courte
-fonctionne ici car Django sait retrouver `CoursConfig`.
+`INSTALLED_APPS` est la liste des composants que Django doit charger. Tant que
+`cours` n'y figure pas, Django ignorera ses modèles, ses templates et ses
+migrations. Dans un projet plus grand, on préfère souvent
+`"cours.apps.CoursConfig"` : cette forme rend explicite la classe de
+configuration définie dans `apps.py`. La forme courte fonctionne ici car Django
+sait retrouver `CoursConfig`.
+
+Relancez `uv run python manage.py check` : si vous aviez fait une faute de
+frappe dans le nom de l'app, Django la signalerait immédiatement.
 
 ## Versionner ce qui doit l'être
 
-Initialisez Git et créez `.gitignore` :
+Si `uv init` n'a pas déjà créé de dépôt Git (cherchez un dossier `.git` avec
+`ls -a`), initialisez-le :
 
 ```bash
 git init
 ```
+
+Complétez ensuite le fichier `.gitignore` pour qu'il contienne au moins :
 
 ```gitignore
 .venv/
@@ -279,10 +456,24 @@ media/
 staticfiles/
 ```
 
+Voici ce qui doit entrer dans Git, et pourquoi :
+
+| Fichier ou dossier | Versionner ? | Raison |
+|---|---|---|
+| code Python, templates, migrations | oui | c'est le projet |
+| `pyproject.toml`, `uv.lock` | oui | permettent de recréer l'environnement |
+| `.python-version` | oui | documente la version de Python attendue |
+| `.venv/` | non | se recrée avec `uv sync` |
+| `*.sqlite3` | non | données de travail locales |
+| `media/` | non | fichiers téléversés par des utilisateurs |
+| `staticfiles/` | non | produit par `collectstatic`, donc régénérable |
+| `.env` | **jamais** | contient des secrets |
+
 La base SQLite locale et les fichiers téléversés peuvent contenir des données
 de travail ; ils ne doivent pas être envoyés par défaut. Les secrets ne doivent
-jamais se trouver dans Git. `uv.lock`, en revanche, **doit** être conservé : il
-sert à reproduire l'installation.
+jamais se trouver dans Git, car l'historique conserve tout : supprimer un secret
+dans un commit ultérieur ne l'efface pas du passé. `uv.lock`, en revanche,
+**doit** être conservé : il sert à reproduire l'installation.
 
 ```bash
 git add .
@@ -293,7 +484,9 @@ git status
 Un commit est une étape vérifiable, pas une sauvegarde automatique de chaque
 frappe. Faites un commit lorsque l'application atteint un état cohérent : le
 projet démarre, le contrôle Django passe et les fichiers nécessaires sont
-présents.
+présents. Le préfixe `chore:` suit la convention « Conventional Commits » :
+`feat:` pour une fonctionnalité, `fix:` pour une correction, `test:` pour des
+tests, `docs:` pour de la documentation.
 
 ## Checkpoint
 
@@ -306,14 +499,70 @@ uv run django-admin --version
 git status
 ```
 
+Vérifiez :
+
+- [ ] `check` affiche « no issues » ;
+- [ ] la page de la fusée s'affiche sur `http://127.0.0.1:8000/` ;
+- [ ] `django-admin --version` affiche une version `5.2.x` ;
+- [ ] `git status` indique « nothing to commit, working tree clean » ;
+- [ ] `.venv/` et `db.sqlite3` n'apparaissent pas dans `git status`.
+
+## Erreurs fréquentes
+
+| Symptôme | Cause probable | Remède |
+|---|---|---|
+| `uv: command not found` | terminal ouvert avant l'installation | fermer et rouvrir le terminal |
+| `ModuleNotFoundError: No module named 'django'` | commande lancée sans `uv run` | préfixer par `uv run` |
+| `can't open file 'manage.py'` | mauvais dossier courant | `cd` vers la racine du projet |
+| `Error: That port is already in use` | un autre serveur tourne déjà | l'arrêter, ou `runserver 8001` |
+| `ModuleNotFoundError: No module named 'cours'` | app mal nommée ou absente du dossier | vérifier le nom dans `INSTALLED_APPS` |
+| dossier `config/config/` | oubli du point final de `startproject` | recommencer dans un dossier propre |
+
+## À retenir
+
+- Une requête HTTP a une ligne de requête, des en-têtes et parfois un corps ;
+  la réponse a un statut, des en-têtes et un corps.
+- `pyproject.toml` déclare, `uv.lock` enregistre : les deux sont versionnés.
+- `uv run` exécute toute commande dans l'environnement du projet.
+- Le **projet** assemble et configure ; les **applications** portent les
+  fonctionnalités.
+- Une app doit être déclarée dans `INSTALLED_APPS` pour exister.
+- `runserver` sert à apprendre, jamais à publier.
+- Un secret ne doit jamais entrer dans Git.
+
 ## Exercices
 
 1. Décrivez avec vos mots la différence entre un projet Django et une app
-   Django.
-2. Supprimez `.venv/` si elle existe, puis relancez une commande avec
-   `uv run`. Que constatez-vous ?
-3. Ajoutez une dépendance de développement avec `uv add --dev ruff`, puis
+   Django. Donnez ensuite trois apps possibles pour un site de e-commerce.
+2. Expliquez pourquoi `uv.lock` est versionné alors que `.venv/` ne l'est pas.
+   Que se passerait-il pour un collègue si `uv.lock` était absent ?
+3. Pourquoi la commande `startproject config .` se termine-t-elle par un
+   point ? Qu'obtiendrait-on sans lui ?
+4. Citez trois raisons pour lesquelles `runserver` ne convient pas à un site
+   public.
+5. Dans la ligne de journal `"GET /cours/ HTTP/1.1" 404 2345`, que signifient
+   les différents éléments ? Que vous dit le `404` ?
+
+6. Supprimez `.venv/` si elle existe, puis relancez une commande avec
+   `uv run`. Que constatez-vous ? Quelle commande aurait-elle pu recréer
+   l'environnement explicitement ?
+7. Ajoutez une dépendance de développement avec `uv add --dev ruff`, puis
    observez la différence entre les dépendances normales et celles de
-   développement dans `pyproject.toml`.
-4. Faites un commit avant et après la création de l'app `cours`, puis utilisez
-   `git diff` pour identifier ce que Django a généré.
+   développement dans `pyproject.toml`. Lancez `uv run ruff --version`. Cet
+   outil sera réutilisé au @sec-tests.
+8. Faites un commit avant et après la création de l'app `cours`, puis utilisez
+   `git show --stat` pour identifier ce que Django a généré.
+9. Lancez `uv tree`. Quelles sont les dépendances **indirectes** de Django ?
+   Retrouvez-les dans `uv.lock`.
+10. Lancez le serveur sur le port 8001 (`runserver 8001`), puis, dans un second
+    terminal, observez la réponse brute avec `curl -i http://127.0.0.1:8001/`
+    (sous PowerShell, tapez `curl.exe`). Repérez la ligne de statut et les
+    en-têtes.
+
+11. Ouvrez `config/settings.py` et listez cinq réglages dont vous ne
+    comprenez pas encore le rôle. Gardez cette liste : au chapitre suivant,
+    vous pourrez la compléter avec les réponses.
+12. Rédigez un fichier `README.md` qui décrit, en cinq commandes maximum,
+    comment un nouveau venu installe et lance BiblioCours. Demandez à une
+    personne de suivre vos instructions sur une machine « propre » et notez
+    où elle bute.

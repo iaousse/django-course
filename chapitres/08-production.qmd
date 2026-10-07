@@ -19,6 +19,13 @@ reproductibles plusieurs éléments :
 - le processus qui sert Django ;
 - les sauvegardes et la supervision.
 
+Ce chapitre prépare une mise en production et enseigne les contrôles communs
+à toute plateforme. Il ne décrit pas le déploiement complet chez un hébergeur
+particulier : les étapes de création du service, des variables secrètes, de la
+base de données et du domaine dépendent du fournisseur choisi. Avant une mise
+en ligne réelle, suivez aussi son guide officiel et testez la procédure sur un
+environnement de préproduction.
+
 Le guide de déploiement Django rappelle que la configuration par défaut est
 adaptée au développement et doit être auditée avant exposition publique
 [@django-deployment]. Une démarche de déploiement progressive et documentée
@@ -252,6 +259,36 @@ Terminez BiblioCours avec les exigences suivantes :
 - `uv sync --frozen` permet de recréer l'environnement ;
 - `check --deploy` n'affiche plus de problème connu non traité.
 
+À la fin du parcours, les fichiers principaux doivent se répartir ainsi
+(certains fichiers générés par Django ne sont pas représentés) :
+
+```text
+bibliocours/
+├── .env.example
+├── pyproject.toml
+├── uv.lock
+├── manage.py
+├── config/
+│   ├── settings.py
+│   └── urls.py
+├── cours/
+│   ├── migrations/
+│   ├── static/cours/site.css
+│   ├── templates/cours/
+│   ├── tests/
+│   ├── admin.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
+└── templates/registration/login.html
+```
+
+Le fichier `.env` local, `.venv/`, `db.sqlite3` et `staticfiles/` ne sont pas
+versionnés. Comparez cette carte à votre dépôt ; si un fichier est ailleurs,
+vérifiez que le réglage ou le chemin des templates et des fichiers statiques
+correspond.
+
 Pour chaque fonctionnalité, faites un commit qui raconte une décision :
 
 ```bash
@@ -263,7 +300,7 @@ Un historique lisible devient une documentation supplémentaire du projet. Il
 permet de comprendre non seulement l'état actuel, mais aussi la raison des
 évolutions.
 
-## Exercices de consolidation
+## Exercices 
 
 1. Configurez un environnement de test séparé et faites tourner la suite depuis
    une base vide.
